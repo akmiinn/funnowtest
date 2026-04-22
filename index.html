@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MKT Campaign Setup — Eatigo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#fafaf9; --surface:#fff; --border:#e7e5e4; --border-soft:#f1efed;
+      --text:#1c1917; --text-2:#57534e; --text-3:#a8a29e;
+      --primary:#ea580c; --primary-600:#c2410c; --primary-50:#fff7ed; --primary-100:#ffedd5;
+      --danger:#dc2626; --warn:#d97706; --success:#16a34a; --info:#2563eb;
+    }
+    html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);margin:0;}
+    body{font-feature-settings:"cv11","ss01","ss03";}
+    .mono{font-family:'JetBrains Mono',monospace;}
+
+    /* Inputs */
+    .f-input,.f-select,.f-textarea{width:100%;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);transition:border-color .12s,box-shadow .12s;outline:none;font-family:inherit;box-sizing:border-box;}
+    .f-input::placeholder,.f-textarea::placeholder{color:#b8b4af;}
+    .f-input:hover,.f-select:hover,.f-textarea:hover{border-color:#d6d3d1;}
+    .f-input:focus,.f-select:focus,.f-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(234,88,12,.15);}
+    .f-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;}
+    .f-textarea{resize:vertical;min-height:72px;}
+    .f-label{display:block;font-size:11.5px;font-weight:500;color:var(--text-2);margin-bottom:6px;letter-spacing:.02em;}
+    .f-label .req{color:var(--primary);font-weight:600;}
+
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;font-weight:500;font-size:14px;padding:9px 16px;border:1px solid transparent;transition:all .12s;cursor:pointer;white-space:nowrap;}
+    .btn-primary{background:var(--primary);color:#fff;} .btn-primary:hover{background:var(--primary-600);}
+    .btn-secondary{background:#fff;color:var(--text);border-color:var(--border);} .btn-secondary:hover{background:#fafaf9;border-color:#d6d3d1;}
+    .btn-ghost{background:transparent;color:var(--text-2);} .btn-ghost:hover{background:#f5f5f4;color:var(--text);}
+    .btn-ai{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;font-size:12px;padding:6px 12px;border-radius:8px;} .btn-ai:hover{opacity:.9;}
+    .btn-danger{background:#fee2e2;color:var(--danger);border:none;} .btn-danger:hover{background:#fecaca;}
+    .btn-add{background:var(--primary-50);color:var(--primary);border:1.5px dashed var(--primary-100);font-size:13px;} .btn-add:hover{background:var(--primary-100);}
+    .btn-icon{width:32px;height:32px;padding:0;border-radius:8px;}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+    /* Seg control */
+    .seg{display:inline-flex;background:#f5f5f4;border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;}
+    .seg-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 12px;font-size:13px;font-weight:500;color:var(--text-2);border-radius:7px;background:transparent;border:none;cursor:pointer;transition:all .12s;white-space:nowrap;}
+    .seg-btn:hover{color:var(--text);}
+    .seg-btn.on{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.03);font-weight:600;}
+
+    /* Chips */
+    .chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+    .chip .dot{width:6px;height:6px;border-radius:999px;flex-shrink:0;}
+    .chip-idle{background:#f5f5f4;color:#78716c;} .chip-idle .dot{background:#a8a29e;}
+    .chip-ready{background:#dcfce7;color:#166534;} .chip-ready .dot{background:#22c55e;}
+    .chip-busy{background:#fff7ed;color:#9a3412;} .chip-busy .dot{background:var(--primary);animation:pulse 1s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+    /* Top tabs */
+    .top-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;}
+    .top-tabs::-webkit-scrollbar{height:0;}
+    .top-tab{position:relative;padding:13px 14px 12px;font-size:13px;font-weight:500;color:var(--text-2);border:none;background:transparent;cursor:pointer;transition:color .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0;}
+    .top-tab:hover{color:var(--text);}
+    .top-tab.on{color:var(--primary);font-weight:600;}
+    .top-tab.on::after{content:'';position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--primary);border-radius:2px 2px 0 0;}
+    .top-tab .tab-ico{width:15px;height:15px;flex-shrink:0;}
+    .tab-panel{display:none;} .tab-panel.on{display:block;}
+
+    /* Form cards */
+    .form-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;}
+    .form-card-head{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border-soft);background:#fcfcfb;border-radius:14px 14px 0 0;}
+    .form-card-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--primary-50);color:var(--primary);flex-shrink:0;}
+    .form-card-title{font-size:13px;font-weight:600;color:var(--text-2);}
+    .form-card-body{padding:14px 16px;}
+
+    /* Collapsible advanced */
+    .adv-body{display:none;padding:14px 16px;border-top:1px solid var(--border-soft);}
+    .adv-body.open{display:block;}
+    .adv-toggle-icon{transition:transform .2s;margin-left:auto;}
+    .adv-toggle-icon.open{transform:rotate(180deg);}
+
+    /* Char counter */
+    .char-counter{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-3);text-align:right;margin-top:3px;}
+    .char-counter.warn{color:var(--warn);} .char-counter.error{color:var(--danger);font-weight:600;}
+
+    /* Image preview */
+    .img-preview{width:48px;height:48px;border-radius:8px;border:1px solid var(--border);object-fit:cover;display:none;flex-shrink:0;}
+    .img-preview.show{display:block;}
+    .img-field-row{display:flex;align-items:flex-end;gap:8px;}
+    .img-field-row .img-input-wrap{flex:1;}
+
+    /* Toggle switch */
+    .toggle-row{display:flex;align-items:center;gap:10px;padding:8px 0;}
+    .toggle-row+.toggle-row{border-top:1px dashed var(--border-soft);}
+    .toggle-label{flex:1;font-size:13px;color:var(--text);}
+    .toggle-sub{font-size:11px;color:var(--text-3);display:block;margin-top:1px;}
+    .toggle{position:relative;width:36px;height:20px;cursor:pointer;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:#d6d3d1;border-radius:999px;transition:background .15s;}
+    .toggle-slider::before{content:'';position:absolute;width:14px;height:14px;border-radius:50%;left:3px;top:3px;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.15);}
+    .toggle input:checked+.toggle-slider{background:var(--primary);}
+    .toggle input:checked+.toggle-slider::before{transform:translateX(16px);}
+
+    /* AI panel */
+    .ai-panel{background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:1px solid #c4b5fd;border-radius:12px;padding:14px;margin-bottom:12px;display:none;}
+    .ai-panel.open{display:block;}
+    .ai-panel-title{font-size:12px;font-weight:600;color:#5b21b6;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+    /* Tag branch cards */
+    .branch-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;transition:border-color .15s;}
+    .branch-card:focus-within{border-color:#d6d3d1;box-shadow:0 1px 3px rgba(0,0,0,.03),0 4px 20px -4px rgba(0,0,0,.05);}
+    .branch-card-head{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border-soft);background:#fcfcfb;border-radius:14px 14px 0 0;}
+    .branch-num{width:24px;height:24px;border-radius:7px;background:var(--primary-50);color:var(--primary);font-size:12px;font-weight:700;display:grid;place-items:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+    .branch-card-body{padding:14px;}
+
+    /* Submit bar */
+    .submit-bar{position:sticky;bottom:0;z-index:20;background:rgba(250,250,249,.92);backdrop-filter:saturate(180%) blur(8px);-webkit-backdrop-filter:saturate(180%) blur(8px);border-top:1px solid var(--border);padding:12px 0;}
+
+    /* Type badge */
+    .type-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;}
+    .type-badge.push{background:#eff6ff;color:#1d4ed8;} .type-badge.banner{background:#f0fdf4;color:#166534;} .type-badge.tag{background:#fff7ed;color:#9a3412;}
+
+    /* Calendar */
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+    .cal-header-cell{text-align:center;font-size:11px;font-weight:600;color:var(--text-3);padding:8px 4px;text-transform:uppercase;letter-spacing:.05em;}
+    .cal-day{min-height:88px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;}
+    .cal-day.other-month{background:#fafaf9;}
+    .cal-day.today{border-color:var(--primary);}
+    .cal-day-num{font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:4px;line-height:1;}
+    .cal-day.today .cal-day-num{background:var(--primary);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+    .cal-event{font-size:10px;font-weight:500;padding:2px 5px;border-radius:4px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .1s;line-height:1.4;}
+    .cal-event:hover{opacity:.8;}
+    .cal-event.push{background:#dbeafe;color:#1e40af;}
+    .cal-event.banner{background:#dcfce7;color:#166534;}
+    .cal-event.banner-end{background:#fef3c7;color:#92400e;}
+
+    /* Popover */
+    .cal-popover{position:fixed;z-index:40;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.12);padding:14px 16px;min-width:240px;max-width:320px;display:none;}
+    .cal-popover.show{display:block;}
+
+    /* Filter chips */
+    .filter-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all .12s;}
+    .filter-chip:hover{border-color:#d6d3d1;color:var(--text);}
+    .filter-chip.on{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+    /* Mockup / Coming Soon */
+    .mockup-section{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 20px;margin-bottom:12px;}
+    .mockup-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:#f0fdf4;color:#166534;font-size:11px;font-weight:600;margin-bottom:12px;border:1px solid #bbf7d0;}
+    .mockup-field{height:36px;background:#f5f5f4;border-radius:8px;border:1px solid var(--border);}
+    .mockup-field-lg{height:80px;background:#f5f5f4;border-radius:8px;border:1px solid var(--border);}
+    .mockup-label{height:10px;background:#f5f5f4;border-radius:4px;margin-bottom:6px;}
+    .mockup-btn{height:36px;background:var(--primary-50);border-radius:10px;border:1px dashed var(--primary-100);}
+    .mockup-card{background:#fafaf9;border:1px solid var(--border);border-radius:12px;padding:12px;}
+    .mockup-tag{display:inline-block;height:22px;background:#f5f5f4;border-radius:999px;margin:2px;}
+
+    /* Toast */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:#fff;font-size:13px;font-weight:500;padding:10px 18px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;transition:all .2s;pointer-events:none;z-index:60;white-space:nowrap;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .toast.success{background:var(--success);} .toast.error{background:var(--danger);}
+
+    /* Spin */
+    .spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(234,88,12,.25);border-top-color:var(--primary);border-radius:50%;animation:rot .7s linear infinite;vertical-align:middle;}
+    .spin.white{border-color:rgba(255,255,255,.3);border-top-color:#fff;}
+    @keyframes rot{to{transform:rotate(360deg)}}
+
+    /* Config banner */
+    .cfg-banner{background:#fef3c7;border-bottom:1px solid #fcd34d;padding:10px 20px;font-size:13px;color:#92400e;display:flex;align-items:center;gap:8px;}
+
+    /* Field grid */
+    .fgrid{display:grid;gap:10px;}
+    @media(min-width:540px){.fgrid-2{grid-template-columns:1fr 1fr;}}
+    @media(min-width:720px){.fgrid-3{grid-template-columns:1fr 1fr 1fr;}.fgrid-4{grid-template-columns:1fr 1fr 1fr 1fr;}}
+
+    /* Empty state */
+    .empty{border:1.5px dashed var(--border);border-radius:14px;padding:40px 20px;text-align:center;color:var(--text-3);background:#fcfcfb;}
+
+    .sticky-header{position:sticky;top:0;z-index:30;}
+    @media(max-width:540px){.top-tab{padding:11px 10px;font-size:12px;gap:4px;}}
+  </style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <header style="background:linear-gradient(135deg,#ea580c 0%,#c2410c 100%);">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.15);display:grid;place-items:center;flex-shrink:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#fff;line-height:1.2;">MKT Campaign Setup</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:1px;">Eatigo Marketing · Auto Campaign</div>
+        </div>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.15);font-size:12px;color:rgba(255,255,255,.85);font-weight:500;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#fbbf24;display:inline-block;" id="status-dot"></span>
+        <span id="status-label">Mock Mode</span>
+      </div>
+    </div>
+  </header>
+  <div class="cfg-banner" id="cfg-banner">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>ตอนนี้อยู่ใน <strong>Mock Mode</strong> — ข้อมูลไม่ถูกบันทึกจริง · เพิ่ม webhook URL ใน CONFIG block เพื่อใช้งานจริง</span>
+  </div>
+  <div style="background:var(--surface);border-bottom:1px solid var(--border);">
+    <div class="max-w-5xl mx-auto px-2 sm:px-6">
+      <div class="top-tabs" style="border-bottom:none;">
+        <button class="top-tab on" id="toptab-push" onclick="switchTab('push')">
+          <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Push
+        </button>
+        <button class="top-tab" id="toptab-banner" onclick="switchTab('banner')">
+          <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>H/T Banner
+        </button>
+        <button class="top-tab" id="toptab-tag" onclick="switchTab('tag')">
+          <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Tag Mgmt
+        </button>
+        <button class="top-tab" id="toptab-blog" onclick="switchTab('blog')">
+          <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Blog Gen
+        </button>
+        <button class="top-tab" id="toptab-sem" onclick="switchTab('sem')">
+          <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>SEM Keywords
+        </button>
+        <button class="top-tab" id="toptab-calendar" onclick="switchTab('calendar')">
+          <svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-push" class="tab-panel on">
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-5" style="padding-bottom:100px;">
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></div>
+        <span class="form-card-title">Campaign Info</span>
+      </div>
+      <div class="form-card-body">
+        <div class="fgrid fgrid-2">
+          <div><label class="f-label">Campaign Name <span class="req">*</span></label><input id="push-campaign_name" type="text" class="f-input" placeholder="e.g. TH Flash Sale Apr 2026"/></div>
+          <div><label class="f-label">Requester Email <span class="req">*</span></label><input id="push-requester" type="email" class="f-input" placeholder="your@eatigo.com"/></div>
+          <div>
+            <label class="f-label">Country <span class="req">*</span></label>
+            <select id="push-country" class="f-select"><option value="">Select country…</option><option>TH</option><option>MY</option><option>HK</option><option>PH</option><option>TW</option><option>SG</option><option>ALL</option></select>
+          </div>
+          <div><label class="f-label">Segment Name <span class="req">*</span></label><input id="push-segment_name" type="text" class="f-input" placeholder="e.g. All Users TH"/></div>
+          <div><label class="f-label">Segment ID <span class="req">*</span></label><input id="push-segment_id" type="text" class="f-input mono" placeholder="seg_xxxxx"/></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <span class="form-card-title">Scheduling</span>
+      </div>
+      <div class="form-card-body">
+        <div style="margin-bottom:12px;">
+          <label class="f-label">Schedule Type</label>
+          <div class="seg" style="max-width:260px;">
+            <button class="seg-btn on" id="push-sched-Now" onclick="setSchedule('push','Now')">⚡ Now</button>
+            <button class="seg-btn" id="push-sched-Later" onclick="setSchedule('push','Later')">🕐 Later</button>
+          </div>
+        </div>
+        <div id="push-date-group" class="fgrid fgrid-2" style="display:none;margin-bottom:12px;">
+          <div><label class="f-label">Start Date <span class="req">*</span></label><input id="push-start_date" type="date" class="f-input"/></div>
+          <div><label class="f-label">Start Time <span class="req">*</span></label><input id="push-start_time" type="time" class="f-input"/></div>
+        </div>
+        <div><label class="f-label">Delivery Timezone</label>
+          <select id="push-timezone" class="f-select" style="max-width:320px;">
+            <option value="Account">Account Default</option>
+            <option value="Asia/Bangkok">Bangkok (UTC+7)</option>
+            <option value="Asia/Kuala_Lumpur">Kuala Lumpur (UTC+8)</option>
+            <option value="Asia/Hong_Kong">Hong Kong (UTC+8)</option>
+            <option value="Asia/Manila">Manila (UTC+8)</option>
+            <option value="Asia/Taipei">Taipei (UTC+8)</option>
+            <option value="Asia/Singapore">Singapore (UTC+8)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <span class="form-card-title">Notification Content</span>
+        <button class="btn btn-ai" style="margin-left:auto;" onclick="toggleAiPanel()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          ✨ AI สร้าง Content
+        </button>
+      </div>
+      <div class="form-card-body">
+        <div id="ai-panel" class="ai-panel">
+          <div class="ai-panel-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            AI Content Generator
+          </div>
+          <div class="fgrid fgrid-2" style="margin-bottom:10px;">
+            <div>
+              <label class="f-label">Campaign Theme</label>
+              <input id="ai-theme" type="text" class="f-input" placeholder="e.g. Flash sale, Weekend deal, Payday" style="background:#fff;"/>
+            </div>
+            <div>
+              <label class="f-label">Key Offer</label>
+              <input id="ai-offer" type="text" class="f-input" placeholder="e.g. 50% off, Free dessert, Buy 1 Get 1" style="background:#fff;"/>
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="f-label">Language Style</label>
+            <div class="seg" style="max-width:340px;">
+              <button class="seg-btn on" id="ai-lang-EN" onclick="setAiLang('EN')">🇬🇧 English</button>
+              <button class="seg-btn" id="ai-lang-TH" onclick="setAiLang('TH')">🇹🇭 ภาษาไทย</button>
+              <button class="seg-btn" id="ai-lang-BOTH" onclick="setAiLang('BOTH')">🌐 Both</button>
+            </div>
+          </div>
+          <button class="btn btn-ai" onclick="generateContent()" id="btn-ai-gen" style="font-size:13px;padding:8px 16px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Generate
+          </button>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label class="f-label">Title <span class="req">*</span> <span style="color:var(--text-3);font-weight:400;">(max 40 chars)</span></label>
+          <input id="push-title" type="text" class="f-input" placeholder="e.g. 🍽️ Flash deals up to 50% off!" maxlength="60" oninput="updateCounter('push-title','push-title-ctr',40)"/>
+          <div id="push-title-ctr" class="char-counter">0 / 40</div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="f-label">Body <span class="req">*</span> <span style="color:var(--text-3);font-weight:400;">(max 120 chars)</span></label>
+          <textarea id="push-body" class="f-textarea" rows="3" placeholder="e.g. Book now at your favourite restaurants. Limited time only!" maxlength="150" oninput="updateCounter('push-body','push-body-ctr',120)"></textarea>
+          <div id="push-body-ctr" class="char-counter">0 / 120</div>
+        </div>
+
+        <div class="fgrid fgrid-2" style="margin-bottom:12px;">
+          <div><label class="f-label">Image URL</label>
+            <div class="img-field-row"><div class="img-input-wrap"><input id="push-image_url" type="url" class="f-input" placeholder="https://…" oninput="previewImg('push-image_url','push-img1')"/></div><img id="push-img1" class="img-preview" src="" alt=""/></div>
+          </div>
+          <div><label class="f-label">Large Icon URL</label>
+            <div class="img-field-row"><div class="img-input-wrap"><input id="push-large_icon_url" type="url" class="f-input" placeholder="https://…" oninput="previewImg('push-large_icon_url','push-img2')"/></div><img id="push-img2" class="img-preview" src="" alt=""/></div>
+          </div>
+        </div>
+
+        <div class="fgrid fgrid-2">
+          <div><label class="f-label">URL Type</label>
+            <select id="push-url_type" class="f-select" onchange="onUrlTypeChange()">
+              <option value="">— None —</option><option value="Deeplink">Deeplink</option><option value="External URL">External URL</option><option value="Screen">Screen</option>
+            </select>
+          </div>
+          <div id="push-urlid-group" style="display:none;"><label class="f-label">URL ID / Screen Name</label><input id="push-url_id" type="text" class="f-input mono" placeholder="e.g. 1234 or home_screen"/></div>
+        </div>
+        <div id="push-deeplink-group" style="display:none;margin-top:10px;">
+          <label class="f-label">Deeplink URL</label><input id="push-deeplink" type="url" class="f-input" placeholder="eatigo://…"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <span class="form-card-title">Goal & Conversion</span>
+      </div>
+      <div class="form-card-body">
+        <div class="fgrid fgrid-2">
+          <div><label class="f-label">Goal Event</label><input id="push-goal_event" type="text" class="f-input" placeholder="e.g. Order Completed"/></div>
+          <div><label class="f-label">Conversion Window</label>
+            <select id="push-conversion_time" class="f-select"><option value="">— Select —</option><option>1D</option><option>2D</option><option>3D</option><option>7D</option><option>14D</option><option>30D</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head" style="cursor:pointer;" onclick="toggleAdv()">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.56 13.75M3.37 18.07A10 10 0 0 1 4.93 4.93"/></svg></div>
+        <span class="form-card-title">Advanced Settings</span>
+        <span style="margin-left:6px;font-size:11px;color:var(--text-3);">TTL · Priority · RenderMax · Freq Caps</span>
+        <svg id="adv-icon" class="adv-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div id="push-adv-body" class="adv-body">
+        <div class="fgrid fgrid-2" style="margin-bottom:14px;">
+          <div><label class="f-label">TTL (hours)</label><input id="push-ttl_hour" type="number" min="1" max="72" class="f-input mono" placeholder="24"/></div>
+          <div><label class="f-label">Notification Priority (Android)</label>
+            <select id="push-notif_priority" class="f-select"><option value="default">Default</option><option value="high">High</option><option value="max">Max</option></select>
+          </div>
+          <div><label class="f-label">Delivery Priority (Android)</label>
+            <select id="push-delivery_priority" class="f-select"><option value="high">High</option><option value="normal">Normal</option></select>
+          </div>
+        </div>
+        <div style="border-top:1px dashed var(--border-soft);padding-top:12px;">
+          <div class="toggle-row">
+            <div class="toggle-label">RenderMax (Android) <span class="toggle-sub">Enable rich media rendering</span></div>
+            <label class="toggle"><input type="checkbox" id="push-rendermax"/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label">System Control Group <span class="toggle-sub">Exclude from DND restrictions</span></div>
+            <label class="toggle"><input type="checkbox" id="push-sys_ctrl"/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label">Frequency Caps <span class="toggle-sub">Respect user frequency limits</span></div>
+            <label class="toggle"><input type="checkbox" id="push-freq_caps" checked/><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  <div class="submit-bar">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
+      <span id="push-err" style="font-size:13px;color:var(--danger);"></span>
+      <button id="btn-push" class="btn btn-primary" onclick="submitForm('push')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Submit Push Campaign
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="panel-banner" class="tab-panel">
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-5" style="padding-bottom:100px;">
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+        <span class="form-card-title">Banner Info</span>
+      </div>
+      <div class="form-card-body">
+        <div class="fgrid fgrid-2">
+          <div><label class="f-label">Campaign Name <span class="req">*</span></label><input id="banner-campaign_name" type="text" class="f-input" placeholder="e.g. TH Homepage Hero Apr"/></div>
+          <div><label class="f-label">Requester Email <span class="req">*</span></label><input id="banner-requester" type="email" class="f-input" placeholder="your@eatigo.com"/></div>
+          <div><label class="f-label">Country <span class="req">*</span></label>
+            <select id="banner-country" class="f-select"><option value="">Select country…</option><option>TH</option><option>MY</option><option>HK</option><option>PH</option><option>TW</option><option>SG</option><option>ALL</option></select>
+          </div>
+          <div><label class="f-label">Banner Status</label>
+            <select id="banner-status" class="f-select"><option value="Display">Display</option><option value="Hidden">Hidden</option></select>
+          </div>
+          <div><label class="f-label">Banner Title <span class="req">*</span></label><input id="banner-title" type="text" class="f-input" placeholder="e.g. Flash Deals This Week"/></div>
+          <div><label class="f-label">Banner Description</label><input id="banner-desc" type="text" class="f-input" placeholder="Short subtitle…"/></div>
+        </div>
+        <div style="margin-top:12px;"><label class="f-label">Display Platform</label>
+          <div class="seg" style="max-width:320px;">
+            <button class="seg-btn on" id="banner-plat-App" onclick="setBannerPlatform('App')">📱 App</button>
+            <button class="seg-btn" id="banner-plat-AppWeb" onclick="setBannerPlatform('App+Web')">📱🌐 App+Web</button>
+            <button class="seg-btn" id="banner-plat-Web" onclick="setBannerPlatform('Web')">🌐 Web</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <span class="form-card-title">Display Period <span class="req" style="font-size:11px;">*</span></span>
+      </div>
+      <div class="form-card-body">
+        <div class="fgrid fgrid-4">
+          <div><label class="f-label">Start Date <span class="req">*</span></label><input id="banner-start_date" type="date" class="f-input"/></div>
+          <div><label class="f-label">Start Time <span class="req">*</span></label><input id="banner-start_time" type="time" class="f-input"/></div>
+          <div><label class="f-label">End Date <span class="req">*</span></label><input id="banner-end_date" type="date" class="f-input"/></div>
+          <div><label class="f-label">End Time <span class="req">*</span></label><input id="banner-end_time" type="time" class="f-input"/></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+        <span class="form-card-title">Links</span>
+      </div>
+      <div class="form-card-body">
+        <div class="fgrid fgrid-2" style="margin-bottom:10px;">
+          <div><label class="f-label">App Link Type</label>
+            <select id="banner-app_link_type" class="f-select"><option value="">— None —</option><option value="restaurant_id">Restaurant ID</option><option value="collection_id">Collection ID</option><option value="promo_code">Promo Code</option><option value="category_id">Category ID</option><option value="external_url">External URL</option></select>
+          </div>
+          <div><label class="f-label">App Link Value</label><input id="banner-app_link_value" type="text" class="f-input" placeholder="ID, code, or URL…"/></div>
+        </div>
+        <div class="fgrid fgrid-2">
+          <div><label class="f-label">Web Link Type</label>
+            <select id="banner-web_link_type" class="f-select"><option value="">— None —</option><option value="path">Path (internal)</option><option value="external">External URL</option></select>
+          </div>
+          <div><label class="f-label">Web Link URL</label><input id="banner-web_link_url" type="url" class="f-input" placeholder="https://…"/></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <span class="form-card-title">Targeting</span>
+      </div>
+      <div class="form-card-body">
+        <div class="fgrid fgrid-2">
+          <div><label class="f-label">Region</label>
+            <select id="banner-region" class="f-select"><option value="All">All</option><option>Bangkok</option><option>Nationwide</option><option>Central</option><option>North</option><option>Northeast</option><option>South</option></select>
+          </div>
+          <div><label class="f-label">Category</label>
+            <select id="banner-category" class="f-select"><option value="All">All</option><option>Restaurant</option><option>Hotel</option><option>Activity</option><option>Experience</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <span class="form-card-title">Banner Images</span>
+      </div>
+      <div class="form-card-body">
+        <div class="fgrid fgrid-2">
+          <div><label class="f-label">Small Image URL <span class="req">*</span></label>
+            <div class="img-field-row"><div class="img-input-wrap"><input id="banner-small_url" type="url" class="f-input" placeholder="https://… (360×180 px)" oninput="previewImg('banner-small_url','banner-img1')"/></div><img id="banner-img1" class="img-preview" src="" alt=""/></div>
+          </div>
+          <div><label class="f-label">Large Image URL <span class="req">*</span></label>
+            <div class="img-field-row"><div class="img-input-wrap"><input id="banner-large_url" type="url" class="f-input" placeholder="https://… (720×360 px)" oninput="previewImg('banner-large_url','banner-img2')"/></div><img id="banner-img2" class="img-preview" src="" alt=""/></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  <div class="submit-bar">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
+      <span id="banner-err" style="font-size:13px;color:var(--danger);"></span>
+      <button id="btn-banner" class="btn btn-primary" onclick="submitForm('banner')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Submit Banner
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="panel-tag" class="tab-panel">
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-5" style="padding-bottom:100px;">
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px;">
+      <div class="fgrid fgrid-2">
+        <div><label class="f-label">Campaign Name <span class="req">*</span></label><input id="tag-campaign_name" type="text" class="f-input" placeholder="e.g. Tag Cleanup MY Q2 2026"/></div>
+        <div><label class="f-label">Requester Email <span class="req">*</span></label><input id="tag-requester" type="email" class="f-input" placeholder="your@eatigo.com"/></div>
+        <div><label class="f-label">Country <span class="req">*</span></label>
+          <select id="tag-country" class="f-select"><option value="">Select country…</option><option>TH</option><option>MY</option><option>HK</option><option>PH</option><option>TW</option><option>SG</option><option>ALL</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div id="branch-cards-container"></div>
+
+    <button class="btn btn-add" style="width:100%;padding:12px;" onclick="addBranchCard()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Branch / Restaurant
+    </button>
+
+  </main>
+  <div class="submit-bar">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
+      <span id="tag-err" style="font-size:13px;color:var(--danger);"></span>
+      <button id="btn-tag" class="btn btn-primary" onclick="submitForm('tag')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Submit Tag Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="panel-blog" class="tab-panel">
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-5">
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <div style="flex:1;">
+        <div style="font-size:18px;font-weight:700;color:var(--text);">Blog Content Generator</div>
+        <div style="font-size:13px;color:var(--text-3);margin-top:2px;">AI-powered blog articles for each market</div>
+      </div>
+      <span class="mockup-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Coming Soon
+      </span>
+    </div>
+
+    <div class="mockup-section">
+      <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Blog Setup
+      </div>
+      <div class="fgrid fgrid-2" style="gap:12px;">
+        <div><div class="mockup-label" style="width:80px;"></div><div class="mockup-field"></div></div>
+        <div><div class="mockup-label" style="width:60px;"></div><div class="mockup-field"></div></div>
+        <div><div class="mockup-label" style="width:100px;"></div><div class="mockup-field"></div></div>
+        <div><div class="mockup-label" style="width:70px;"></div><div class="mockup-field"></div></div>
+        <div style="grid-column:1/-1;"><div class="mockup-label" style="width:120px;"></div><div class="mockup-field-lg"></div></div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;">
+        <div class="mockup-btn" style="width:140px;"></div>
+        <div class="mockup-btn" style="width:100px;background:#f0fdf4;border-color:#bbf7d0;"></div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Generated Articles Preview
+    </div>
+
+    <div style="display:grid;gap:10px;">
+      <div class="mockup-card" style="opacity:.6;">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#dbeafe,#ede9fe);flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div style="display:flex;gap:6px;margin-bottom:6px;">
+              <span style="background:#dbeafe;color:#1e40af;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;">TH</span>
+              <span style="background:#f0fdf4;color:#166534;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;">Restaurant</span>
+            </div>
+            <div style="height:14px;background:#e7e5e4;border-radius:4px;width:75%;margin-bottom:6px;"></div>
+            <div style="height:10px;background:#f5f5f4;border-radius:4px;width:100%;margin-bottom:4px;"></div>
+            <div style="height:10px;background:#f5f5f4;border-radius:4px;width:85%;"></div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-soft);display:flex;gap:6px;">
+          <div class="mockup-tag" style="width:60px;"></div>
+          <div class="mockup-tag" style="width:80px;"></div>
+          <div class="mockup-tag" style="width:50px;"></div>
+        </div>
+      </div>
+      <div class="mockup-card" style="opacity:.4;">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#fef3c7,#fee2e2);flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div style="display:flex;gap:6px;margin-bottom:6px;">
+              <span style="background:#fef3c7;color:#92400e;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;">MY</span>
+              <span style="background:#f0fdf4;color:#166534;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;">Hotel</span>
+            </div>
+            <div style="height:14px;background:#e7e5e4;border-radius:4px;width:65%;margin-bottom:6px;"></div>
+            <div style="height:10px;background:#f5f5f4;border-radius:4px;width:100%;margin-bottom:4px;"></div>
+            <div style="height:10px;background:#f5f5f4;border-radius:4px;width:90%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:30px 20px;margin-top:10px;">
+      <div style="width:48px;height:48px;background:linear-gradient(135deg,#f5f3ff,#eff6ff);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:var(--text-2);">Blog Generator is in development</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:4px;">Will auto-generate SEO blogs from restaurant/campaign data per market</div>
+    </div>
+
+  </main>
+</div>
+
+<div id="panel-sem" class="tab-panel">
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-5">
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <div style="flex:1;">
+        <div style="font-size:18px;font-weight:700;color:var(--text);">SEM Keyword Setup</div>
+        <div style="font-size:13px;color:var(--text-3);margin-top:2px;">Search Engine Marketing keyword planning per market</div>
+      </div>
+      <span class="mockup-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Coming Soon
+      </span>
+    </div>
+
+    <div class="mockup-section">
+      <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Campaign & Ad Group
+      </div>
+      <div class="fgrid fgrid-2" style="gap:12px;">
+        <div><div class="mockup-label" style="width:100px;"></div><div class="mockup-field"></div></div>
+        <div><div class="mockup-label" style="width:70px;"></div><div class="mockup-field"></div></div>
+        <div><div class="mockup-label" style="width:90px;"></div><div class="mockup-field"></div></div>
+        <div><div class="mockup-label" style="width:60px;"></div><div class="mockup-field"></div></div>
+        <div style="grid-column:1/-1;"><div class="mockup-label" style="width:80px;"></div><div class="mockup-field"></div></div>
+      </div>
+    </div>
+
+    <div class="mockup-section">
+      <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="display:flex;align-items:center;gap:8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Keyword List
+        </span>
+        <div class="mockup-btn" style="width:120px;height:28px;border-radius:8px;"></div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px;gap:0;background:#fafaf9;padding:8px 12px;border-bottom:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;">Keyword</div>
+          <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;">Match Type</div>
+          <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;">Bid (USD)</div>
+          <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;">Volume</div>
+          <div></div>
+        </div>
+        ${[
+          ['restaurant booking bangkok','Phrase','0.45','High'],
+          ['eatigo thailand','Exact','0.80','Med'],
+          ['discount restaurant near me','Broad','0.30','High'],
+          ['thai food delivery deal','Phrase','0.35','Med'],
+        ].map(([kw,match,bid,vol]) => `
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px;gap:0;padding:10px 12px;border-bottom:1px solid var(--border-soft);align-items:center;opacity:.5;">
+          <div style="font-size:13px;color:var(--text);font-family:monospace;">${kw}</div>
+          <div><span style="background:${match==='Exact'?'#dbeafe':match==='Phrase'?'#fef3c7':'#f0fdf4'};color:${match==='Exact'?'#1e40af':match==='Phrase'?'#92400e':'#166534'};font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;">${match}</span></div>
+          <div style="font-size:13px;color:var(--text);font-family:monospace;">$${bid}</div>
+          <div><span style="font-size:12px;color:${vol==='High'?'var(--success)':'var(--warn)'};">● ${vol}</span></div>
+          <div style="display:flex;gap:4px;"><div style="width:24px;height:24px;background:#f5f5f4;border-radius:6px;"></div><div style="width:24px;height:24px;background:#fee2e2;border-radius:6px;"></div></div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="mockup-section" style="opacity:.7;">
+      <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        Negative Keywords
+      </div>
+      <div class="mockup-field-lg"></div>
+    </div>
+
+    <div style="text-align:center;padding:24px 20px;margin-top:4px;">
+      <div style="width:48px;height:48px;background:linear-gradient(135deg,#eff6ff,#f0fdf4);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:var(--text-2);">SEM Keyword Setup is in development</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:4px;">Will integrate with Google Ads API to push keywords directly</div>
+    </div>
+
+  </main>
+</div>
+
+<div id="panel-calendar" class="tab-panel">
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-5">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <button class="btn btn-secondary btn-icon" onclick="calNav(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div id="cal-month-label" style="font-size:16px;font-weight:700;color:var(--text);min-width:160px;text-align:center;"></div>
+        <button class="btn btn-secondary btn-icon" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <button class="btn btn-ghost" style="font-size:12px;margin-left:4px;" onclick="calGoToday()">Today</button>
+        <button class="btn btn-secondary" style="margin-left:auto;font-size:12px;" onclick="loadCalendar()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.1"/></svg>Refresh
+        </button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+        <span style="font-size:12px;font-weight:500;color:var(--text-3);margin-right:2px;">Country:</span>
+        <button class="filter-chip on" id="fc-all" onclick="setCalFilter('country','all')">All</button>
+        <button class="filter-chip" id="fc-TH" onclick="setCalFilter('country','TH')">🇹🇭 TH</button>
+        <button class="filter-chip" id="fc-MY" onclick="setCalFilter('country','MY')">🇲🇾 MY</button>
+        <button class="filter-chip" id="fc-HK" onclick="setCalFilter('country','HK')">🇭🇰 HK</button>
+        <button class="filter-chip" id="fc-PH" onclick="setCalFilter('country','PH')">🇵🇭 PH</button>
+        <button class="filter-chip" id="fc-TW" onclick="setCalFilter('country','TW')">🇹🇼 TW</button>
+        <button class="filter-chip" id="fc-SG" onclick="setCalFilter('country','SG')">🇸🇬 SG</button>
+        <span style="font-size:12px;font-weight:500;color:var(--text-3);margin-left:8px;margin-right:2px;">Type:</span>
+        <button class="filter-chip on" id="ft-all" onclick="setCalFilter('type','all')">All</button>
+        <button class="filter-chip" id="ft-push" onclick="setCalFilter('type','push')">Push</button>
+        <button class="filter-chip" id="ft-banner" onclick="setCalFilter('type','banner')">Banner</button>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;padding:12px;">
+      <div class="cal-grid" style="margin-bottom:6px;">
+        <div class="cal-header-cell">Mon</div><div class="cal-header-cell">Tue</div><div class="cal-header-cell">Wed</div>
+        <div class="cal-header-cell">Thu</div><div class="cal-header-cell">Fri</div><div class="cal-header-cell">Sat</div><div class="cal-header-cell">Sun</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:10px;padding:0 4px;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#dbeafe;"></span>Push Campaign</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#dcfce7;"></span>Banner Start</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#fef3c7;"></span>Banner End</div>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="cal-popover" class="cal-popover">
+  <button class="btn btn-ghost btn-icon" style="position:absolute;top:10px;right:10px;" onclick="closePopover()">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div id="cal-popover-content"></div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+// 1) Replace these URLs with your actual n8n webhooks
+// 2) Ensure all three submit webhooks are set to HTTP Method: POST and have "Respond to CORS Preflight" enabled.
+const WEBHOOK_PUSH     = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-push'; 
+const WEBHOOK_BANNER   = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-banner'; 
+const WEBHOOK_TAG      = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-tag'; 
+const WEBHOOK_CALENDAR = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-calendar'; 
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TABS = ['push','banner','tag','blog','sem','calendar'];
+
+let activeTab = 'push';
+let submitting = false;
+let aiLang = 'EN';
+let bannerPlatform = 'App';
+let branchCount = 0;
+
+// Calendar state
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+let calData = [];
+const calFilters = { country:'all', type:'all' };
+
+// Mock campaign data
+const MOCK_CAMPAIGNS = [
+  {id:'m1',campaign_type:'push',campaign_name:'TH Flash Sale Weekend',country:'TH',requester:'chokchai@eatigo.com',start_date:'2026-04-21',status:'ready'},
+  {id:'m2',campaign_type:'push',campaign_name:'SG Weekday Promo',country:'SG',requester:'jasmine@eatigo.com',start_date:'2026-04-23',status:'ready'},
+  {id:'m3',campaign_type:'banner',campaign_name:'Homepage Hero TH April',country:'TH',requester:'chokchai@eatigo.com',start_date:'2026-04-18',end_date:'2026-04-30',status:'ready'},
+  {id:'m4',campaign_type:'push',campaign_name:'MY Ramadan Special',country:'MY',requester:'gallen@eatigo.com',start_date:'2026-04-25',status:'ready'},
+  {id:'m5',campaign_type:'banner',campaign_name:'HK Easter Banner',country:'HK',requester:'jasmine@eatigo.com',start_date:'2026-04-20',end_date:'2026-04-28',status:'ready'},
+  {id:'m6',campaign_type:'push',campaign_name:'PH Payday Push',country:'PH',requester:'lisa@eatigo.com',start_date:'2026-04-30',status:'ready'},
+  {id:'m7',campaign_type:'push',campaign_name:'TW Spring Campaign',country:'TW',requester:'chokchai@eatigo.com',start_date:'2026-04-15',status:'ready'},
+];
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const v = id => (document.getElementById(id)?.value||'').trim();
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+let toastT;
+function toast(msg,type=''){const el=document.getElementById('toast');if(!el)return;clearTimeout(toastT);el.textContent=msg;el.className='toast'+(type?' '+type:'');el.classList.add('show');toastT=setTimeout(()=>el.classList.remove('show'),3200);}
+function saveEmail(e){if(!e||!e.includes('@'))return;try{let a=JSON.parse(localStorage.getItem('mkt_emails')||'[]');a=[e,...a.filter(x=>x!==e)].slice(0,5);localStorage.setItem('mkt_emails',JSON.stringify(a));}catch(err){}}
+function getEmails(){try{return JSON.parse(localStorage.getItem('mkt_emails')||'[]');}catch(e){return[];}}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+function switchTab(name){
+  activeTab=name;
+  TABS.forEach(n=>{
+    document.getElementById('toptab-'+n)?.classList.toggle('on',n===name);
+    document.getElementById('panel-'+n)?.classList.toggle('on',n===name);
+  });
+  try{localStorage.setItem('mkt_tab',name);}catch(e){}
+  if(name==='calendar') renderCalendar();
+}
+
+// ── SCHEDULE SEG ──────────────────────────────────────────────────────────────
+function setSchedule(tab,type){
+  ['Now','Later'].forEach(t=>document.getElementById(tab+'-sched-'+t)?.classList.toggle('on',t===type));
+  const dg=document.getElementById(tab+'-date-group');
+  if(dg) dg.style.display=type==='Later'?'':'none';
+}
+
+// ── BANNER PLATFORM ───────────────────────────────────────────────────────────
+function setBannerPlatform(p){
+  bannerPlatform=p;
+  ['App','AppWeb','Web'].forEach(k=>document.getElementById('banner-plat-'+k)?.classList.remove('on'));
+  const key=p==='App+Web'?'AppWeb':p;
+  document.getElementById('banner-plat-'+key)?.classList.add('on');
+}
+
+// ── ADVANCED SETTINGS TOGGLE ──────────────────────────────────────────────────
+function toggleAdv(){
+  const body=document.getElementById('push-adv-body');
+  const icon=document.getElementById('adv-icon');
+  if(!body) return;
+  const isOpen=body.classList.toggle('open');
+  if(icon) icon.classList.toggle('open',isOpen);
+}
+
+// ── AI PANEL ──────────────────────────────────────────────────────────────────
+function toggleAiPanel(){
+  const p=document.getElementById('ai-panel');
+  if(!p) return;
+  p.classList.toggle('open');
+}
+function setAiLang(lang){
+  aiLang=lang;
+  ['EN','TH','BOTH'].forEach(l=>document.getElementById('ai-lang-'+l)?.classList.toggle('on',l===lang));
+}
+async function generateContent(){
+  const btn=document.getElementById('btn-ai-gen');
+  const theme=v('ai-theme')||'special offer';
+  const offer=v('ai-offer')||'exclusive deal';
+  const country=v('push-country')||'TH';
+  const segment=v('push-segment_name')||'users';
+
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin white"></span> Generating…';}
+
+  await new Promise(r=>setTimeout(r,900));
+
+  const templates={
+    EN:{
+      titles:[
+        `🍽️ ${offer} — Book now!`,
+        `✨ Special deal for ${segment}`,
+        `🎉 Flash ${theme} — limited time!`,
+        `🔥 Don't miss: ${offer} today`,
+      ],
+      bodies:[
+        `Discover top restaurants and save with ${offer}. Limited seats available — book before it's gone!`,
+        `Exclusive ${theme} for ${segment}. Open Eatigo now and grab your deal before midnight!`,
+        `Your favourite dining spots are offering ${offer} this week. Book in seconds, dine in style.`,
+      ]
+    },
+    TH:{
+      titles:[
+        `🍜 ${offer} — จองเดี๋ยวนี้!`,
+        `✨ ดีลพิเศษสำหรับ ${segment}`,
+        `🎉 Flash ${theme} — วันนี้เท่านั้น!`,
+        `🔥 อย่าพลาด: ${offer} วันนี้`,
+      ],
+      bodies:[
+        `ค้นหาร้านอาหารชั้นนำและประหยัดกับ ${offer} ที่นั่งมีจำนวนจำกัด — จองก่อนหมด!`,
+        `ดีลสุดพิเศษสำหรับ ${segment} เปิด Eatigo แล้วจองเลยก่อนเที่ยงคืน!`,
+        `ร้านโปรดของคุณมี ${offer} สัปดาห์นี้ จองเร็ว กินอร่อย`,
+      ]
+    }
+  };
+
+  const pick=(arr)=>arr[Math.floor(Math.random()*arr.length)];
+  let title='',body='';
+
+  if(aiLang==='TH'||(aiLang==='BOTH'&&['TH','MY'].includes(country))){
+    title=pick(templates.TH.titles);
+    body=pick(templates.TH.bodies);
+  } else {
+    title=pick(templates.EN.titles);
+    body=pick(templates.EN.bodies);
+  }
+
+  // Trim to limits
+  if(title.length>40) title=title.slice(0,37)+'…';
+  if(body.length>120) body=body.slice(0,117)+'…';
+
+  document.getElementById('push-title').value=title;
+  document.getElementById('push-body').value=body;
+  updateCounter('push-title','push-title-ctr',40);
+  updateCounter('push-body','push-body-ctr',120);
+
+  if(btn){btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate';}
+  toast('✨ Content generated!','success');
+}
+
+// ── CONDITIONAL URL FIELDS ────────────────────────────────────────────────────
+function onUrlTypeChange(){
+  const t=v('push-url_type');
+  document.getElementById('push-urlid-group').style.display=['Deeplink','Screen'].includes(t)?'':'none';
+  document.getElementById('push-deeplink-group').style.display=t==='Deeplink'?'':'none';
+}
+
+// ── CHAR COUNTER ──────────────────────────────────────────────────────────────
+function updateCounter(inputId,counterId,max){
+  const len=(document.getElementById(inputId)?.value||'').length;
+  const el=document.getElementById(counterId);
+  if(!el)return;
+  el.textContent=len+' / '+max;
+  el.classList.toggle('warn',len>max*.75&&len<=max);
+  el.classList.toggle('error',len>max);
+}
+
+// ── IMAGE PREVIEW ─────────────────────────────────────────────────────────────
+function previewImg(inputId,imgId){
+  const url=v(inputId);const img=document.getElementById(imgId);if(!img)return;
+  if(url&&url.startsWith('http')){img.src=url;img.classList.add('show');img.onerror=()=>img.classList.remove('show');}
+  else img.classList.remove('show');
+}
+
+// ── BRANCH CARDS (TAG MGMT) ───────────────────────────────────────────────────
+function addBranchCard(){
+  branchCount++;
+  const n=branchCount;
+  const container=document.getElementById('branch-cards-container');
+  if(!container)return;
+  const card=document.createElement('div');
+  card.className='branch-card';
+  card.id='branch-card-'+n;
+  card.innerHTML=`
+    <div class="branch-card-head">
+      <div class="branch-num">${n}</div>
+      <span style="font-size:13px;font-weight:600;color:var(--text-2);">Branch / Restaurant ${n}</span>
+      <input type="text" class="f-input" id="branch-name-${n}" placeholder="Branch name…" style="flex:1;min-width:0;margin:0 4px;font-size:13px;background:transparent;border-color:transparent;padding:4px 8px;" oninput="document.getElementById('branch-card-${n}').querySelector('.branch-num').parentElement.querySelector('span').textContent=this.value||'Branch / Restaurant ${n}'"/>
+      <button class="btn btn-danger btn-icon" onclick="removeBranchCard(${n})" title="Remove">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="branch-card-body">
+      <div class="fgrid fgrid-2" style="margin-bottom:12px;">
+        <div><label class="f-label">Branch ID <span class="req">*</span></label><input type="text" class="f-input mono" id="branch-id-${n}" placeholder="e.g. 12345"/></div>
+        <div><label class="f-label">Unhide Branch ID</label><input type="text" class="f-input mono" id="branch-unhide-${n}" placeholder="Comma-separated IDs"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label class="f-label" style="color:var(--success);">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;margin-right:3px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tag IDs to ADD
+          </label>
+          <textarea class="f-textarea mono" id="branch-tags-add-${n}" rows="3" placeholder="101, 205, 310…" oninput="countIds('branch-tags-add-${n}','branch-add-count-${n}')"></textarea>
+          <div style="font-size:11px;color:var(--text-3);text-align:right;margin-top:2px;"><span id="branch-add-count-${n}">0</span> tag(s)</div>
+        </div>
+        <div>
+          <label class="f-label" style="color:var(--danger);">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;margin-right:3px;"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tag IDs to DELETE
+          </label>
+          <textarea class="f-textarea mono" id="branch-tags-del-${n}" rows="3" placeholder="503, 608…" oninput="countIds('branch-tags-del-${n}','branch-del-count-${n}')"></textarea>
+          <div style="font-size:11px;color:var(--text-3);text-align:right;margin-top:2px;"><span id="branch-del-count-${n}">0</span> tag(s)</div>
+        </div>
+      </div>
+    </div>`;
+  container.appendChild(card);
+  document.getElementById('branch-name-'+n)?.focus();
+}
+
+function removeBranchCard(n){
+  document.getElementById('branch-card-'+n)?.remove();
+  toast('Branch removed');
+}
+
+function countIds(textareaId,countId){
+  const val=(document.getElementById(textareaId)?.value||'').trim();
+  const count=val?val.split(/[\s,]+/).filter(Boolean).length:0;
+  const el=document.getElementById(countId);if(el)el.textContent=count;
+}
+
+// ── VALIDATION ────────────────────────────────────────────────────────────────
+function validatePush(){
+  const reqs=[['push-campaign_name','Campaign name required'],['push-requester','Requester email required'],['push-country','Country required'],['push-segment_name','Segment name required'],['push-segment_id','Segment ID required'],['push-title','Title required'],['push-body','Body required']];
+  for(const[id,msg]of reqs){if(!v(id)){toast(msg,'error');return false;}}
+  if(!v('push-requester').includes('@')){toast('Invalid requester email','error');return false;}
+  if(v('push-title').length>40){toast('Title exceeds 40 chars','error');return false;}
+  if(v('push-body').length>120){toast('Body exceeds 120 chars','error');return false;}
+  const sched=document.getElementById('push-sched-Later')?.classList.contains('on');
+  if(sched&&(!v('push-start_date')||!v('push-start_time'))){toast('Start date & time required','error');return false;}
+  return true;
+}
+function validateBanner(){
+  const reqs=[['banner-campaign_name','Campaign name required'],['banner-requester','Requester email required'],['banner-country','Country required'],['banner-title','Banner title required'],['banner-start_date','Start date required'],['banner-start_time','Start time required'],['banner-end_date','End date required'],['banner-end_time','End time required'],['banner-small_url','Small image URL required'],['banner-large_url','Large image URL required']];
+  for(const[id,msg]of reqs){if(!v(id)){toast(msg,'error');return false;}}
+  return true;
+}
+function validateTag(){
+  const reqs=[['tag-campaign_name','Campaign name required'],['tag-requester','Requester email required'],['tag-country','Country required']];
+  for(const[id,msg]of reqs){if(!v(id)){toast(msg,'error');return false;}}
+  const cards=document.querySelectorAll('[id^="branch-card-"]');
+  if(cards.length===0){toast('Add at least one branch','error');return false;}
+  return true;
+}
+
+// ── DATA COLLECTORS ───────────────────────────────────────────────────────────
+function getPushData(){
+  const isLater=document.getElementById('push-sched-Later')?.classList.contains('on');
+  return{campaign_type:'push',campaign_name:v('push-campaign_name'),requester:v('push-requester'),country:v('push-country'),segment_name:v('push-segment_name'),segment_id:v('push-segment_id'),schedule_type:isLater?'Later':'Now',start_date:isLater?v('push-start_date'):'',start_time:isLater?v('push-start_time'):'',delivery_timezone:v('push-timezone'),title:v('push-title'),body:v('push-body'),image_url:v('push-image_url'),large_icon_url:v('push-large_icon_url'),url_type:v('push-url_type'),url_id:v('push-url_id'),deeplink:v('push-deeplink'),goal_event:v('push-goal_event'),conversion_time:v('push-conversion_time'),ttl_hour:v('push-ttl_hour'),notification_priority_android:v('push-notif_priority'),notification_delivery_priority_android:v('push-delivery_priority'),rendermax_android:document.getElementById('push-rendermax')?.checked?'true':'false',system_control_group:document.getElementById('push-sys_ctrl')?.checked?'true':'false',frequency_caps:document.getElementById('push-freq_caps')?.checked?'true':'false',status:'ready'};
+}
+function getBannerData(){
+  return{campaign_type:'banner',campaign_name:v('banner-campaign_name'),requester:v('banner-requester'),country:v('banner-country'),banner_status:v('banner-status'),banner_title:v('banner-title'),banner_description:v('banner-desc'),display_platform:bannerPlatform,start_date:v('banner-start_date'),start_time:v('banner-start_time'),end_date:v('banner-end_date'),end_time:v('banner-end_time'),app_link_type:v('banner-app_link_type'),app_link_value:v('banner-app_link_value'),web_link_type:v('banner-web_link_type'),web_link_url:v('banner-web_link_url'),region:v('banner-region'),category:v('banner-category'),image_small_url:v('banner-small_url'),image_large_url:v('banner-large_url'),status:'ready'};
+}
+function getTagData(){
+  const branches=[];
+  document.querySelectorAll('[id^="branch-card-"]').forEach(card=>{
+    const n=card.id.split('-').pop();
+    branches.push({branch_name:v('branch-name-'+n),branch_id:v('branch-id-'+n),unhide_bid:v('branch-unhide-'+n),tag_id_add:v('branch-tags-add-'+n),tag_id_delete:v('branch-tags-del-'+n)});
+  });
+  return{campaign_type:'tag',campaign_name:v('tag-campaign_name'),requester:v('tag-requester'),country:v('tag-country'),branches,status:'ready'};
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
+async function submitForm(tab){
+  if(submitting)return;
+  const vals={push:validatePush,banner:validateBanner,tag:validateTag};
+  const gets={push:getPushData,banner:getBannerData,tag:getTagData};
+  const webhooks={push:WEBHOOK_PUSH, banner:WEBHOOK_BANNER, tag:WEBHOOK_TAG};
+  
+  if(!vals[tab]())return;
+  const data=gets[tab]();
+  submitting=true;
+  const btn=document.getElementById('btn-'+tab);
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin white"></span>&nbsp;Submitting…';}
+
+  const targetWebhook = webhooks[tab];
+
+  if(!targetWebhook){
+    await new Promise(r=>setTimeout(r,800));
+    console.log('[MKT Form] MOCK SUBMIT:',data);
+    toast('✅ Submitted (mock) — check console','success');
+    saveEmail(data.requester);
+    resetForm(tab);
+  } else {
+    try{
+      const res=await fetch(targetWebhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      const json=await res.json();
+      if(json.success!==false){toast('Campaign submitted!','success');saveEmail(data.requester);resetForm(tab);}
+      else toast('Error: '+(json.message||'Failed'),'error');
+    }catch(e){console.error(e);toast('Network error','error');}
+  }
+  submitting=false;
+  const labels={push:'Submit Push Campaign',banner:'Submit Banner',tag:'Submit Tag Changes'};
+  if(btn){btn.disabled=false;btn.innerHTML=labels[tab]||'Submit';}
+}
+
+function resetForm(tab){
+  const req=v(tab+'-requester');
+  document.getElementById('panel-'+tab)?.querySelectorAll('input:not([type=checkbox])').forEach(el=>{if(!el.id?.includes('requester'))el.value='';});
+  document.getElementById('panel-'+tab)?.querySelectorAll('textarea').forEach(el=>el.value='');
+  document.getElementById('panel-'+tab)?.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
+  document.getElementById('panel-'+tab)?.querySelectorAll('input[type=checkbox]').forEach(el=>el.checked=false);
+  if(tab==='push'){
+    setSchedule('push','Now');
+    updateCounter('push-title','push-title-ctr',40);
+    updateCounter('push-body','push-body-ctr',120);
+    ['push-img1','push-img2'].forEach(id=>document.getElementById(id)?.classList.remove('show'));
+  }
+  if(tab==='tag'){
+    document.getElementById('branch-cards-container').innerHTML='';
+    branchCount=0;
+  }
+  const reqEl=document.getElementById(tab+'-requester');
+  if(reqEl)reqEl.value=req;
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function calNav(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function calGoToday(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();renderCalendar();}
+function setCalFilter(type,val){
+  calFilters[type]=val;
+  if(type==='country'){document.querySelectorAll('[id^="fc-"]').forEach(e=>e.classList.remove('on'));document.getElementById('fc-'+val)?.classList.add('on');}
+  else{document.querySelectorAll('[id^="ft-"]').forEach(e=>e.classList.remove('on'));document.getElementById('ft-'+val)?.classList.add('on');}
+  renderCalendar();
+}
+async function loadCalendar(){
+  if(!WEBHOOK_CALENDAR){calData=MOCK_CAMPAIGNS;renderCalendar();toast('Loaded mock data');return;}
+  try{const r=await fetch(WEBHOOK_CALENDAR+'?month='+calYear+'-'+String(calMonth+1).padStart(2,'0')+(calFilters.country!=='all'?'&country='+calFilters.country:''));calData=await r.json();renderCalendar();}
+  catch(e){toast('Failed to load calendar','error');}
+}
+function renderCalendar(){
+  document.getElementById('cal-month-label').textContent=MONTHS[calMonth]+' '+calYear;
+  const grid=document.getElementById('cal-grid');if(!grid)return;
+  const today=new Date(),firstDay=new Date(calYear,calMonth,1);
+  let startOff=firstDay.getDay()-1;if(startOff<0)startOff=6;
+  const daysInMo=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+  const total=Math.ceil((startOff+daysInMo)/7)*7;
+  const src=(calData.length?calData:MOCK_CAMPAIGNS).filter(c=>{
+    if(calFilters.country!=='all'&&c.country!==calFilters.country&&c.country!=='ALL')return false;
+    if(calFilters.type!=='all'&&c.campaign_type!==calFilters.type)return false;
+    return true;
+  });
+  const map={};
+  src.forEach(c=>{
+    if(c.start_date){const d=c.start_date.slice(0,10);(map[d]=map[d]||[]).push({...c,_role:'start'});}
+    if(c.end_date){const d=c.end_date.slice(0,10);(map[d]=map[d]||[]).push({...c,_role:'end'});}
+  });
+  let html='';
+  for(let i=0;i<total;i++){
+    const dn=i-startOff+1,isPrev=dn<=0,isNext=dn>daysInMo;
+    const disp=isPrev?daysInPrev+dn:isNext?dn-daysInMo:dn;
+    const isToday=!isPrev&&!isNext&&today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===dn;
+    let evs='';
+    if(!isPrev&&!isNext){
+      const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(dn).padStart(2,'0');
+      (map[ds]||[]).slice(0,3).forEach(ev=>{
+        const cls=ev._role==='end'?'cal-event banner-end':'cal-event '+ev.campaign_type;
+        const lbl=ev._role==='end'?'⊠ '+ev.campaign_name:(ev.campaign_type==='push'?'▶ ':'◆ ')+ev.campaign_name;
+        evs+=`<div class="${esc(cls)}" onclick='showPopover(event,${JSON.stringify(ev)})' title="${esc(ev.campaign_name)}">${esc(lbl)}</div>`;
+      });
+      const t=(map[ds]||[]).length;if(t>3)evs+=`<div style="font-size:10px;color:var(--text-3);padding:1px 4px;">+${t-3} more</div>`;
+    }
+    html+=`<div class="cal-day${isPrev||isNext?' other-month':''}${isToday?' today':''}"><div class="cal-day-num">${disp}</div>${evs}</div>`;
+  }
+  grid.innerHTML=html;
+}
+function showPopover(e,data){
+  e.stopPropagation();
+  const pop=document.getElementById('cal-popover'),ct=document.getElementById('cal-popover-content');
+  if(!pop||!ct)return;
+  ct.innerHTML=`<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span class="type-badge ${esc(data.campaign_type)}">${esc(data.campaign_type)}</span><span class="chip chip-ready" style="font-size:11px;"><span class="dot"></span>${esc(data.status||'ready')}</span></div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;padding-right:20px;">${esc(data.campaign_name)}</div><table style="width:100%;border-collapse:collapse;font-size:12px;"><tr><td style="padding:3px 0;color:var(--text-3);width:80px;">Country</td><td style="color:var(--text);font-weight:500;">${esc(data.country)}</td></tr><tr><td style="padding:3px 0;color:var(--text-3);">Requester</td><td style="color:var(--text);">${esc(data.requester)}</td></tr><tr><td style="padding:3px 0;color:var(--text-3);">Start</td><td style="color:var(--text);font-family:monospace;">${esc(data.start_date||'—')}</td></tr>${data.end_date?`<tr><td style="padding:3px 0;color:var(--text-3);">End</td><td style="color:var(--text);font-family:monospace;">${esc(data.end_date)}</td></tr>`:''}</table>`;
+  const rect=e.target.getBoundingClientRect();
+  pop.style.top=(rect.bottom+8)+'px';
+  pop.style.left=Math.min(rect.left,window.innerWidth-340)+'px';
+  pop.classList.add('show');
+}
+function closePopover(){document.getElementById('cal-popover')?.classList.remove('show');}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(function init(){
+  try{const s=localStorage.getItem('mkt_tab');if(s&&TABS.includes(s))switchTab(s);else switchTab('push');}catch(e){switchTab('push');}
+  const emails=getEmails();
+  if(emails[0]){['push','banner','tag'].forEach(t=>{const el=document.getElementById(t+'-requester');if(el&&!el.value)el.value=emails[0];});}
+  
+  // Adjusted for multiple webhooks to hide the config banner
+  if(WEBHOOK_PUSH || WEBHOOK_BANNER || WEBHOOK_TAG){
+      document.getElementById('status-dot').style.background='#4ade80';
+      document.getElementById('status-label').textContent='Connected';
+      document.getElementById('cfg-banner').style.display='none';
+  }
+  
+  calData=MOCK_CAMPAIGNS;
+  renderCalendar();
+  addBranchCard(); // Start with 1 branch card
+  document.addEventListener('click',e=>{const p=document.getElementById('cal-popover');if(p&&p.classList.contains('show')&&!p.contains(e.target))p.classList.remove('show');});
+})();
+</script>
+</body>
+</html>
