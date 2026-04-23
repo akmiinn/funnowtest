@@ -904,8 +904,8 @@ async function generateContent(){
   const theme=v('ai-theme')||'special offer';
   const offer=v('ai-offer')||'exclusive deal';
   const country=v('push-country')||'TH';
-  const segment=v('push-segment_name')||'users';
-
+  const segVal=v('push-segment');
+  const segment=segVal?segVal.split('|')[1]:'users';
   if(!WEBHOOK_AI_GEN) { toast('AI Webhook not configured', 'error'); return; }
 
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spin white"></span> Generating…';}
@@ -1022,7 +1022,7 @@ function countIds(textareaId,countId){
 
 // ── VALIDATION ────────────────────────────────────────────────────────────────
 function validatePush(){
-  const reqs=[['push-campaign_name','Campaign name required'],['push-requester','Requester email required'],['push-country','Country required'],['push-segment_name','Segment name required'],['push-segment_id','Segment ID required'],['push-title','Title required'],['push-body','Body required']];
+  const reqs=[['push-campaign_name','Campaign name required'],['push-requester','Requester email required'],['push-country','Country required'],['push-segment','Segment required'],['push-title','Title required'],['push-body','Body required']];
   for(const[id,msg]of reqs){if(!v(id)){toast(msg,'error');return false;}}
   if(!v('push-requester').includes('@')){toast('Invalid requester email','error');return false;}
   if(v('push-title').length>40){toast('Title exceeds 40 chars','error');return false;}
@@ -1047,7 +1047,11 @@ function validateTag(){
 // ── DATA COLLECTORS ───────────────────────────────────────────────────────────
 function getPushData(){
   const isLater=document.getElementById('push-sched-Later')?.classList.contains('on');
-  return{campaign_type:'push',campaign_name:v('push-campaign_name'),requester:v('push-requester'),country:v('push-country'),segment_name:v('push-segment_name'),segment_id:v('push-segment_id'),schedule_type:isLater?'Later':'Now',start_date:isLater?v('push-start_date'):'',start_time:isLater?v('push-start_time'):'',delivery_timezone:v('push-timezone'),title:v('push-title'),body:v('push-body'),image_url:v('push-image_url'),large_icon_url:v('push-large_icon_url'),url_type:v('push-url_type'),url_id:v('push-url_id'),deeplink:v('push-deeplink'),goal_event:v('push-goal_event'),conversion_time:v('push-conversion_time'),ttl_hour:v('push-ttl_hour'),notification_priority_android:v('push-notif_priority'),notification_delivery_priority_android:v('push-delivery_priority'),rendermax_android:document.getElementById('push-rendermax')?.checked?'true':'false',system_control_group:document.getElementById('push-sys_ctrl')?.checked?'true':'false',frequency_caps:document.getElementById('push-freq_caps')?.checked?'true':'false',status:'ready'};
+  const segVal = v('push-segment');
+  const segment_id = segVal ? segVal.split('|')[0] : '';
+  const segment_name = segVal ? segVal.split('|')[1] : '';
+  
+  return{campaign_type:'push',campaign_name:v('push-campaign_name'),requester:v('push-requester'),country:v('push-country'),segment_name:segment_name,segment_id:segment_id,schedule_type:isLater?'Later':'Now',start_date:isLater?v('push-start_date'):'',start_time:isLater?v('push-start_time'):'',delivery_timezone:v('push-timezone'),title:v('push-title'),body:v('push-body'),image_url:v('push-image_url'),large_icon_url:v('push-large_icon_url'),url_type:v('push-url_type'),url_id:v('push-url_id'),deeplink:v('push-deeplink'),goal_event:v('push-goal_event'),conversion_time:v('push-conversion_time'),ttl_hour:v('push-ttl_hour'),notification_priority_android:v('push-notif_priority'),notification_delivery_priority_android:v('push-delivery_priority'),rendermax_android:document.getElementById('push-rendermax')?.checked?'true':'false',system_control_group:document.getElementById('push-sys_ctrl')?.checked?'true':'false',frequency_caps:document.getElementById('push-freq_caps')?.checked?'true':'false',status:'ready'};
 }
 function getBannerData(){
   return{campaign_type:'banner',campaign_name:v('banner-campaign_name'),requester:v('banner-requester'),country:v('banner-country'),banner_status:v('banner-status'),banner_title:v('banner-title'),banner_description:v('banner-desc'),display_platform:bannerPlatform,start_date:v('banner-start_date'),start_time:v('banner-start_time'),end_date:v('banner-end_date'),end_time:v('banner-end_time'),app_link_type:v('banner-app_link_type'),app_link_value:v('banner-app_link_value'),web_link_type:v('banner-web_link_type'),web_link_url:v('banner-web_link_url'),region:v('banner-region'),category:v('banner-category'),image_small_url:v('banner-small_url'),image_large_url:v('banner-large_url'),status:'ready'};
