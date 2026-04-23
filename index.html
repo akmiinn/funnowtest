@@ -51,8 +51,7 @@
     .chip .dot{width:6px;height:6px;border-radius:999px;flex-shrink:0;}
     .chip-idle{background:#f5f5f4;color:#78716c;} .chip-idle .dot{background:#a8a29e;}
     .chip-ready{background:#dcfce7;color:#166534;} .chip-ready .dot{background:#22c55e;}
-    .chip-busy{background:#fff7ed;color:#9a3412;} .chip-busy .dot{background:var(--primary);animation:pulse 1s ease-in-out infinite;}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    .chip-busy{background:#fee2e2;color:#991b1b;} .chip-busy .dot{background:var(--danger);}
 
     /* Top tabs */
     .top-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;}
@@ -132,9 +131,25 @@
     .cal-event.banner{background:#dcfce7;color:#166534;}
     .cal-event.banner-end{background:#fef3c7;color:#92400e;}
 
-    /* Popover */
-    .cal-popover{position:fixed;z-index:40;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.12);padding:14px 16px;min-width:240px;max-width:320px;display:none;}
-    .cal-popover.show{display:block;}
+    /* Calendar Loading State */
+    .cal-loading { opacity: 0.5; pointer-events: none; transition: opacity 0.2s; filter: grayscale(100%); }
+    .refresh-spin { animation: rot 1s linear infinite; }
+
+    /* Big Modal Overlay */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 20px;}
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+    .modal-box { background: var(--surface); border-radius: 16px; width: 100%; max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.15); transform: scale(0.95); transition: transform 0.2s; overflow: hidden;}
+    .modal-overlay.show .modal-box { transform: scale(1); }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-soft); display: flex; align-items: center; justify-content: space-between; background: #fcfcfb; }
+    .modal-body { padding: 20px; overflow-y: auto; }
+    .modal-close { cursor: pointer; color: var(--text-3); transition: color 0.15s; background: none; border: none; padding: 4px; display: grid; place-items: center; border-radius: 6px;}
+    .modal-close:hover { color: var(--text); background: #f5f5f4; }
+    
+    /* Modal Data Grid */
+    .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .data-label { font-size: 11px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .data-value { font-size: 13px; color: var(--text); word-break: break-word; line-height: 1.4; }
+    .data-box { background:#f5f5f4; padding:12px; border-radius:8px; margin-top:4px; font-size:13px; color:var(--text); border: 1px solid var(--border);}
 
     /* Filter chips */
     .filter-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all .12s;}
@@ -729,7 +744,7 @@
         <div id="cal-month-label" style="font-size:16px;font-weight:700;color:var(--text);min-width:160px;text-align:center;"></div>
         <button class="btn btn-secondary btn-icon" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
         <button class="btn btn-ghost" style="font-size:12px;margin-left:4px;" onclick="calGoToday()">Today</button>
-        <button class="btn btn-secondary" style="margin-left:auto;font-size:12px;" onclick="loadCalendar()">
+        <button id="btn-refresh-cal" class="btn btn-secondary" style="margin-left:auto;font-size:12px;" onclick="loadCalendar()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.1"/></svg>Refresh
         </button>
       </div>
@@ -764,21 +779,30 @@
 </div>
 
 <div id="toast" class="toast"></div>
-<div id="cal-popover" class="cal-popover">
-  <button class="btn btn-ghost btn-icon" style="position:absolute;top:10px;right:10px;" onclick="closePopover()">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-  </button>
-  <div id="cal-popover-content"></div>
+
+<div id="event-modal" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="modal-badge" class="type-badge"></span>
+        <span id="modal-status" class="chip chip-ready" style="font-size:11px;"></span>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="modal-content">
+      </div>
+  </div>
 </div>
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 // 1) Replace these URLs with your actual n8n webhooks
-// 2) Ensure all three submit webhooks are set to HTTP Method: POST and have "Respond to CORS Preflight" enabled.
+// 2) Ensure all submit webhooks are set to HTTP Method: POST and have "Respond to CORS Preflight" enabled.
 const WEBHOOK_PUSH     = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-push'; 
 const WEBHOOK_BANNER   = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-banner'; 
 const WEBHOOK_TAG      = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-tag'; 
-const WEBHOOK_CALENDAR = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-calendar'; 
+const WEBHOOK_CALENDAR = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-calendar';
+const WEBHOOK_AI_GEN   = 'https://funnow.app.n8n.cloud/webhook/mkt-campaign-ai'; 
 // ─────────────────────────────────────────────────────────────────────────────
 
 const TABS = ['push','banner','tag','blog','sem','calendar'];
@@ -821,7 +845,7 @@ function switchTab(name){
     document.getElementById('panel-'+n)?.classList.toggle('on',n===name);
   });
   try{localStorage.setItem('mkt_tab',name);}catch(e){}
-  if(name==='calendar') renderCalendar();
+  if(name==='calendar') loadCalendar();
 }
 
 // ── SCHEDULE SEG ──────────────────────────────────────────────────────────────
@@ -865,61 +889,37 @@ async function generateContent(){
   const country=v('push-country')||'TH';
   const segment=v('push-segment_name')||'users';
 
+  if(!WEBHOOK_AI_GEN) { toast('AI Webhook not configured', 'error'); return; }
+
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spin white"></span> Generating…';}
 
-  await new Promise(r=>setTimeout(r,900));
-
-  const templates={
-    EN:{
-      titles:[
-        `🍽️ ${offer} — Book now!`,
-        `✨ Special deal for ${segment}`,
-        `🎉 Flash ${theme} — limited time!`,
-        `🔥 Don't miss: ${offer} today`,
-      ],
-      bodies:[
-        `Discover top restaurants and save with ${offer}. Limited seats available — book before it's gone!`,
-        `Exclusive ${theme} for ${segment}. Open Eatigo now and grab your deal before midnight!`,
-        `Your favourite dining spots are offering ${offer} this week. Book in seconds, dine in style.`,
-      ]
-    },
-    TH:{
-      titles:[
-        `🍜 ${offer} — จองเดี๋ยวนี้!`,
-        `✨ ดีลพิเศษสำหรับ ${segment}`,
-        `🎉 Flash ${theme} — วันนี้เท่านั้น!`,
-        `🔥 อย่าพลาด: ${offer} วันนี้`,
-      ],
-      bodies:[
-        `ค้นหาร้านอาหารชั้นนำและประหยัดกับ ${offer} ที่นั่งมีจำนวนจำกัด — จองก่อนหมด!`,
-        `ดีลสุดพิเศษสำหรับ ${segment} เปิด Eatigo แล้วจองเลยก่อนเที่ยงคืน!`,
-        `ร้านโปรดของคุณมี ${offer} สัปดาห์นี้ จองเร็ว กินอร่อย`,
-      ]
-    }
-  };
-
-  const pick=(arr)=>arr[Math.floor(Math.random()*arr.length)];
-  let title='',body='';
-
-  if(aiLang==='TH'||(aiLang==='BOTH'&&['TH','MY'].includes(country))){
-    title=pick(templates.TH.titles);
-    body=pick(templates.TH.bodies);
-  } else {
-    title=pick(templates.EN.titles);
-    body=pick(templates.EN.bodies);
+  try {
+    const res = await fetch(WEBHOOK_AI_GEN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        theme: theme,
+        offer: offer,
+        country: country,
+        segment: segment,
+        lang: aiLang
+      })
+    });
+    
+    const data = await res.json();
+    
+    document.getElementById('push-title').value = data.title || '';
+    document.getElementById('push-body').value = data.body || '';
+    updateCounter('push-title','push-title-ctr',40);
+    updateCounter('push-body','push-body-ctr',120);
+    
+    toast('✨ Content generated!','success');
+  } catch(e) {
+    console.error(e);
+    toast('Failed to generate content', 'error');
+  } finally {
+    if(btn){btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate';}
   }
-
-  // Trim to limits
-  if(title.length>40) title=title.slice(0,37)+'…';
-  if(body.length>120) body=body.slice(0,117)+'…';
-
-  document.getElementById('push-title').value=title;
-  document.getElementById('push-body').value=body;
-  updateCounter('push-title','push-title-ctr',40);
-  updateCounter('push-body','push-body-ctr',120);
-
-  if(btn){btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate';}
-  toast('✨ Content generated!','success');
 }
 
 // ── CONDITIONAL URL FIELDS ────────────────────────────────────────────────────
@@ -1108,11 +1108,34 @@ function setCalFilter(type,val){
   else{document.querySelectorAll('[id^="ft-"]').forEach(e=>e.classList.remove('on'));document.getElementById('ft-'+val)?.classList.add('on');}
   renderCalendar();
 }
+
 async function loadCalendar(){
-  if(!WEBHOOK_CALENDAR){calData=MOCK_CAMPAIGNS;renderCalendar();toast('Loaded mock data');return;}
-  try{const r=await fetch(WEBHOOK_CALENDAR+'?month='+calYear+'-'+String(calMonth+1).padStart(2,'0')+(calFilters.country!=='all'?'&country='+calFilters.country:''));calData=await r.json();renderCalendar();}
-  catch(e){toast('Failed to load calendar','error');}
+  const btn = document.getElementById('btn-refresh-cal');
+  const grid = document.getElementById('cal-grid');
+  
+  // Turn on loading state
+  if(btn) btn.innerHTML = '<svg class="refresh-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg> Refreshing...';
+  if(grid) grid.classList.add('cal-loading');
+
+  try {
+      if(!WEBHOOK_CALENDAR) {
+          calData = MOCK_CAMPAIGNS;
+          await new Promise(r => setTimeout(r, 600)); // Fake delay for mock
+          toast('Loaded mock data');
+      } else {
+          const r = await fetch(WEBHOOK_CALENDAR+'?month='+calYear+'-'+String(calMonth+1).padStart(2,'0')+(calFilters.country!=='all'?'&country='+calFilters.country:''));
+          calData = await r.json();
+      }
+      renderCalendar();
+  } catch(e) {
+      toast('Failed to load calendar','error');
+  } finally {
+      // Turn off loading state
+      if(btn) btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.1"/></svg>Refresh';
+      if(grid) grid.classList.remove('cal-loading');
+  }
 }
+
 function renderCalendar(){
   document.getElementById('cal-month-label').textContent=MONTHS[calMonth]+' '+calYear;
   const grid=document.getElementById('cal-grid');if(!grid)return;
@@ -1121,16 +1144,20 @@ function renderCalendar(){
   const daysInMo=new Date(calYear,calMonth+1,0).getDate();
   const daysInPrev=new Date(calYear,calMonth,0).getDate();
   const total=Math.ceil((startOff+daysInMo)/7)*7;
+  
   const src=(calData.length?calData:MOCK_CAMPAIGNS).filter(c=>{
     if(calFilters.country!=='all'&&c.country!==calFilters.country&&c.country!=='ALL')return false;
     if(calFilters.type!=='all'&&c.campaign_type!==calFilters.type)return false;
     return true;
   });
+  
   const map={};
   src.forEach(c=>{
+    // Handle both formats: "YYYY-MM-DD" and "YYYY-MM-DD HH:mm:ss"
     if(c.start_date){const d=c.start_date.slice(0,10);(map[d]=map[d]||[]).push({...c,_role:'start'});}
     if(c.end_date){const d=c.end_date.slice(0,10);(map[d]=map[d]||[]).push({...c,_role:'end'});}
   });
+  
   let html='';
   for(let i=0;i<total;i++){
     const dn=i-startOff+1,isPrev=dn<=0,isNext=dn>daysInMo;
@@ -1139,28 +1166,69 @@ function renderCalendar(){
     let evs='';
     if(!isPrev&&!isNext){
       const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(dn).padStart(2,'0');
-      (map[ds]||[]).slice(0,3).forEach(ev=>{
+      (map[ds]||[]).slice(0,4).forEach(ev=>{
         const cls=ev._role==='end'?'cal-event banner-end':'cal-event '+ev.campaign_type;
         const lbl=ev._role==='end'?'⊠ '+ev.campaign_name:(ev.campaign_type==='push'?'▶ ':'◆ ')+ev.campaign_name;
-        evs+=`<div class="${esc(cls)}" onclick='showPopover(event,${JSON.stringify(ev)})' title="${esc(ev.campaign_name)}">${esc(lbl)}</div>`;
+        evs+=`<div class="${esc(cls)}" onclick='openModal(event,${JSON.stringify(ev)})' title="${esc(ev.campaign_name)}">${esc(lbl)}</div>`;
       });
-      const t=(map[ds]||[]).length;if(t>3)evs+=`<div style="font-size:10px;color:var(--text-3);padding:1px 4px;">+${t-3} more</div>`;
+      const t=(map[ds]||[]).length;if(t>4)evs+=`<div style="font-size:10px;color:var(--text-3);padding:1px 4px;font-weight:600;">+${t-4} more</div>`;
     }
     html+=`<div class="cal-day${isPrev||isNext?' other-month':''}${isToday?' today':''}"><div class="cal-day-num">${disp}</div>${evs}</div>`;
   }
   grid.innerHTML=html;
 }
-function showPopover(e,data){
+
+function openModal(e, data) {
   e.stopPropagation();
-  const pop=document.getElementById('cal-popover'),ct=document.getElementById('cal-popover-content');
-  if(!pop||!ct)return;
-  ct.innerHTML=`<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span class="type-badge ${esc(data.campaign_type)}">${esc(data.campaign_type)}</span><span class="chip chip-ready" style="font-size:11px;"><span class="dot"></span>${esc(data.status||'ready')}</span></div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;padding-right:20px;">${esc(data.campaign_name)}</div><table style="width:100%;border-collapse:collapse;font-size:12px;"><tr><td style="padding:3px 0;color:var(--text-3);width:80px;">Country</td><td style="color:var(--text);font-weight:500;">${esc(data.country)}</td></tr><tr><td style="padding:3px 0;color:var(--text-3);">Requester</td><td style="color:var(--text);">${esc(data.requester)}</td></tr><tr><td style="padding:3px 0;color:var(--text-3);">Start</td><td style="color:var(--text);font-family:monospace;">${esc(data.start_date||'—')}</td></tr>${data.end_date?`<tr><td style="padding:3px 0;color:var(--text-3);">End</td><td style="color:var(--text);font-family:monospace;">${esc(data.end_date)}</td></tr>`:''}</table>`;
-  const rect=e.target.getBoundingClientRect();
-  pop.style.top=(rect.bottom+8)+'px';
-  pop.style.left=Math.min(rect.left,window.innerWidth-340)+'px';
-  pop.classList.add('show');
+  const modal = document.getElementById('event-modal');
+  const content = document.getElementById('modal-content');
+  const badge = document.getElementById('modal-badge');
+  const status = document.getElementById('modal-status');
+
+  badge.className = 'type-badge ' + esc(data.campaign_type);
+  badge.textContent = esc(data.campaign_type);
+  status.innerHTML = `<span class="dot"></span>${esc(data.status || 'ready')}`;
+  
+  // Set correct color based on status
+  status.className = 'chip ' + (data.status === 'Success' ? 'chip-ready' : data.status === 'Failed' ? 'chip-busy' : 'chip-idle');
+
+  let detailsHtml = `<div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:20px;line-height:1.2;">${esc(data.campaign_name)}</div>`;
+
+  detailsHtml += `<div class="data-grid">`;
+  detailsHtml += `<div><div class="data-label">Target Market</div><div class="data-value"><b>${esc(data.country)}</b></div></div>`;
+  detailsHtml += `<div><div class="data-label">Requester</div><div class="data-value">${esc(data.requester)}</div></div>`;
+
+  if(data.campaign_type === 'push') {
+      detailsHtml += `<div><div class="data-label">Send Date & Time</div><div class="data-value" style="font-family:monospace;">${esc(data.start_date || '—')}</div></div>`;
+      detailsHtml += `<div><div class="data-label">Segment</div><div class="data-value">${esc(data.segment_name || '—')} <span style="color:var(--text-3);font-size:11px;">(${esc(data.segment_id||'')})</span></div></div>`;
+      detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Notification Title</div><div class="data-value" style="font-weight:600;font-size:14px;">${esc(data.title || '—')}</div></div>`;
+      detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Notification Body</div><div class="data-box">${esc(data.body || '—')}</div></div>`;
+      
+      if (data.deeplink) {
+          detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Deeplink</div><a href="${esc(data.deeplink)}" target="_blank" style="color:var(--info);font-size:12px;word-break:break-all;">${esc(data.deeplink)}</a></div>`;
+      }
+      
+  } else if(data.campaign_type === 'banner') {
+      detailsHtml += `<div><div class="data-label">Start Date/Time</div><div class="data-value" style="font-family:monospace;">${esc(data.start_date || '—')}</div></div>`;
+      detailsHtml += `<div><div class="data-label">End Date/Time</div><div class="data-value" style="font-family:monospace;">${esc(data.end_date || '—')}</div></div>`;
+      detailsHtml += `<div><div class="data-label">Banner Title</div><div class="data-value" style="font-weight:600;">${esc(data.banner_title || '—')}</div></div>`;
+      detailsHtml += `<div><div class="data-label">Platform</div><div class="data-value">${esc(data.display_platform || '—')}</div></div>`;
+      
+      if (data.image_small_url) {
+          detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Banner Preview</div><img src="${esc(data.image_small_url)}" style="max-width:100%; border-radius:8px; margin-top:4px; border:1px solid var(--border);" onerror="this.style.display='none'"/></div>`;
+      }
+  }
+  
+  detailsHtml += `</div>`;
+  content.innerHTML = detailsHtml;
+  modal.classList.add('show');
 }
-function closePopover(){document.getElementById('cal-popover')?.classList.remove('show');}
+
+function closeModal(e) {
+  // If e is passed, only close if the user clicked the dark overlay, not the white box
+  if(e && e.target !== e.currentTarget) return; 
+  document.getElementById('event-modal')?.classList.remove('show');
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 (function init(){
@@ -1168,7 +1236,6 @@ function closePopover(){document.getElementById('cal-popover')?.classList.remove
   const emails=getEmails();
   if(emails[0]){['push','banner','tag'].forEach(t=>{const el=document.getElementById(t+'-requester');if(el&&!el.value)el.value=emails[0];});}
   
-  // Adjusted for multiple webhooks to hide the config banner
   if(WEBHOOK_PUSH || WEBHOOK_BANNER || WEBHOOK_TAG){
       document.getElementById('status-dot').style.background='#4ade80';
       document.getElementById('status-label').textContent='Connected';
