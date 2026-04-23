@@ -1198,30 +1198,60 @@ function openModal(e, data) {
   detailsHtml += `<div><div class="data-label">Target Market</div><div class="data-value"><b>${esc(data.country)}</b></div></div>`;
   detailsHtml += `<div><div class="data-label">Requester</div><div class="data-value">${esc(data.requester)}</div></div>`;
 
-  if(data.campaign_type === 'push') {
-      detailsHtml += `<div><div class="data-label">Send Date & Time</div><div class="data-value" style="font-family:monospace;">${esc(data.start_date || '—')}</div></div>`;
+  if (data.campaign_type === 'push') {
+      const pushTime = data.schedule_type === 'Now' ? '⚡ Now' : `${esc(data.start_date || '—')} ${esc(data.start_time || '')}`;
+      detailsHtml += `<div><div class="data-label">Send Date & Time</div><div class="data-value" style="font-family:monospace;">${pushTime}</div></div>`;
+      detailsHtml += `<div><div class="data-label">Delivery Timezone</div><div class="data-value">${esc(data.delivery_timezone || 'Account Default')}</div></div>`;
+      
       detailsHtml += `<div><div class="data-label">Segment</div><div class="data-value">${esc(data.segment_name || '—')} <span style="color:var(--text-3);font-size:11px;">(${esc(data.segment_id||'')})</span></div></div>`;
+      detailsHtml += `<div><div class="data-label">Goal / Conversion</div><div class="data-value">${esc(data.goal_event || '—')} &middot; ${esc(data.conversion_time || '—')}</div></div>`;
+      
       detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Notification Title</div><div class="data-value" style="font-weight:600;font-size:14px;">${esc(data.title || '—')}</div></div>`;
       detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Notification Body</div><div class="data-box">${esc(data.body || '—')}</div></div>`;
       
-      if (data.deeplink) {
-          detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Deeplink</div><a href="${esc(data.deeplink)}" target="_blank" style="color:var(--info);font-size:12px;word-break:break-all;">${esc(data.deeplink)}</a></div>`;
+      if (data.url_type || data.deeplink) {
+          const linkTarget = data.deeplink || data.url_id || '#';
+          detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Link (${esc(data.url_type || 'Deeplink')})</div><a href="${esc(linkTarget)}" target="_blank" style="color:var(--info);font-size:12px;word-break:break-all;">${esc(linkTarget)}</a></div>`;
+      }
+
+      if (data.image_url || data.large_icon_url) {
+          detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Attached Images</div>`;
+          if (data.image_url) detailsHtml += `<img src="${esc(data.image_url)}" style="max-width:100%; border-radius:8px; margin-top:4px; border:1px solid var(--border);" onerror="this.style.display='none'"/>`;
+          if (data.large_icon_url) detailsHtml += `<img src="${esc(data.large_icon_url)}" style="width:48px; height:48px; object-fit:cover; border-radius:8px; margin-top:4px; border:1px solid var(--border);" onerror="this.style.display='none'"/>`;
+          detailsHtml += `</div>`;
       }
       
-  } else if(data.campaign_type === 'banner') {
-      detailsHtml += `<div><div class="data-label">Start Date/Time</div><div class="data-value" style="font-family:monospace;">${esc(data.start_date || '—')}</div></div>`;
-      detailsHtml += `<div><div class="data-label">End Date/Time</div><div class="data-value" style="font-family:monospace;">${esc(data.end_date || '—')}</div></div>`;
-      detailsHtml += `<div><div class="data-label">Banner Title</div><div class="data-value" style="font-weight:600;">${esc(data.banner_title || '—')}</div></div>`;
-      detailsHtml += `<div><div class="data-label">Platform</div><div class="data-value">${esc(data.display_platform || '—')}</div></div>`;
+  } else if (data.campaign_type === 'banner') {
+      detailsHtml += `<div><div class="data-label">Start Date/Time</div><div class="data-value" style="font-family:monospace;">${esc(data.start_date || '—')} ${esc(data.start_time || '')}</div></div>`;
+      detailsHtml += `<div><div class="data-label">End Date/Time</div><div class="data-value" style="font-family:monospace;">${esc(data.end_date || '—')} ${esc(data.end_time || '')}</div></div>`;
       
-      if (data.image_small_url) {
-          detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Banner Preview</div><img src="${esc(data.image_small_url)}" style="max-width:100%; border-radius:8px; margin-top:4px; border:1px solid var(--border);" onerror="this.style.display='none'"/></div>`;
+      detailsHtml += `<div><div class="data-label">Banner Title</div><div class="data-value" style="font-weight:600;">${esc(data.banner_title || '—')}</div></div>`;
+      detailsHtml += `<div><div class="data-label">Platform & Status</div><div class="data-value">${esc(data.display_platform || '—')} &middot; ${esc(data.banner_status || '—')}</div></div>`;
+      
+      if (data.banner_description) {
+          detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Banner Description</div><div class="data-box">${esc(data.banner_description)}</div></div>`;
+      }
+
+      detailsHtml += `<div><div class="data-label">App Link (${esc(data.app_link_type || 'None')})</div><div class="data-value" style="word-break:break-all; font-family:monospace;">${esc(data.app_link_value || '—')}</div></div>`;
+      detailsHtml += `<div><div class="data-label">Web Link (${esc(data.web_link_type || 'None')})</div><div class="data-value" style="word-break:break-all; font-family:monospace;">${esc(data.web_link_url || '—')}</div></div>`;
+
+      detailsHtml += `<div><div class="data-label">Target Region</div><div class="data-value">${esc(data.region || 'All')}</div></div>`;
+      detailsHtml += `<div><div class="data-label">Target Category</div><div class="data-value">${esc(data.category || 'All')}</div></div>`;
+
+      if (data.image_small_url || data.image_large_url) {
+          detailsHtml += `<div style="grid-column: 1 / -1;"><div class="data-label">Image URLs</div>`;
+          if (data.image_small_url) detailsHtml += `<a href="${esc(data.image_small_url)}" target="_blank" style="color:var(--info);font-size:12px;display:block;margin-bottom:4px;word-break:break-all;">Small: ${esc(data.image_small_url)}</a>`;
+          if (data.image_large_url) detailsHtml += `<a href="${esc(data.image_large_url)}" target="_blank" style="color:var(--info);font-size:12px;display:block;margin-bottom:8px;word-break:break-all;">Large: ${esc(data.image_large_url)}</a>`;
+          
+          const previewImg = data.image_small_url || data.image_large_url;
+          detailsHtml += `<img src="${esc(previewImg)}" style="max-width:100%; border-radius:8px; border:1px solid var(--border);" onerror="this.style.display='none'"/></div>`;
       }
   }
   
   detailsHtml += `</div>`;
   content.innerHTML = detailsHtml;
   modal.classList.add('show');
+
 }
 
 function closeModal(e) {
