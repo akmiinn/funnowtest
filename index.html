@@ -59,7 +59,7 @@
     .top-tab{position:relative;padding:13px 14px 12px;font-size:13px;font-weight:500;color:var(--text-2);border:none;background:transparent;cursor:pointer;transition:color .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0;}
     .top-tab:hover{color:var(--text);}
     .top-tab.on{color:var(--primary);font-weight:600;}
-    .top-tab.on::after{content:'absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--primary);border-radius:2px 2px 0 0;}
+    .top-tab.on::after{content:'';position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--primary);border-radius:2px 2px 0 0;}
     .top-tab .tab-ico{width:15px;height:15px;flex-shrink:0;}
     .tab-panel{display:none;} .tab-panel.on{display:block;}
 
@@ -257,25 +257,8 @@
             <label class="f-label">Country <span class="req">*</span></label>
             <select id="push-country" class="f-select"><option value="">Select country…</option><option>TH</option><option>MY</option><option>HK</option><option>PH</option><option>TW</option><option>SG</option><option>ALL</option></select>
           </div>
-          <div>
-            <label class="f-label">Segment <span class="req">*</span></label>
-            <select id="push-segment" class="f-select">
-              <option value="">Select segment...</option>
-              <option value="1770354695|HQ Test - API n8n">HQ Test - API n8n (1770354695)</option>
-              <option value="1730090972|TH Country">TH Country (1730090972)</option>
-              <option value="1730269217|MY Country">MY Country (1730269217)</option>
-              <option value="1730090947|SG Country">SG Country (1730090947)</option>
-              <option value="1730090920|PH Country">PH Country (1730090920)</option>
-              <option value="1730090897|HK Country">HK Country (1730090897)</option>
-              <option value="1749807127|TW - Country">TW - Country (1749807127)</option>
-              <option value="1754305365|TH - PNs user V1">TH - PNs user V1 (1754305365)</option>
-              <option value="1754305313|MY - PNs user V1">MY - PNs user V1 (1754305313)</option>
-              <option value="1754305349|SG - PNs user V1">SG - PNs user V1 (1754305349)</option>
-              <option value="1754305333|PH - PNs user V1">PH - PNs user V1 (1754305333)</option>
-              <option value="1754305266|HK - PNs user V1">HK - PNs user V1 (1754305266)</option>
-              <option value="1776926036|akm">akm (1776926036)</option>
-            </select>
-          </div>
+          <div><label class="f-label">Segment Name <span class="req">*</span></label><input id="push-segment_name" type="text" class="f-input" placeholder="e.g. All Users TH"/></div>
+          <div><label class="f-label">Segment ID <span class="req">*</span></label><input id="push-segment_id" type="text" class="f-input mono" placeholder="seg_xxxxx"/></div>
         </div>
       </div>
     </div>
@@ -904,8 +887,7 @@ async function generateContent(){
   const theme=v('ai-theme')||'special offer';
   const offer=v('ai-offer')||'exclusive deal';
   const country=v('push-country')||'TH';
-  const segVal=v('push-segment');
-  const segment=segVal?segVal.split('|')[1]:'users';
+  const segment=v('push-segment_name')||'users';
 
   if(!WEBHOOK_AI_GEN) { toast('AI Webhook not configured', 'error'); return; }
 
@@ -1023,7 +1005,7 @@ function countIds(textareaId,countId){
 
 // ── VALIDATION ────────────────────────────────────────────────────────────────
 function validatePush(){
-  const reqs=[['push-campaign_name','Campaign name required'],['push-requester','Requester email required'],['push-country','Country required'],['push-segment','Segment required'],['push-title','Title required'],['push-body','Body required']];
+  const reqs=[['push-campaign_name','Campaign name required'],['push-requester','Requester email required'],['push-country','Country required'],['push-segment_name','Segment name required'],['push-segment_id','Segment ID required'],['push-title','Title required'],['push-body','Body required']];
   for(const[id,msg]of reqs){if(!v(id)){toast(msg,'error');return false;}}
   if(!v('push-requester').includes('@')){toast('Invalid requester email','error');return false;}
   if(v('push-title').length>40){toast('Title exceeds 40 chars','error');return false;}
@@ -1048,11 +1030,7 @@ function validateTag(){
 // ── DATA COLLECTORS ───────────────────────────────────────────────────────────
 function getPushData(){
   const isLater=document.getElementById('push-sched-Later')?.classList.contains('on');
-  const segVal = v('push-segment');
-  const segment_id = segVal ? segVal.split('|')[0] : '';
-  const segment_name = segVal ? segVal.split('|')[1] : '';
-  
-  return{campaign_type:'push',campaign_name:v('push-campaign_name'),requester:v('push-requester'),country:v('push-country'),segment_name:segment_name,segment_id:segment_id,schedule_type:isLater?'Later':'Now',start_date:isLater?v('push-start_date'):'',start_time:isLater?v('push-start_time'):'',delivery_timezone:v('push-timezone'),title:v('push-title'),body:v('push-body'),image_url:v('push-image_url'),large_icon_url:v('push-large_icon_url'),url_type:v('push-url_type'),url_id:v('push-url_id'),deeplink:v('push-deeplink'),goal_event:v('push-goal_event'),conversion_time:v('push-conversion_time'),ttl_hour:v('push-ttl_hour'),notification_priority_android:v('push-notif_priority'),notification_delivery_priority_android:v('push-delivery_priority'),rendermax_android:document.getElementById('push-rendermax')?.checked?'true':'false',system_control_group:document.getElementById('push-sys_ctrl')?.checked?'true':'false',frequency_caps:document.getElementById('push-freq_caps')?.checked?'true':'false',status:'ready'};
+  return{campaign_type:'push',campaign_name:v('push-campaign_name'),requester:v('push-requester'),country:v('push-country'),segment_name:v('push-segment_name'),segment_id:v('push-segment_id'),schedule_type:isLater?'Later':'Now',start_date:isLater?v('push-start_date'):'',start_time:isLater?v('push-start_time'):'',delivery_timezone:v('push-timezone'),title:v('push-title'),body:v('push-body'),image_url:v('push-image_url'),large_icon_url:v('push-large_icon_url'),url_type:v('push-url_type'),url_id:v('push-url_id'),deeplink:v('push-deeplink'),goal_event:v('push-goal_event'),conversion_time:v('push-conversion_time'),ttl_hour:v('push-ttl_hour'),notification_priority_android:v('push-notif_priority'),notification_delivery_priority_android:v('push-delivery_priority'),rendermax_android:document.getElementById('push-rendermax')?.checked?'true':'false',system_control_group:document.getElementById('push-sys_ctrl')?.checked?'true':'false',frequency_caps:document.getElementById('push-freq_caps')?.checked?'true':'false',status:'ready'};
 }
 function getBannerData(){
   return{campaign_type:'banner',campaign_name:v('banner-campaign_name'),requester:v('banner-requester'),country:v('banner-country'),banner_status:v('banner-status'),banner_title:v('banner-title'),banner_description:v('banner-desc'),display_platform:bannerPlatform,start_date:v('banner-start_date'),start_time:v('banner-start_time'),end_date:v('banner-end_date'),end_time:v('banner-end_time'),app_link_type:v('banner-app_link_type'),app_link_value:v('banner-app_link_value'),web_link_type:v('banner-web_link_type'),web_link_url:v('banner-web_link_url'),region:v('banner-region'),category:v('banner-category'),image_small_url:v('banner-small_url'),image_large_url:v('banner-large_url'),status:'ready'};
@@ -1273,6 +1251,7 @@ function openModal(e, data) {
   detailsHtml += `</div>`;
   content.innerHTML = detailsHtml;
   modal.classList.add('show');
+
 }
 
 function closeModal(e) {
@@ -1296,6 +1275,7 @@ function closeModal(e) {
   calData=MOCK_CAMPAIGNS;
   renderCalendar();
   addBranchCard(); // Start with 1 branch card
+  document.addEventListener('click',e=>{const p=document.getElementById('cal-popover');if(p&&p.classList.contains('show')&&!p.contains(e.target))p.classList.remove('show');});
 })();
 </script>
 </body>
