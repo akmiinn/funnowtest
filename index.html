@@ -191,10 +191,10 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 
 /* ═══════════════════════════════════════════════ CAMPAIGN */
 .campc{padding:26px;margin-bottom:26px}
-.ch{display:grid;grid-template-columns:1fr 80px 80px 80px;
+.ch{display:grid;grid-template-columns:1fr 100px 80px 80px;
   font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
   color:var(--muted);padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,.07);margin-bottom:4px}
-.cr{display:grid;grid-template-columns:1fr 80px 80px 80px;
+.cr{display:grid;grid-template-columns:1fr 100px 80px 80px;
   padding:10px 6px;border-bottom:1px solid rgba(0,0,0,.04);
   border-radius:12px;align-items:center;font-size:.82rem;transition:background .12s}
 .cr:hover{background:rgba(255,255,255,.58)}
@@ -368,7 +368,6 @@ tbody tr:last-child td{border-bottom:none}
 
 <div class="wrap" id="app" style="display:none">
 
-  <!-- HEADER -->
   <header>
     <div class="logo">
       <div class="gem"><span>FN</span></div>
@@ -381,18 +380,15 @@ tbody tr:last-child td{border-bottom:none}
     </div>
   </header>
 
-  <!-- NAV -->
   <div class="nav g">
     <button class="tab on" id="tab-overview" onclick="goPage('overview')">📊&nbsp;Overview</button>
     <button class="tab" id="tab-allctry" onclick="goPage('allctry')">🌍&nbsp;All Countries</button>
     <div class="nav-sep"></div>
-    <div class="ctabs" id="ctabs"><!-- country tabs injected --></div>
+    <div class="ctabs" id="ctabs"></div>
   </div>
 
-  <!-- ERR -->
   <div class="err g" id="err-banner">⚠️ <span id="err-msg"></span></div>
 
-  <!-- ══ PAGE: OVERVIEW ════════════════════════════════════ -->
   <div id="pg-overview">
     <div class="sec">Overview</div>
     <div class="kg">
@@ -433,7 +429,7 @@ tbody tr:last-child td{border-bottom:none}
     </div>
     <div class="g campc tilt"><div class="sp"></div><div class="gi">
       <div class="sec">Campaign Breakdown</div>
-      <div class="ch"><span>Campaign / Sheet</span><span>Country</span><span style="text-align:center">Opens</span><span style="text-align:center">Share</span></div>
+      <div class="ch" id="ov-camps-hdr"><span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Opens</span><span style="text-align:center">Share</span></div>
       <div id="ov-camps"><p class="empty">No data</p></div>
     </div></div>
     <div class="g tc"><div class="sp"></div><div class="gi">
@@ -460,7 +456,6 @@ tbody tr:last-child td{border-bottom:none}
     </div></div>
   </div>
 
-  <!-- ══ PAGE: ALL COUNTRIES ════════════════════════════════ -->
   <div id="pg-allctry" style="display:none">
     <div class="g tilt" style="margin-bottom:26px"><div class="sp"></div><div class="gi">
       <div style="padding:28px 36px">
@@ -475,7 +470,6 @@ tbody tr:last-child td{border-bottom:none}
     </div></div>
   </div>
 
-  <!-- ══ PAGE: COUNTRY DETAIL ══════════════════════════════ -->
   <div id="pg-country" style="display:none">
     <div class="g tilt" style="margin-bottom:26px"><div class="sp"></div><div class="gi">
       <div class="ctry-detail-page">
@@ -500,14 +494,12 @@ tbody tr:last-child td{border-bottom:none}
     </div></div>
   </div>
 
-</div><!-- /wrap -->
-
-<script>
+</div><script>
 /* ══════════════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════════════ */
 const WEBHOOK = 'https://funnow.app.n8n.cloud/webhook/Dashboard_clicked';
-const MOCK    = true; // ← flip to false once Respond to Webhook is wired
+const MOCK    = false; // Ensure this is false for real data
 
 const FL = {
   SG:{e:'🇸🇬',n:'Singapore',  c:'#0284c7', grad:'linear-gradient(90deg,#38bdf8,#0284c7)'},
@@ -518,7 +510,6 @@ const FL = {
   PH:{e:'🇵🇭',n:'Philippines',c:'#ea580c', grad:'linear-gradient(90deg,#fb923c,#ea580c)'},
 };
 
-/* SHEET palette — up to 10 distinct colours for bar/mini charts */
 const SHEET_PALETTE = [
   '#3b82f6','#8b5cf6','#06b6d4','#10b981','#f59e0b',
   '#ef4444','#6366f1','#ec4899','#84cc16','#f97316',
@@ -526,25 +517,13 @@ const SHEET_PALETTE = [
 
 const DEMO = [
   {title:'Yardbird',       email:'hello@yardbird.hk',  BD:'Alice', category_name:'Restaurant',    country:'HK',sheetName:'(Final)north_point_HK_2026-05-06',  mail_status:'sent',Stage:'Prospect',  clicked:1},
-  {title:'Amber',          email:'amber@dining.hk',    BD:'Alice', category_name:'Fine Dining',   country:'HK',sheetName:'(Final)central_HK_2026-05-07',      mail_status:'sent',Stage:'Contacted', clicked:1},
-  {title:'Lung King Heen', email:'lkh@4s.hk',          BD:'Alice', category_name:'Cantonese',     country:'HK',sheetName:'(Final)central_HK_2026-05-07',      mail_status:'sent',Stage:'Prospect',  clicked:1},
-  {title:'Ronin Bar',      email:'ron@ronin.hk',       BD:'Alice', category_name:'Bar',           country:'HK',sheetName:'(Final)north_point_HK_2026-05-06',  mail_status:'sent',Stage:'New',       clicked:1},
-  {title:'Jaan',           email:'info@jaan.sg',       BD:'Priya', category_name:'Fine Dining',   country:'SG',sheetName:'(Final)CBD_SG_2026-04-28',          mail_status:'sent',Stage:'Prospect',  clicked:1},
-  {title:'Odette',         email:'odette@odette.sg',   BD:'Priya', category_name:'Fine Dining',   country:'SG',sheetName:'(Final)CBD_SG_2026-04-28',          mail_status:'sent',Stage:'Interested',clicked:1},
-  {title:'Les Amis',       email:'info@lesamis.sg',    BD:'Priya', category_name:'French',        country:'SG',sheetName:'(Final)Orchard_SG_2026-05-05',      mail_status:'sent',Stage:'Prospect',  clicked:1},
-  {title:'Burnt Ends',     email:'he@burntends.sg',    BD:'Jay',   category_name:'BBQ',           country:'SG',sheetName:'(Final)Orchard_SG_2026-05-05',      mail_status:'sent',Stage:'Contacted', clicked:1},
-  {title:'Raan Jay Fai',   email:'rjf@gmail.com',      BD:'Tom',   category_name:'Street Food',   country:'TH',sheetName:'(Final)BKK_Silom_TH_2026-05-01',   mail_status:'sent',Stage:'Prospect',  clicked:1},
-  {title:'Sorn',           email:'sorn@sorn.com',      BD:'Tom',   category_name:'Thai',          country:'TH',sheetName:'(Final)BKK_Silom_TH_2026-05-01',   mail_status:'sent',Stage:'Contacted', clicked:1},
-  {title:'PRU Phuket',     email:'pru@pru.com',        BD:'Tom',   category_name:'Farm-Table',    country:'TH',sheetName:'(Final)Phuket_TH_2026-05-02',      mail_status:'sent',Stage:'Prospect',  clicked:1},
-  {title:'Nadodi KL',      email:'nadodi@nadodi.my',   BD:'Ben',   category_name:'Indian',        country:'MY',sheetName:'(Final)KLCC_MY_2026-05-03',        mail_status:'sent',Stage:'Prospect',  clicked:1},
-  {title:'Entier',         email:'entier@entier.my',   BD:'Ben',   category_name:'French',        country:'MY',sheetName:'(Final)KLCC_MY_2026-05-03',        mail_status:'sent',Stage:'Interested',clicked:1},
-  {title:'Mountain & Sea', email:'msh@msh.com.tw',     BD:'Celia', category_name:'Taiwanese',     country:'TW',sheetName:'(Final)Xinyi_TW_2026-04-30',       mail_status:'sent',Stage:'Prospect',  clicked:1},
-  {title:'Raw',            email:'raw@raw.com.tw',     BD:'Celia', category_name:'Contemporary',  country:'TW',sheetName:'(Final)Xinyi_TW_2026-04-30',       mail_status:'sent',Stage:'Contacted', clicked:1},
+  {title:'Amber',          email:'amber@dining.hk',    BD:'Alice', category_name:'Fine Dining',   country:'HK',sheetName:'(Final)central_HK_2026-05-07',      mail_status:'sent',Stage:'Contacted', clicked:1}
 ];
 
 /* ── STATE ── */
 let all=[],fil=[],sk='title',su=true,pg=1,af=null,curPage='overview',curCtry=null;
 const PS=10;
+window.allTabs = [];
 
 /* ══════════════════════════════════════════════════════════
    FETCH
@@ -560,9 +539,21 @@ async function loadData(){
       const res=await fetch(WEBHOOK,{method:'GET',headers:{'Content-Type':'application/json'}});
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
       const j=await res.json();
-      d=Array.isArray(j)?j:(j.data??j.items??[]);
-      if(!d.length) showErr('Webhook returned 0 rows. Check your Respond to Webhook node is connected after the Filter (clicked=1) node.');
+      
+      d = Array.isArray(j) ? j : (j.data ?? j.items ?? []);
+      
+      // ✅ GRAB THE TABS FROM N8N FOR ACCURATE COUNTS
+      window.allTabs = j.tabs || [];
+      
+      if(!d.length && !window.allTabs.length) showErr('Webhook returned no data. Check n8n Respond to Webhook.');
     }
+    
+    // ✅ FALLBACK: FORCE MAP `country_code` TO `country` TO FIX BLANK COUNTRIES
+    d = d.map(r => {
+      r.country = r.country_code || r.country || "Unknown";
+      return r;
+    });
+    
     all=d.filter(r=>Number(r.clicked)===1);
     renderAll();
     document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString();
@@ -631,7 +622,9 @@ function goPage(page, ctry=null, animate=true){
    COUNTRY TABS
 ══════════════════════════════════════════════════════════ */
 function buildCountryTabs(){
-  const countries=[...new Set(all.map(r=>r.country))];
+  // Extract unique countries from either tabs array or records
+  const sources = window.allTabs.length ? window.allTabs : all;
+  const countries=[...new Set(sources.map(r=>r.country))].filter(c => c && c !== "Unknown");
   const el=document.getElementById('ctabs');
   el.innerHTML=countries.map(code=>{
     const m=FL[code]||{e:'🌐',n:code};
@@ -643,7 +636,11 @@ function buildCountryTabs(){
    OVERVIEW RENDERS
 ══════════════════════════════════════════════════════════ */
 function renderKPIs(){
-  const t=all.length,c=new Set(all.map(r=>r.country)).size,s=new Set(all.map(r=>r.sheetName)).size;
+  const t = all.length;
+  // ✅ DYNAMICALLY USE ALL TABS TO GET ACCURATE ACTIVE MARKET AND CAMPAIGN COUNTS
+  const c = window.allTabs && window.allTabs.length ? new Set(window.allTabs.map(t=>t.country)).size : new Set(all.map(r=>r.country)).size;
+  const s = window.allTabs && window.allTabs.length ? window.allTabs.length : new Set(all.map(r=>r.sheetName)).size;
+  
   const bc={};all.forEach(r=>{if(r.BD)bc[r.BD]=(bc[r.BD]||0)+1;});
   const tb=Object.entries(bc).sort((a,b)=>b[1]-a[1])[0];
   num('k-total',t);num('k-ctry',c);num('k-camp',s);
@@ -686,23 +683,58 @@ function renderOvBD(){
 }
 
 function renderOvCamps(){
-  const cnt={},cmap={};
-  all.forEach(r=>{const k=r.sheetName||'Unknown';cnt[k]=(cnt[k]||0)+1;cmap[k]=r.country;});
-  const tot=all.length||1,rows=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
-  const el=document.getElementById('ov-camps');
-  if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
-  el.innerHTML=rows.map(([nm,n])=>{
-    const ctry=cmap[nm]||'';
-    const s=nm.replace(/^\(Final\)/,'').trim();
-    const dm=s.match(/(\d{4}-\d{2}-\d{2})$/);
-    const lb=s.replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim(),dt=dm?dm[1]:'';
-    return`<div class="cr">
-      <div class="crn">${esc(lb)}${dt?`<small>${dt}</small>`:''}</div>
-      <div><span class="tag tag-${ctry}">${ctry}</span></div>
-      <div style="text-align:center;font-family:var(--fm);font-weight:700;color:var(--blue)">${n}</div>
-      <div style="text-align:center;font-size:.75rem;color:var(--muted)">${(n/tot*100).toFixed(1)}%</div>
-    </div>`;
-  }).join('');
+  const el = document.getElementById('ov-camps');
+  const hdr = document.getElementById('ov-camps-hdr');
+  
+  // ✅ IF TABS DATA EXISTS, RENDER AGGREGATED "SG: 10 Sheets" VIEW
+  if(window.allTabs && window.allTabs.length) {
+    hdr.innerHTML = `<span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Opens</span><span style="text-align:center">Share</span>`;
+    
+    const ctrySheets = {};
+    window.allTabs.forEach(t => { ctrySheets[t.country] = (ctrySheets[t.country]||0) + 1; });
+    const ctryOpens = {};
+    all.forEach(r => { ctryOpens[r.country] = (ctryOpens[r.country]||0) + 1; });
+    
+    const rows = Object.entries(ctrySheets).sort((a,b)=>b[1]-a[1]);
+    const totOpens = all.length || 1;
+    
+    if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
+    
+    el.innerHTML = rows.map(([ctry, sCount])=>{
+      const m = FL[ctry] || { n: ctry };
+      const oCount = ctryOpens[ctry] || 0;
+      return `<div class="cr">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="tag tag-${ctry}">${ctry}</span>
+          <span style="font-weight:600;font-size:.85rem">${m.n}</span>
+        </div>
+        <div style="text-align:center;font-weight:600;color:var(--text)">${sCount}</div>
+        <div style="text-align:center;font-family:var(--fm);font-weight:700;color:var(--blue)">${oCount}</div>
+        <div style="text-align:center;font-size:.75rem;color:var(--muted)">${(oCount/totOpens*100).toFixed(1)}%</div>
+      </div>`;
+    }).join('');
+  } 
+  // FALLBACK VIEW (If tabs data wasn't provided, show individual sheets)
+  else {
+    hdr.innerHTML = `<span>Campaign / Sheet</span><span>Country</span><span style="text-align:center">Opens</span><span style="text-align:center">Share</span>`;
+    
+    const cnt={},cmap={};
+    all.forEach(r=>{const k=r.sheetName||'Unknown';cnt[k]=(cnt[k]||0)+1;cmap[k]=r.country;});
+    const tot=all.length||1,rows=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+    if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
+    el.innerHTML=rows.map(([nm,n])=>{
+      const ctry=cmap[nm]||'';
+      const s=nm.replace(/^\(Final\)/,'').trim();
+      const dm=s.match(/(\d{4}-\d{2}-\d{2})$/);
+      const lb=s.replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim(),dt=dm?dm[1]:'';
+      return`<div class="cr">
+        <div class="crn">${esc(lb)}${dt?`<small>${dt}</small>`:''}</div>
+        <div><span class="tag tag-${ctry}">${ctry}</span></div>
+        <div style="text-align:center;font-family:var(--fm);font-weight:700;color:var(--blue)">${n}</div>
+        <div style="text-align:center;font-size:.75rem;color:var(--muted)">${(n/tot*100).toFixed(1)}%</div>
+      </div>`;
+    }).join('');
+  }
 }
 
 /* ══════════════════════════════════════════════════════════
