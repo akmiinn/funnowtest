@@ -459,7 +459,7 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-allctry" style="display:none">
-    <div class="g tilt" style="margin-bottom:26px"><div class="sp"></div><div class="gi">
+    <div class="g" style="margin-bottom:26px"><div class="gi">
       <div style="padding:28px 36px">
         <div class="sec">All Countries — Open Distribution</div>
         <div class="donut-layout">
@@ -473,7 +473,7 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-country" style="display:none">
-    <div class="g tilt" style="margin-bottom:26px"><div class="sp"></div><div class="gi">
+    <div class="g" style="margin-bottom:26px"><div class="gi">
       <div class="ctry-detail-page">
         <div class="ctry-header">
           <div class="ctry-flag-big" id="cd-flag">🌍</div>
@@ -802,7 +802,10 @@ function buildDonutSVG(svgId, segs, cx, cy, R, W, showCenter){
   svg.innerHTML = '';
   const C = 2 * Math.PI * R;
   const GAP = 3;
-  const total = segs.reduce((s,x)=>s+x.v,0)||1;
+  
+  // ✅ USE RAW TOTAL FOR TEXT DISPLAY, MATH TOTAL FOR ARC CALCULATIONS
+  const rawTotal = segs.reduce((s,x)=>s+x.v,0);
+  const mathTotal = rawTotal || 1; 
 
   // background ring
   const bg = document.createElementNS(ns,'circle');
@@ -813,7 +816,7 @@ function buildDonutSVG(svgId, segs, cx, cy, R, W, showCenter){
 
   let accAngle = 0; // in radians
   segs.forEach((seg,i)=>{
-    const frac = seg.v/total;
+    const frac = seg.v / mathTotal;
     const arcLen = frac * C;
     const drawLen = Math.max(0, arcLen - GAP);
     const startDeg = (accAngle / (2*Math.PI)) * 360 - 90;
@@ -827,7 +830,11 @@ function buildDonutSVG(svgId, segs, cx, cy, R, W, showCenter){
     // initial (for animation)
     c.setAttribute('stroke-dasharray',`0 ${C}`);
     c.setAttribute('stroke-dashoffset', -(accAngle / (2*Math.PI)) * C);
-    c.setAttribute('transform',`rotate(-90,${cx},${cy})`);
+    
+    // ✅ SAFARI COMPATIBILITY FIX
+    c.style.transformOrigin = `${cx}px ${cy}px`;
+    c.style.transform = 'rotate(-90deg)';
+    
     c.setAttribute('class','donut-seg');
     c.setAttribute('data-final',`${drawLen} ${C - drawLen}`);
     c.setAttribute('data-offset', -(accAngle / (2*Math.PI)) * C);
@@ -842,8 +849,10 @@ function buildDonutSVG(svgId, segs, cx, cy, R, W, showCenter){
     const t1 = document.createElementNS(ns,'text');
     t1.setAttribute('x',cx);t1.setAttribute('y',cy-10);t1.setAttribute('text-anchor','middle');
     t1.setAttribute('font-size',R>80?30:18);t1.setAttribute('font-weight','800');t1.setAttribute('fill','#0f172a');
-    t1.setAttribute('font-family','Outfit');t1.textContent = total;
+    t1.setAttribute('font-family','Outfit');
+    t1.textContent = rawTotal; // ✅ ENSURES "0" IS DISPLAYED WHEN EMPTY
     svg.appendChild(t1);
+    
     const t2 = document.createElementNS(ns,'text');
     t2.setAttribute('x',cx);t2.setAttribute('y',cy+12);t2.setAttribute('text-anchor','middle');
     t2.setAttribute('font-size',R>80?12:9);t2.setAttribute('fill','#94a3b8');t2.setAttribute('font-family','Outfit');
@@ -856,8 +865,8 @@ function animateDonut(svgId){
   const svg = document.getElementById(svgId);
   if(!svg) return;
   svg.querySelectorAll('.donut-seg').forEach(c=>{
-    // trigger by re-setting with transition
-    c.style.transition = `stroke-dasharray 1.1s cubic-bezier(.4,0,.2,1) ${c.style.transitionDelay||'0s'}`;
+    // ✅ SAFARI COMPATIBILITY FIX
+    c.style.transition = `stroke-dasharray 1.1s cubic-bezier(.4,0,.2,1) ${c.style.transitionDelay||'0s'}, stroke-opacity .2s ease, transform .2s ease`;
     rAF(()=>{
       c.setAttribute('stroke-dasharray', c.dataset.final);
       c.setAttribute('stroke-dashoffset', c.dataset.offset);
@@ -976,7 +985,7 @@ function renderCountryDetail(code){
 }
 
 /* ══════════════════════════════════════════════════════════
-   TILT + SPECULAR + SHIMMER
+   TILT + SPECULAR + SHIMMER (ONLY ON .tilt CARDS)
 ══════════════════════════════════════════════════════════ */
 function initTilt(){
   document.querySelectorAll('.tilt').forEach(card=>{
