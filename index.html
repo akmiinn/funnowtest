@@ -265,14 +265,16 @@ tbody tr:last-child td{border-bottom:none}
 
 .donut-wrap{position:relative;width:300px;height:300px;flex-shrink:0}
 .donut-svg{width:100%;height:100%;overflow:visible}
-.donut-seg{
-  transition:stroke-dasharray 1.1s cubic-bezier(.4,0,.2,1),
-             stroke-opacity .2s ease,
-             transform .2s ease;
-  transform-origin:150px 150px;
-  cursor:pointer;
+.donut-seg {
+  transition: stroke-dasharray 1.1s cubic-bezier(.4,0,.2,1),
+              stroke-opacity .2s ease,
+              transform .2s ease;
+  cursor: pointer;
 }
-.donut-seg:hover{stroke-opacity:.75;transform:scale(1.04)}
+.donut-seg:hover {
+  stroke-opacity: .75;
+  transform: rotate(-90deg) scale(1.04) !important;
+}
 
 .legend{display:flex;flex-direction:column;gap:14px}
 .leg-row{
