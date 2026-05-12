@@ -1641,27 +1641,20 @@ function renderSentCountry(code){
 function renderSentSheet(sheetName){
   const el=document.getElementById('sent-view-sheet');
   const rows=sentAll.filter(r=>r.sheetName===sheetName);
-  const ctry=rows[0]?.country||'';
+  const ctry=rows[0]?.country||sentCtry||'';
   const m=FL[ctry]||{e:'',n:ctry};
   const clean=sheetName.replace(/^\(Final\)/,'').replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
+  const dmatch=sheetName.match(/(\d{4}-\d{2}-\d{2})$/);
+  const dt=dmatch?dmatch[1]:'';
+
+  // Stats
+  const clicked=all.filter(r=>r.sheetName===sheetName).length;
+  const replied=repliedAll.filter(r=>r.sheetName===sheetName).length;
+  const total=rows.length;
+  const cPct=total?((clicked/total)*100).toFixed(1):'—';
+  const rPct=total?((replied/total)*100).toFixed(1):'—';
 
   const s=(sentPg-1)*PS, sl=rows.slice(s,s+PS);
-
-  const tableRows = isMob()
-    ? sl.map(r=>{const mc=FL[r.country]||{};return`<tr><td colspan="5" style="padding:0;border:none;background:none">
-        <div class="mob-card">
-          <div class="mc-name">${esc(r.title||'—')}</div>
-          <div class="mc-email">${esc(r.email||'')}</div>
-          <div class="mc-row"><span class="mc-lbl">BD</span><span>${esc(r.BD||'—')}</span></div>
-          <div class="mc-row"><span class="mc-lbl">Status</span><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span></div>
-          <div class="mc-row"><span class="mc-lbl">Stage</span><span>${esc(r.Stage||r.lead_status||'—')}</span></div>
-        </div></td></tr>`;}).join('')
-    : sl.map(r=>`<tr>
-        <td><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
-        <td style="font-weight:600">${esc(r.BD||'—')}</td>
-        <td><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span></td>
-        <td style="font-size:.78rem;color:var(--sub)">${esc(r.Stage||r.lead_status||'—')}</td>
-      </tr>`).join('');
 
   // Pagination
   const tot=Math.ceil(rows.length/PS);
@@ -1675,26 +1668,53 @@ function renderSentSheet(sheetName){
     pgHtml+=`<button class="pb" onclick="sentSheetPg(${sentPg+1})" ${sentPg===tot?'disabled':''}>›</button>`;
   }
 
+  const merchantRows = sl.map(r=>`
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,.05)">
+      <div style="flex:1;min-width:0">
+        <div class="mn" style="white-space:normal;overflow:visible">${esc(r.title||'—')}</div>
+        <div class="me">${esc(r.email||'')}</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;flex-shrink:0">
+        <span style="font-size:.78rem;font-weight:600;color:var(--sub)">${esc(r.BD||'—')}</span>
+        <span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span>
+        ${r.Stage||r.lead_status?`<span style="font-size:.72rem;color:var(--muted)">${esc(r.Stage||r.lead_status)}</span>`:''}
+      </div>
+    </div>`).join('');
+
   el.innerHTML=`
     <div class="sent-back" onclick="goSent('country','${ctry}')">← ${m.e} ${m.n||ctry}</div>
-    <div class="g tc" style="overflow:hidden"><div class="gi">
-      <div class="sent-merchant-hdr">
-        <div>
-          <div style="font-size:.88rem;font-weight:700">${esc(clean)}</div>
-          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${rows.length} sent merchants</div>
+    <div class="g" style="overflow:hidden;margin-bottom:16px"><div class="gi">
+
+      <div style="padding:20px 22px 16px;border-bottom:1px solid rgba(0,0,0,.06)">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div style="min-width:0">
+            <div style="font-size:1rem;font-weight:800;word-break:break-word">${esc(clean)}</div>
+            ${dt?`<div style="font-size:.70rem;color:var(--muted);margin-top:2px">${dt}</div>`:''}
+          </div>
+          <span class="tag tag-${ctry}" style="flex-shrink:0">${m.e} ${ctry}</span>
         </div>
-        <span class="tag tag-${ctry}">${m.e} ${ctry}</span>
+        <div style="display:flex;gap:20px;margin-top:14px;flex-wrap:wrap">
+          <div style="text-align:center">
+            <div style="font-size:1.4rem;font-weight:800;font-family:var(--fm);color:var(--brand)">${total}</div>
+            <div style="font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Sent</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:1.4rem;font-weight:800;font-family:var(--fm);color:#0284c7">${clicked} <small style="font-size:.7rem;opacity:.6">(${cPct}%)</small></div>
+            <div style="font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Clicked</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:1.4rem;font-weight:800;font-family:var(--fm);color:#4f46e5">${replied} <small style="font-size:.7rem;opacity:.6">(${rPct}%)</small></div>
+            <div style="font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Replied</div>
+          </div>
+        </div>
       </div>
-      <div class="tscr"><table>
-        <thead><tr>
-          <th>Merchant</th><th>BD</th><th>Status</th><th>Stage</th>
-        </tr></thead>
-        <tbody>${tableRows}</tbody>
-      </table></div>
-      <div class="tfoot">
-        <span>${rows.length} merchants</span>
-        <div class="pr">${pgHtml}</div>
+
+      <div style="padding:4px 22px 16px">
+        ${merchantRows.length ? merchantRows : '<p class="empty">No merchants</p>'}
       </div>
+
+      ${pgHtml?`<div class="tfoot" style="padding:10px 22px"><span>${total} merchants</span><div class="pr">${pgHtml}</div></div>`:''}
+
     </div></div>`;
 }
 
