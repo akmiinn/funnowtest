@@ -605,8 +605,12 @@ async function loadData(){
       return r;
     });
     
-    // Dataset 1: Standard Clicks
-    all = d.filter(r=>Number(r.clicked)===1);
+    // Dataset 1: Standard Clicks (NOW INCLUDES REPLIES)
+    all = d.filter(r => {
+      const isClicked = Number(r.clicked) === 1;
+      const isReplied = r.mail_status && r.mail_status.toLowerCase().includes('replied');
+      return isClicked || isReplied;
+    });
     
     // Dataset 2: Email Replies ONLY
     repliedAll = d.filter(r => r.mail_status && r.mail_status.toLowerCase().includes('replied'));
@@ -799,14 +803,23 @@ function renderOvCamps(){
    MULTI-SELECT TABLE FILTERS
 ══════════════════════════════════════════════════════════ */
 function toggleF(k, v) {
-  if (activeFilters[k].has(v)) activeFilters[k].delete(v);
-  else activeFilters[k].add(v);
-  pg = 1; pills(); doFil(); renderOvBD(); 
+  if (activeFilters[k].has(v)) {
+    activeFilters[k].delete(v);
+  } else {
+    activeFilters[k].add(v);
+  }
+  pg = 1; 
+  pills(); 
+  doFil();
+  renderOvBD(); 
 }
 
 function rmF(k, v) {
   activeFilters[k].delete(v);
-  pg = 1; pills(); doFil(); renderOvBD();
+  pg = 1; 
+  pills(); 
+  doFil();
+  renderOvBD();
 }
 
 function doFil(){
