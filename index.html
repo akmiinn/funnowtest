@@ -158,13 +158,12 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 @media(max-width:800px){.mg{grid-template-columns:1fr}}
 .mc{padding:26px}
 
-/* Country / BD rows (Hover Effects ON for Overview) */
+/* Country rows */
 .crow{display:flex;align-items:flex-start;gap:12px;padding:14px 13px;border-radius:14px;
   cursor:pointer;transition:background .14s,transform .14s;margin-bottom:5px}
 .crow:hover{background:rgba(255,255,255,.55);transform:translateX(4px)}
 .cflag{font-size:1.4rem;width:30px;text-align:center;flex-shrink:0; margin-top:2px;}
 .cname{font-size:.85rem;font-weight:600}
-.ccnt{font-size:.71rem;color:var(--muted);margin-top:1px}
 .ctrack{flex:2;height:8px;background:rgba(0,0,0,.055);border-radius:99px;overflow:hidden;
   box-shadow:inset 0 2px 3px rgba(0,0,0,.09)}
 .cfill{height:100%;border-radius:99px;transition:width 1.3s cubic-bezier(.4,0,.2,1);width:0;
@@ -172,18 +171,16 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .cfill::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.35);border-radius:inherit}
 .cpct{font-size:.76rem;font-weight:700;font-family:var(--fm);width:32px;text-align:right}
 
+/* BD Rows */
 .brow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;
   cursor:pointer;transition:background .14s,transform .14s;margin-bottom:5px}
 .brow:hover{background:rgba(255,255,255,.55);transform:translateX(4px)}
-
-/* MULTI-SELECT ACTIVE BD STATE */
 .brow.active-bd {
   background: rgba(255, 85, 55, 0.12);
   transform: translateX(4px);
   border: 1px solid rgba(255, 85, 55, 0.2);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 2px 8px rgba(255, 85, 55, 0.15);
 }
-
 .brk{font-size:.69rem;font-weight:700;font-family:var(--fm);color:var(--muted);width:20px;flex-shrink:0}
 .brk.g{color:#d97706}.brk.s{color:#94a3b8}.brk.b{color:#92400e}
 .bav{width:33px;height:33px;border-radius:50%;flex-shrink:0;
@@ -200,7 +197,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .bf::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.28)}
 .bnum{font-size:.78rem;font-weight:700;font-family:var(--fm);color:var(--brand);width:24px;text-align:right}
 
-/* ═══════════════════════════════════════════════ CAMPAIGN */
+/* ═══════════════════════════════════════════════ CAMPAIGN BREAKDOWN */
 .campc{padding:26px;margin-bottom:26px}
 .ch{display:grid;grid-template-columns:1fr 90px 90px 80px 80px;
   font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
@@ -222,7 +219,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .tag-TW{background:rgba(124,58,237,.10);color:#4c1d95;border:1px solid rgba(124,58,237,.20)}
 .tag-PH{background:rgba(234,88,12,.10);color:#7c2d12;border:1px solid rgba(234,88,12,.20)}
 
-/* ═══════════════════════════════════════════════ TABLE */
+/* ═══════════════════════════════════════════════ TABLE (FIXED COLUMNS) */
 .tc{overflow:hidden;padding:0}
 .th2{display:flex;align-items:center;justify-content:space-between;padding:24px 26px 12px}
 .srch{background:rgba(255,255,255,.70);border:1.5px solid rgba(255,255,255,.88);
@@ -237,8 +234,24 @@ table {
   width: 100%;
   border-collapse: collapse;
   min-width: 680px;
-  table-layout: fixed; 
+  table-layout: fixed; /* ✅ PREVENTS COLUMNS FROM SHIFTING */
 }
+
+/* Overview Table Percentages */
+#pg-overview table th:nth-child(1), #pg-overview table td:nth-child(1) { width: 22%; }
+#pg-overview table th:nth-child(2), #pg-overview table td:nth-child(2) { width: 14%; }
+#pg-overview table th:nth-child(3), #pg-overview table td:nth-child(3) { width: 14%; }
+#pg-overview table th:nth-child(4), #pg-overview table td:nth-child(4) { width: 22%; }
+#pg-overview table th:nth-child(5), #pg-overview table td:nth-child(5) { width: 14%; }
+#pg-overview table th:nth-child(6), #pg-overview table td:nth-child(6) { width: 14%; }
+
+/* Replies Table Percentages */
+#pg-replies table th:nth-child(1), #pg-replies table td:nth-child(1) { width: 25%; }
+#pg-replies table th:nth-child(2), #pg-replies table td:nth-child(2) { width: 15%; }
+#pg-replies table th:nth-child(3), #pg-replies table td:nth-child(3) { width: 15%; }
+#pg-replies table th:nth-child(4), #pg-replies table td:nth-child(4) { width: 30%; }
+#pg-replies table th:nth-child(5), #pg-replies table td:nth-child(5) { width: 15%; }
+
 thead th{
   font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
   color:var(--muted);padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.07);
@@ -248,14 +261,12 @@ thead th{
 thead th:hover{color:var(--text)}
 thead th.ac{color:var(--brand)}
 
-/* FULL-WIDTH HEADER DROPDOWNS */
+/* ✅ INVISIBLE DROPDOWNS THAT LOOK LIKE TABLE HEADERS */
 thead th select {
   background: transparent; border: none; font-family: var(--f); font-size: inherit; font-weight: inherit;
   letter-spacing: inherit; text-transform: inherit; color: inherit; cursor: pointer; outline: none;
-  -webkit-appearance: none; appearance: none; padding: 0; 
-  width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
+  -webkit-appearance: none; appearance: none; padding: 0; width: 100%;
 }
-thead th select:hover { color: var(--text); }
 thead th select option { color: var(--text); font-weight: 500; text-transform: none; letter-spacing: normal; }
 
 tbody tr{transition:background .12s}
@@ -263,21 +274,8 @@ tbody tr:hover td{background:rgba(255,255,255,.48)}
 tbody td{padding:12px 16px;font-size:.82rem;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:middle; overflow:hidden;}
 tbody tr:last-child td{border-bottom:none}
 
-/* REPLIES TABLE SPECIFIC */
-.msg-cell {
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--text);
-  font-size: .80rem;
-}
-.msg-date {
-  font-size: .68rem;
-  color: var(--muted);
-  font-family: var(--fm);
-  margin-top: 3px;
-}
+.msg-cell { width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); font-size: .80rem; }
+.msg-date { font-size: .68rem; color: var(--muted); font-family: var(--fm); margin-top: 3px; }
 
 .mn{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .me{font-size:.71rem;color:var(--muted);margin-top:2px;font-family:var(--fm); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
@@ -350,13 +348,21 @@ tbody tr:last-child td{border-bottom:none}
 .ctry-title{font-size:1.5rem;font-weight:800;letter-spacing:-.03em}
 .ctry-subtitle{font-size:.8rem;color:var(--muted);margin-top:3px;font-weight:500}
 
-.ctry-body{display:grid;grid-template-columns:220px 220px 1fr;gap:0;align-items:start}
-@media(max-width:900px){.ctry-body{grid-template-columns:1fr}}
+.ctry-body{display:grid;grid-template-columns:250px 250px 1fr;gap:0;align-items:start}
+@media(max-width:1000px){.ctry-body{grid-template-columns:1fr}}
 .mini-donut-wrap{
   padding:24px 20px;border-right:1px solid rgba(0,0,0,.06);
-  display:flex;flex-direction:column;align-items:center;gap:16px;
+  display:flex;flex-direction:column;align-items:center;gap:20px;
 }
-.mini-donut-svg{width:160px;height:160px}
+.mini-donut-svg{width:180px;height:180px}
+
+/* ✅ MATCHES THE BIG DONUT LEGEND PERFECTLY */
+.mini-leg-row { display:flex; align-items:center; gap:10px; width:100%; }
+.mini-leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.mini-leg-name { flex:1; font-size:.78rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mini-leg-right { text-align:right; }
+.mini-leg-cnt { font-family:var(--fm); font-size:.80rem; font-weight:700; color:var(--text); }
+.mini-leg-pct { font-family:var(--fm); font-size:.65rem; color:var(--muted); margin-top:-2px; }
 
 .bar-chart{padding:22px 28px 22px 20px}
 .bar-sec{font-size:.67rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
@@ -476,7 +482,7 @@ tbody tr:last-child td{border-bottom:none}
     
     <div class="g campc tilt"><div class="sp"></div><div class="gi">
       <div class="sec">Campaign Breakdown</div>
-      <div class="ch" id="ov-camps-hdr"><span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Opens</span><span style="text-align:center">Share</span></div>
+      <div class="ch" id="ov-camps-hdr"><span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Merchants</span><span style="text-align:center">Opens</span><span style="text-align:center">Avg Rate</span></div>
       <div id="ov-camps"><p class="empty">No data</p></div>
     </div></div>
     
@@ -488,12 +494,12 @@ tbody tr:last-child td{border-bottom:none}
       <div class="pills" id="pills"></div>
       <div class="tscr"><table>
         <thead><tr>
-          <th onclick="srt('title')" style="width:26%">Merchant <span id="si-title">↕</span></th>
-          <th style="width:12%"><select id="sel-country" onchange="doFil()"><option value="">COUNTRY ▾</option></select></th>
-          <th style="width:16%"><select id="sel-bd" onchange="doFil()"><option value="">BD ▾</option></select></th>
-          <th style="width:18%"><select id="sel-cat" onchange="doFil()"><option value="">CATEGORY ▾</option></select></th>
-          <th style="width:16%"><select id="sel-mail" onchange="doFil()"><option value="">MAIL ▾</option></select></th>
-          <th style="width:12%"><select id="sel-stage" onchange="doFil()"><option value="">STAGE ▾</option></select></th>
+          <th onclick="srt('title')">Merchant <span id="si-title">↕</span></th>
+          <th><select id="sel-country" onchange="doFil()"><option value="">COUNTRY ▾</option></select></th>
+          <th><select id="sel-bd" onchange="doFil()"><option value="">BD ▾</option></select></th>
+          <th><select id="sel-cat" onchange="doFil()"><option value="">CATEGORY ▾</option></select></th>
+          <th><select id="sel-mail" onchange="doFil()"><option value="">MAIL ▾</option></select></th>
+          <th><select id="sel-stage" onchange="doFil()"><option value="">STAGE ▾</option></select></th>
         </tr></thead>
         <tbody id="tbody"><tr><td colspan="6" class="empty">No data</td></tr></tbody>
       </table></div>
@@ -512,11 +518,11 @@ tbody tr:last-child td{border-bottom:none}
       </div>
       <div class="tscr"><table>
         <thead><tr>
-          <th onclick="srtRep('title')" style="width:26%">Merchant <span id="sir-title">↕</span></th>
-          <th style="width:12%"><select id="sel-country-rep" onchange="doFilRep()"><option value="">COUNTRY ▾</option></select></th>
-          <th style="width:16%"><select id="sel-bd-rep" onchange="doFilRep()"><option value="">BD ▾</option></select></th>
-          <th onclick="srtRep('replied_at')" style="width:34%">Message <span id="sir-replied_at">↕</span></th>
-          <th style="width:12%"><select id="sel-stage-rep" onchange="doFilRep()"><option value="">STAGE ▾</option></select></th>
+          <th onclick="srtRep('title')">Merchant <span id="sir-title">↕</span></th>
+          <th><select id="sel-country-rep" onchange="doFilRep()"><option value="">COUNTRY ▾</option></select></th>
+          <th><select id="sel-bd-rep" onchange="doFilRep()"><option value="">BD ▾</option></select></th>
+          <th onclick="srtRep('replied_at')">Message <span id="sir-replied_at">↕</span></th>
+          <th><select id="sel-stage-rep" onchange="doFilRep()"><option value="">STAGE ▾</option></select></th>
         </tr></thead>
         <tbody id="tbody-rep"><tr><td colspan="5" class="empty">No replies found</td></tr></tbody>
       </table></div>
@@ -554,13 +560,13 @@ tbody tr:last-child td{border-bottom:none}
         <div class="ctry-body">
           <div class="mini-donut-wrap">
             <div style="font-size:.66rem;font-weight:700;color:var(--muted);letter-spacing:.1em">OPENS</div>
-            <svg class="mini-donut-svg" id="donut-mini-opens" viewBox="0 0 160 160"></svg>
-            <div id="mini-legend-opens" style="width:100%;display:flex;flex-direction:column;gap:8px"></div>
+            <svg class="mini-donut-svg" id="donut-mini-opens" viewBox="0 0 180 180"></svg>
+            <div id="mini-legend-opens" style="width:100%;display:flex;flex-direction:column;gap:12px"></div>
           </div>
           <div class="mini-donut-wrap">
             <div style="font-size:.66rem;font-weight:700;color:var(--muted);letter-spacing:.1em">REPLIES</div>
-            <svg class="mini-donut-svg" id="donut-mini-replies" viewBox="0 0 160 160"></svg>
-            <div id="mini-legend-replies" style="width:100%;display:flex;flex-direction:column;gap:8px"></div>
+            <svg class="mini-donut-svg" id="donut-mini-replies" viewBox="0 0 180 180"></svg>
+            <div id="mini-legend-replies" style="width:100%;display:flex;flex-direction:column;gap:12px"></div>
           </div>
           
           <div class="bar-chart">
@@ -623,6 +629,7 @@ async function loadData(){
       if(!d.length && !window.allTabs.length) showErr('Webhook returned no data. Check n8n Respond to Webhook.');
     }
     
+    // ✅ 1. PRE-PROCESS DATA
     d = d.map(r => {
       r.country = r.country_code || r.country || "Unknown";
       if (!r.BD && r.account_owner) {
@@ -632,13 +639,25 @@ async function loadData(){
       }
       return r;
     });
+
+    // ✅ 2. FRONTEND DEDUPLICATION (PREVENTS LOOP BUG DUPLICATES)
+    const seen = new Set();
+    d = d.filter(r => {
+      if(!r.email || !r.title) return false;
+      const k = r.email + '|' + r.title + '|' + r.sheetName;
+      if(seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
     
+    // Dataset 1: Standard Clicks (INCLUDES REPLIES)
     all = d.filter(r => {
       const isClicked = Number(r.clicked) === 1;
       const isReplied = r.mail_status && r.mail_status.toLowerCase().includes('replied');
       return isClicked || isReplied;
     });
     
+    // Dataset 2: Email Replies ONLY
     repliedAll = d.filter(r => r.mail_status && r.mail_status.toLowerCase().includes('replied'));
     
     populateFilters();
@@ -744,8 +763,8 @@ function goPage(page, ctry=null, animate=true){
    COUNTRY TABS
 ══════════════════════════════════════════════════════════ */
 function buildCountryTabs(){
-  const sources = window.allTabs.length ? window.allTabs : all;
-  const countries=[...new Set(sources.map(r=>r.country))].filter(c => c && c !== "Unknown");
+  // Rely on all array to guarantee active countries are shown
+  const countries=[...new Set(all.map(r=>r.country))].filter(c => c && c !== "Unknown");
   const el=document.getElementById('ctabs');
   el.innerHTML=countries.map(code=>{
     const m=FL[code]||{e:'🌐',n:code};
@@ -758,11 +777,14 @@ function buildCountryTabs(){
 ══════════════════════════════════════════════════════════ */
 function renderKPIs(){
   const t = all.length;
-  const c = window.allTabs && window.allTabs.length ? new Set(window.allTabs.map(t=>t.country)).size : new Set(all.map(r=>r.country)).size;
-  const s = window.allTabs && window.allTabs.length ? window.allTabs.length : new Set(all.map(r=>r.sheetName)).size;
+  // Use sets based on 'all' data for 100% accuracy of active items
+  const c = new Set(all.map(r=>r.country)).size;
+  const s = new Set(all.map(r=>r.sheetName)).size;
   
-  num('k-total',t);num('k-ctry',c);num('k-camp',s);
+  num('k-total',t);
   num('k-rep', repliedAll.length); 
+  num('k-ctry',c);
+  num('k-camp',s);
 }
 
 function renderOvCtry(){
@@ -834,60 +856,54 @@ function renderOvCamps(){
   const el = document.getElementById('ov-camps');
   const hdr = document.getElementById('ov-camps-hdr');
   
-  if(window.allTabs && window.allTabs.length) {
-    hdr.innerHTML = `<span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Merchants</span><span style="text-align:center">Opens</span><span style="text-align:center">Avg Rate</span>`;
-    
-    const ctrySheets = {};
-    const ctryMerchants = {};
-    window.allTabs.forEach(t => { 
-      ctrySheets[t.country] = (ctrySheets[t.country]||0) + 1; 
-      ctryMerchants[t.country] = (ctryMerchants[t.country]||0) + t.totalRows;
-    });
-    const ctryOpens = {};
-    all.forEach(r => { ctryOpens[r.country] = (ctryOpens[r.country]||0) + 1; });
-    
-    const rows = Object.entries(ctrySheets).sort((a,b)=>b[1]-a[1]);
-    
-    if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
-    
-    el.innerHTML = rows.map(([ctry, sCount])=>{
-      const m = FL[ctry] || { n: ctry };
-      const oCount = ctryOpens[ctry] || 0;
-      const tMerch = ctryMerchants[ctry] || 0;
-      const avgRate = tMerch ? Math.round((oCount/tMerch)*100) : 0;
-      
-      return `<div class="cr" style="grid-template-columns:1fr 90px 90px 80px 80px;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="tag tag-${ctry}">${ctry}</span>
-          <span style="font-weight:600;font-size:.85rem">${m.n}</span>
-        </div>
-        <div style="text-align:center;font-weight:600;color:var(--text)">${sCount}</div>
-        <div style="text-align:center;font-weight:600;color:var(--muted)">${tMerch}</div>
-        <div style="text-align:center;font-family:var(--fm);font-weight:700;color:var(--brand)">${oCount}</div>
-        <div style="text-align:center;font-size:.75rem;color:var(--muted);font-family:var(--fm)">${avgRate}%</div>
-      </div>`;
-    }).join('');
-  } 
-  else {
-    hdr.innerHTML = `<span>Campaign / Sheet</span><span>Country</span><span style="text-align:center">Opens</span><span style="text-align:center">Share</span>`;
-    
-    const cnt={},cmap={};
-    all.forEach(r=>{const k=r.sheetName||'Unknown';cnt[k]=(cnt[k]||0)+1;cmap[k]=r.country;});
-    const tot=all.length||1,rows=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
-    if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
-    el.innerHTML=rows.map(([nm,n])=>{
-      const ctry=cmap[nm]||'';
-      const s=nm.replace(/^\(Final\)/,'').trim();
-      const dm=s.match(/(\d{4}-\d{2}-\d{2})$/);
-      const lb=s.replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim(),dt=dm?dm[1]:'';
-      return`<div class="cr">
-        <div class="crn">${esc(lb)}${dt?`<small>${dt}</small>`:''}</div>
-        <div><span class="tag tag-${ctry}">${ctry}</span></div>
-        <div style="text-align:center;font-family:var(--fm);font-weight:700;color:var(--brand)">${n}</div>
-        <div style="text-align:center;font-size:.75rem;color:var(--muted)">${(n/tot*100).toFixed(1)}%</div>
-      </div>`;
-    }).join('');
+  hdr.innerHTML = `<span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Merchants</span><span style="text-align:center">Opens</span><span style="text-align:center">Avg Rate</span>`;
+  
+  const ctryStats = {};
+  all.forEach(r => {
+    const c = r.country || 'Unknown';
+    if(!ctryStats[c]) ctryStats[c] = { sheets: new Set(), opens: 0, merchants: 0 };
+    ctryStats[c].sheets.add(r.sheetName);
+    ctryStats[c].opens += 1;
+  });
+  
+  // Create a dictionary of the actual total rows per sheet directly from the tabs array
+  const sheetTotals = {};
+  if (window.allTabs && window.allTabs.length) {
+      window.allTabs.forEach(t => {
+          if (t.sheetName && t.totalRows) {
+              sheetTotals[t.sheetName] = t.totalRows;
+          }
+      });
   }
+  
+  Object.keys(ctryStats).forEach(c => {
+      let tMerch = 0;
+      ctryStats[c].sheets.forEach(sheet => {
+          tMerch += (sheetTotals[sheet] || 0);
+      });
+      // Fallback: If n8n count fails, at least use the opens as minimum merchants
+      if (tMerch < ctryStats[c].opens) tMerch = ctryStats[c].opens;
+      ctryStats[c].merchants = tMerch;
+  });
+
+  const rows = Object.entries(ctryStats).sort((a,b) => b[1].opens - a[1].opens);
+  if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
+  
+  el.innerHTML = rows.map(([ctry, stats])=>{
+    const m = FL[ctry] || { n: ctry };
+    const avgRate = stats.merchants ? Math.round((stats.opens / stats.merchants) * 100) : 0;
+    
+    return `<div class="cr" style="grid-template-columns:1fr 90px 90px 80px 80px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="tag tag-${ctry}">${ctry}</span>
+        <span style="font-weight:600;font-size:.85rem">${m.n}</span>
+      </div>
+      <div style="text-align:center;font-weight:600;color:var(--text)">${stats.sheets.size}</div>
+      <div style="text-align:center;font-weight:600;color:var(--muted)">${stats.merchants}</div>
+      <div style="text-align:center;font-family:var(--fm);font-weight:700;color:var(--brand)">${stats.opens}</div>
+      <div style="text-align:center;font-size:.75rem;color:var(--muted);font-family:var(--fm)">${avgRate}%</div>
+    </div>`;
+  }).join('');
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -914,6 +930,7 @@ function doFil(){
   const mVal = document.getElementById('sel-mail').value;
   const sVal = document.getElementById('sel-stage').value;
   
+  // Highlight active dropdowns
   ['sel-country', 'sel-bd', 'sel-cat', 'sel-mail', 'sel-stage'].forEach(id => {
      const el = document.getElementById(id);
      if(el) el.style.color = el.value ? 'var(--brand)' : 'inherit';
@@ -1214,25 +1231,27 @@ function renderCountryDetail(code){
   const miniSegsOpens = sheetRows.map(([nm,v],i)=>({
     label: nm, v: v, color: SHEET_PALETTE[i % SHEET_PALETTE.length]
   }));
-  buildDonutSVG('donut-mini-opens', miniSegsOpens, 80, 80, 55, 26, true);
+  buildDonutSVG('donut-mini-opens', miniSegsOpens, 90, 90, 65, 30, true);
   setTimeout(()=>animateDonut('donut-mini-opens'), 120);
 
   /* ── 2) Replies Donut ── */
   const miniSegsReplies = sheetRows.map(([nm,v],i)=>({
     label: nm, v: sheetRepCnt[nm]||0, color: SHEET_PALETTE[i % SHEET_PALETTE.length]
   }));
-  buildDonutSVG('donut-mini-replies', miniSegsReplies, 80, 80, 55, 26, true);
+  buildDonutSVG('donut-mini-replies', miniSegsReplies, 90, 90, 65, 30, true);
   setTimeout(()=>animateDonut('donut-mini-replies'), 120);
 
-  /* ── Legend Generator (with percentages) ── */
+  /* ── Legend Generator (MATCHING ALL COUNTRIES LEGEND) ── */
   const buildLegend = (segs, totCount) => segs.map(seg=>{
     const pct = totCount ? Math.round((seg.v/totCount)*100) : 0;
     const label = seg.label.replace(/^\(Final\)/,'').replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
-    return`<div style="display:flex;align-items:center;gap:8px;font-size:.72rem">
-      <div style="width:10px;height:10px;border-radius:50%;background:${seg.color};flex-shrink:0"></div>
-      <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;font-weight:500">${esc(label)}</div>
-      <div style="font-family:var(--fm);font-weight:700;color:${seg.color};margin-left:auto">${seg.v}</div>
-      <div style="font-family:var(--fm);color:var(--muted);width:32px;text-align:right">${pct}%</div>
+    return`<div class="mini-leg-row">
+      <div class="mini-leg-dot" style="background:${seg.color}"></div>
+      <div class="mini-leg-name" title="${esc(label)}">${esc(label)}</div>
+      <div class="mini-leg-right">
+        <div class="mini-leg-cnt" style="color:${seg.color}">${seg.v}</div>
+        <div class="mini-leg-pct">${pct}%</div>
+      </div>
     </div>`;
   }).join('');
 
@@ -1244,7 +1263,6 @@ function renderCountryDetail(code){
   barsEl.innerHTML = sheetRows.map(([nm,n],i)=>{
     const repN = sheetRepCnt[nm] || 0;
     
-    // PULLS TOTAL LEADS FROM N8N ARRAY TO CALCULATE REAL CONVERSION
     const tabObj = window.allTabs.find(t => t.sheetName === nm);
     const totalLeads = tabObj ? tabObj.totalRows : n; 
     
