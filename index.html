@@ -852,6 +852,7 @@ tbody tr:last-child td{border-bottom:none}
 
   <div class="nav g">
     <button class="tab on" id="tab-overview" onclick="goPage('overview')">📊&nbsp;Click Rate</button>
+    <button class="tab" id="tab-sent" onclick="goPage('sent')">📤&nbsp;Sent</button>
     <button class="tab" id="tab-replies" onclick="goPage('replies')">💬&nbsp;Replies</button>
     <button class="tab" id="tab-allctry" onclick="goPage('allctry')">🌍&nbsp;All Countries</button>
     <div class="nav-sep"></div>
@@ -949,6 +950,29 @@ tbody tr:last-child td{border-bottom:none}
     </div></div>
   </div>
 
+  <div id="pg-sent" style="display:none">
+    <div class="g tc"><div class="gi">
+      <div class="th2">
+        <div class="sec" style="margin-bottom:0">📤 Sent Merchants</div>
+        <input class="srch" type="text" placeholder="🔍 Search name, email…" id="srch-sent" oninput="doFilSent()"/>
+      </div>
+      <div class="tscr"><table>
+        <thead><tr>
+          <th onclick="srtSent('title')">Merchant <span id="sis-title">↕</span></th>
+          <th><select id="sel-country-sent" onchange="doFilSent()"><option value="">COUNTRY ▾</option></select></th>
+          <th><select id="sel-bd-sent" onchange="doFilSent()"><option value="">BD ▾</option></select></th>
+          <th><select id="sel-mail-sent" onchange="doFilSent()"><option value="">STATUS ▾</option></select></th>
+          <th><select id="sel-stage-sent" onchange="doFilSent()"><option value="">STAGE ▾</option></select></th>
+        </tr></thead>
+        <tbody id="tbody-sent"><tr><td colspan="5" class="empty">No sent records</td></tr></tbody>
+      </table></div>
+      <div class="tfoot">
+        <span id="rcount-sent">0 sent</span>
+        <div class="pr" id="pg-sent-pg"></div>
+      </div>
+    </div></div>
+  </div>
+
   <div id="pg-allctry" style="display:none">
     <div class="g" style="margin-bottom:26px"><div class="gi">
       <div style="padding:28px 36px">
@@ -1022,6 +1046,9 @@ let activeFilters = { BD: new Set(), country: new Set() };
 const PS=10;
 window.allTabs = [];
 
+/* ── STATE (SENT) ── */
+let sentAll=[],sentFil=[],sks='title',sus=true,pgs=1;
+
 /* ── STATE (REPLIES) ── */
 let repliedAll=[], repliedFil=[], skr='replied_at', sur=false, pgr=1;
 
@@ -1076,13 +1103,20 @@ async function loadData(){
     
     // Dataset 2: Email Replies ONLY
     repliedAll = d.filter(r => r.mail_status && r.mail_status.toLowerCase().includes('replied'));
+
+    // Dataset 3: Sent ONLY (any sent status)
+    const SENT_STATUSES = ['email - sent','email - 2nd outreach sent','email - 3rd outreach sent','email - 4th outreach sent'];
+    sentAll = d.filter(r => {
+      const s = (r.mail_status||'').toLowerCase().trim();
+      return SENT_STATUSES.some(v => s === v);
+    });
     
     populateFilters();
     renderAll();
     const tsEl = document.getElementById('ts'); if(tsEl) tsEl.textContent='Updated '+new Date().toLocaleTimeString();
   }catch(e){
     showErr(`${e.message}. Enable CORS in n8n webhook settings (Access-Control-Allow-Origin: *).`);
-    all=[]; repliedAll=[]; renderAll();
+    all=[]; repliedAll=[]; sentAll=[]; renderAll();
   } finally{
     document.getElementById('loading').style.display='none';
     const app=document.getElementById('app');
@@ -1117,12 +1151,16 @@ function populateFilters() {
   
   buildOpts(ctryList, 'sel-country', 'COUNTRY');
   buildOpts(ctryList, 'sel-country-rep', 'COUNTRY');
+  buildOpts(ctryList, 'sel-country-sent', 'COUNTRY');
   buildOpts(bdList, 'sel-bd', 'BD');
   buildOpts(bdList, 'sel-bd-rep', 'BD');
+  buildOpts(bdList, 'sel-bd-sent', 'BD');
   buildOpts(catList, 'sel-cat', 'CATEGORY');
   buildOpts(mailList, 'sel-mail', 'MAIL');
+  buildOpts(sentAll.map(r=>r.mail_status), 'sel-mail-sent', 'STATUS');
   buildOpts(stageList, 'sel-stage', 'STAGE');
   buildOpts(stageList, 'sel-stage-rep', 'STAGE');
+  buildOpts(stageList, 'sel-stage-sent', 'STAGE');
 }
 
 function matchDropdown(recordVal, dropVal) {
@@ -1138,6 +1176,7 @@ function renderAll(){
   buildCountryTabs();
   renderKPIs(); renderOvCtry(); renderOvBD(); renderOvCamps(); 
   doFil(); 
+  doFilSent();
   doFilRep(); 
   renderDonutMain();
   goPage(curPage, curCtry, false);
@@ -1148,7 +1187,7 @@ function renderAll(){
 ══════════════════════════════════════════════════════════ */
 function goPage(page, ctry=null, animate=true){
   curPage=page; curCtry=ctry;
-  ['overview','replies','allctry','country'].forEach(p=>document.getElementById('pg-'+p).style.display='none');
+  ['overview','sent','replies','allctry','country'].forEach(p=>document.getElementById('pg-'+p).style.display='none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
 
   const show = id => {
@@ -1161,6 +1200,9 @@ function goPage(page, ctry=null, animate=true){
   if(page==='overview'){
     document.getElementById('tab-overview').classList.add('on');
     show('overview');
+  } else if(page==='sent'){
+    document.getElementById('tab-sent').classList.add('on');
+    show('sent');
   } else if(page==='replies'){
     document.getElementById('tab-replies').classList.add('on');
     show('replies');
@@ -1444,6 +1486,85 @@ function pills(){
 }
 
 /* ══════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════
+   SENT TABLE LOGIC
+══════════════════════════════════════════════════════════ */
+function doFilSent(){
+  pgs=1;
+  const q=(document.getElementById('srch-sent')?.value||'').toLowerCase();
+  const cVal=document.getElementById('sel-country-sent')?.value||'';
+  const bVal=document.getElementById('sel-bd-sent')?.value||'';
+  const mVal=document.getElementById('sel-mail-sent')?.value||'';
+  const sVal=document.getElementById('sel-stage-sent')?.value||'';
+
+  sentFil=sentAll.filter(r=>{
+    if(!matchDropdown(r.country,cVal))return false;
+    if(!matchDropdown(r.BD,bVal))return false;
+    if(!matchDropdown(r.mail_status,mVal))return false;
+    if(!matchDropdown(r.Stage||r.lead_status,sVal))return false;
+    if(q&&!`${r.title} ${r.email} ${r.BD} ${r.country}`.toLowerCase().includes(q))return false;
+    return true;
+  });
+
+  sentFil.sort((a,b)=>{
+    const av=(a[sks]||'').toString().toLowerCase();
+    const bv=(b[sks]||'').toString().toLowerCase();
+    return sus?av.localeCompare(bv):bv.localeCompare(av);
+  });
+
+  renderTblSent(); renderPgSent();
+}
+
+function srtSent(k){
+  document.querySelectorAll('#pg-sent thead th').forEach(t=>t.classList.remove('ac'));
+  document.querySelectorAll('[id^=sis-]').forEach(s=>s.textContent='↕');
+  if(sks===k)sus=!sus;else{sks=k;sus=true;}
+  const si=document.getElementById('sis-'+k);
+  if(si){si.textContent=sus?'↑':'↓';si.closest('th').classList.add('ac');}
+  doFilSent();
+}
+
+function renderTblSent(){
+  const s=(pgs-1)*PS, sl=sentFil.slice(s,s+PS);
+  document.getElementById('rcount-sent').innerHTML=`${sentFil.length} sent <small style="color:var(--muted);margin-left:6px;">(${sentAll.length} total)</small>`;
+  const tb=document.getElementById('tbody-sent');
+  if(!sl.length){tb.innerHTML='<tr><td colspan="5" class="empty">No sent records found</td></tr>';return;}
+  if(isMob()){
+    tb.innerHTML=sl.map(r=>{const m=FL[r.country]||{};return`<tr><td colspan="5" style="padding:0;border:none;background:none">
+      <div class="mob-card">
+        <div class="mc-name">${esc(r.title||'—')}</div>
+        <div class="mc-email">${esc(r.email||'')}</div>
+        <div class="mc-row"><span class="mc-lbl">Country</span><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></div>
+        <div class="mc-row"><span class="mc-lbl">BD</span><span>${esc(r.BD||'—')}</span></div>
+        <div class="mc-row"><span class="mc-lbl">Status</span><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span></div>
+        <div class="mc-row"><span class="mc-lbl">Stage</span><span>${esc(r.Stage||r.lead_status||'—')}</span></div>
+      </div>
+    </td></tr>`;}).join('');
+  } else {
+    tb.innerHTML=sl.map(r=>{const m=FL[r.country]||{};return`<tr>
+      <td><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
+      <td><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></td>
+      <td style="font-weight:600">${esc(r.BD||'—')}</td>
+      <td><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span></td>
+      <td style="font-size:.78rem;color:var(--sub)">${esc(r.Stage||r.lead_status||'—')}</td>
+    </tr>`;}).join('');
+  }
+}
+
+function renderPgSent(){
+  const tot=Math.ceil(sentFil.length/PS),el=document.getElementById('pg-sent-pg');
+  if(tot<=1){el.innerHTML='';return;}
+  let h=`<button class="pb" onclick="goPgSent(${pgs-1})" ${pgs===1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=tot;i++){
+    if(tot>7&&Math.abs(i-pgs)>2&&i!==1&&i!==tot){if(i===2||i===tot-1)h+=`<button class="pb" disabled>…</button>`;continue;}
+    h+=`<button class="pb ${i===pgs?'on':''}" onclick="goPgSent(${i})">${i}</button>`;
+  }
+  h+=`<button class="pb" onclick="goPgSent(${pgs+1})" ${pgs===tot?'disabled':''}>›</button>`;
+  el.innerHTML=h;
+}
+function goPgSent(p){const t=Math.ceil(sentFil.length/PS);if(p<1||p>t)return;pgs=p;renderTblSent();renderPgSent();}
+
+/* ══════════════════════════════════════════════════════════
    REPLIES TABLE LOGIC
 ══════════════════════════════════════════════════════════ */
 function doFilRep(){
@@ -1724,7 +1845,7 @@ function renderCountryDetail(code){
     const n          = sheetCnt[nm]  || 0;
     const repN       = sheetRepCnt[nm] || 0;
     const sentN      = t.sentCount || 0;
-    const totalLeads = (t.totalRows && t.totalRows > 0) ? t.totalRows : null;
+    const totalLeads = sentN > 0 ? sentN : ((t.totalRows && t.totalRows > 0) ? t.totalRows : null);
     const sentPct    = (totalLeads && totalLeads >= sentN) ? (sentN/totalLeads*100).toFixed(2)  : 0;
     const openPct    = (totalLeads && totalLeads >= n)    ? (n/totalLeads*100).toFixed(2)       : 0;
     const repPct     = (totalLeads && totalLeads >= repN) ? (repN/totalLeads*100).toFixed(2)    : 0;
@@ -1738,7 +1859,7 @@ function renderCountryDetail(code){
 
     return`<div class="bar-row-static" style="align-items:flex-start;opacity:${n>0||sentN>0?1:0.4}">
       <div class="bar-label" style="margin-top:5px;">${esc(label)}${dt?`<small>${dt}</small>`:''}
-        <div style="font-size:0.68rem;font-weight:600;color:var(--text);margin-top:5px;">👥 ${totalLeads ?? '—'} Total</div>
+        <div style="font-size:0.68rem;font-weight:600;color:var(--text);margin-top:5px;">📤 ${sentN > 0 ? sentN : (totalLeads ?? '—')} Sent</div>
       </div>
       <div style="flex:1;">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
