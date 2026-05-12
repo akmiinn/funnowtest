@@ -405,9 +405,360 @@ tbody tr:last-child td{border-bottom:none}
   box-shadow:0 0 20px rgba(255,85,55,.13);animation:sp .75s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .ll{font-size:.77rem;font-weight:700;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(0,0,0,.10);border-radius:99px}
+/* ═══════════════════════════════════════════════ 3D GLOSS UPGRADE */
+
+/* Richer token shadows */
+:root {
+  --sh:
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 2px 0 0 rgba(255,255,255,.85),
+    inset 0 -1px 0 rgba(255,85,55,.14),
+    0 1px 0 rgba(255,255,255,.9),
+    0 4px 8px rgba(255,85,55,.06),
+    0 12px 28px rgba(255,85,55,.13),
+    0 28px 56px rgba(255,85,55,.09),
+    0 56px 90px rgba(255,85,55,.05),
+    0 0 0 1px rgba(255,255,255,.55);
+  --sh-lift:
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 2px 0 0 rgba(255,255,255,.85),
+    0 8px 18px rgba(255,85,55,.14),
+    0 22px 44px rgba(255,85,55,.20),
+    0 44px 80px rgba(255,85,55,.14),
+    0 80px 120px rgba(255,85,55,.08),
+    0 0 0 1.5px rgba(255,255,255,.70);
+}
+
+/* Glass cards — noise grain + stronger gloss */
+.g {
+  background: rgba(255,255,255,.62);
+  backdrop-filter: blur(64px) saturate(210%) brightness(1.06);
+  -webkit-backdrop-filter: blur(64px) saturate(210%) brightness(1.06);
+  border: 1.5px solid rgba(255,255,255,.92);
+  box-shadow: var(--sh);
+}
+/* Top-edge mirror highlight */
+.g::before {
+  background: linear-gradient(180deg,
+    rgba(255,255,255,.95) 0%,
+    rgba(255,255,255,.55) 30%,
+    rgba(255,255,255,.12) 65%,
+    transparent 100%);
+  height: 60%;
+}
+/* Noise grain overlay for tactile glass feel */
+.g::after {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E"),
+    linear-gradient(108deg,transparent 35%,rgba(255,255,255,.65) 50%,transparent 65%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.g.sh::after { animation: shim .55s ease forwards; }
+
+/* Specular orb — bigger, brighter */
+.sp {
+  width: 260px; height: 260px;
+  background: radial-gradient(circle,rgba(255,255,255,.80) 0%,rgba(255,255,255,.28) 40%,transparent 68%);
+  opacity: 0;
+}
+
+/* Tilt — more dramatic */
+.g.tilt:hover {
+  transform: perspective(800px) rotateX(0deg) rotateY(0deg) scale(1.022) translateZ(8px);
+}
+
+/* KPI icon — deep 3D gem effect */
+.ki {
+  box-shadow:
+    inset 0 2.5px 0 rgba(255,255,255,.98),
+    inset 2px 0 0 rgba(255,255,255,.70),
+    inset 0 -2px 0 rgba(0,0,0,.14),
+    0 6px 16px rgba(0,0,0,.14),
+    0 14px 30px rgba(0,0,0,.10),
+    0 2px 4px rgba(0,0,0,.08);
+  border: 1px solid rgba(255,255,255,.70);
+}
+.ki::before {
+  height: 56%;
+  background: rgba(255,255,255,.62);
+}
+
+/* KPI value — embossed */
+.kv {
+  text-shadow:
+    0 2px 0 rgba(255,255,255,.95),
+    0 -1px 0 rgba(0,0,0,.06),
+    0 4px 12px rgba(255,85,55,.10);
+}
+
+/* Active tab — iridescent */
+.tab.on {
+  background: linear-gradient(148deg, #ff7a5e 0%, #ff5537 45%, #e8401f 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.50),
+    inset 2px 0 0 rgba(255,255,255,.25),
+    inset 0 -2px 0 rgba(0,0,0,.18),
+    0 6px 20px rgba(255,85,55,.45),
+    0 12px 32px rgba(255,85,55,.28),
+    0 2px 4px rgba(0,0,0,.12);
+}
+
+/* Nav bar — deeper glass */
+.nav {
+  background: rgba(255,255,255,.60);
+  backdrop-filter: blur(40px) saturate(200%);
+  border: 1.5px solid rgba(255,255,255,.90);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.98),
+    inset 0 -1px 0 rgba(255,85,55,.06),
+    0 4px 20px rgba(255,85,55,.10),
+    0 12px 36px rgba(255,85,55,.07);
+}
+
+/* Buttons — deeper gloss */
+.bw {
+  background: rgba(255,255,255,.82);
+  border: 1.5px solid rgba(255,255,255,.95);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 2px 0 0 rgba(255,255,255,.80),
+    inset 0 -1.5px 0 rgba(0,0,0,.07),
+    0 2px 8px rgba(255,85,55,.08),
+    0 6px 18px rgba(255,85,55,.06);
+}
+.bw:hover {
+  background: rgba(255,255,255,.96);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,1),
+    0 8px 24px rgba(255,85,55,.18),
+    0 16px 40px rgba(255,85,55,.12);
+}
+
+/* Bar track — deeper inset */
+.bar-track {
+  background: rgba(0,0,0,.06);
+  box-shadow:
+    inset 0 3px 6px rgba(0,0,0,.12),
+    inset 0 1px 2px rgba(0,0,0,.08),
+    inset 0 0 0 1px rgba(0,0,0,.04);
+}
+/* Bar fill — glossy tube */
+.bar-fill {
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.60),
+    inset 0 -1px 0 rgba(0,0,0,.12),
+    0 3px 10px rgba(0,0,0,.15);
+}
+.bar-fill::before {
+  height: 52%;
+  background: rgba(255,255,255,.45);
+}
+
+/* BD avatar — deeper gradient gem */
+.bav {
+  background: linear-gradient(148deg, #ffccc2 0%, #ff8970 40%, #ff5537 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.65),
+    inset 2px 0 0 rgba(255,255,255,.35),
+    inset 0 -1.5px 0 rgba(0,0,0,.12),
+    0 4px 14px rgba(255,85,55,.38),
+    0 8px 22px rgba(255,85,55,.20);
+}
+
+/* Tags — 3D pill */
+.tag {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.75),
+    inset 0 -1px 0 rgba(0,0,0,.06),
+    0 2px 6px rgba(0,0,0,.07);
+}
+
+/* Search input — glassy inset */
+.srch {
+  background: rgba(255,255,255,.78);
+  box-shadow:
+    inset 0 3px 7px rgba(0,0,0,.07),
+    inset 0 1px 2px rgba(0,0,0,.05),
+    inset 0 0 0 1px rgba(255,255,255,.90);
+}
+
+/* Country fill bars — glossy */
+.cfill {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.55),
+    inset 0 -1px 0 rgba(0,0,0,.10),
+    0 2px 6px rgba(0,0,0,.12);
+}
+
+/* ═══════════════════════════════════════════════ MOBILE LAYOUT */
+@media(max-width:520px){
+
+  /* Wrapper padding */
+  .wrap{ padding:16px 12px 60px; }
+
+  /* ── Header ── */
+  header{ margin-bottom:16px; }
+  .lt{ font-size:.95rem; white-space:nowrap; }
+  .ls{ display:none; }
+  #ts{ display:none; }
+
+  /* ── Nav: horizontal scroll pill bar ── */
+  .nav{
+    padding:5px;
+    gap:4px;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    border-radius:14px;
+    margin-bottom:16px;
+  }
+  .nav::-webkit-scrollbar{ display:none; }
+  .tab{ padding:7px 12px; font-size:.72rem; white-space:nowrap; border-radius:10px; }
+  .nav-sep{ display:none; }
+  .ctabs{ flex-wrap:nowrap; }
+
+  /* ── KPI grid: 2×2 ── */
+  .kg{ grid-template-columns:1fr 1fr !important; gap:10px; margin-bottom:16px; }
+  .kc{ padding:18px 16px 14px; }
+  .ki{ width:34px; height:34px; border-radius:10px; font-size:.9rem; margin-bottom:10px; }
+  .kv{ font-size:2rem; }
+  .kh{ font-size:.65rem; }
+
+  /* ── Mid grid: stacked ── */
+  .mg{ grid-template-columns:1fr !important; gap:10px; margin-bottom:16px; }
+  .mc{ padding:18px 16px; }
+
+  /* ── Overview section label ── */
+  .sec{ font-size:.62rem; margin-bottom:12px; }
+
+  /* ── Country rows ── */
+  .crow{ padding:10px 8px; }
+  .cname{ font-size:.80rem; }
+
+  /* ── Table → Cards on mobile ── */
+  .tscr{ overflow-x:unset; }
+  .tscr table{ min-width:unset; width:100%; }
+  .tscr table, .tscr tbody, .tscr tr, .tscr td { display:block; width:100%; }
+  .tscr thead { display:none; } /* hide column headers */
+
+  /* Each row = a card */
+  .tscr tbody tr{
+    background:rgba(255,255,255,.60);
+    border-radius:14px;
+    margin:0 0 10px;
+    padding:12px 14px;
+    border:1.5px solid rgba(255,255,255,.88);
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 4px 14px rgba(255,85,55,.07);
+    position:relative;
+  }
+  .tscr tbody tr:hover td { background:transparent; }
+
+  /* Each cell: label left, value right */
+  .tscr tbody td{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:5px 0;
+    font-size:.78rem;
+    border-bottom:1px solid rgba(0,0,0,.04);
+    gap:10px;
+  }
+  .tscr tbody td:last-child{ border-bottom:none; padding-bottom:0; }
+  .tscr tbody td:first-child{ border-top:none; padding-top:0; }
+
+  /* Label from data-label */
+  .tscr tbody td::before{
+    content: attr(data-label);
+    font-size:.63rem;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    flex-shrink:0;
+    min-width:72px;
+  }
+  /* Merchant cell: stack name+email, no flex-row */
+  .tscr tbody td[data-label="Merchant"]{
+    flex-direction:column;
+    align-items:flex-start;
+    padding-bottom:8px;
+  }
+  .tscr tbody td[data-label="Merchant"]::before{ margin-bottom:3px; }
+  /* Message cell: stack */
+  .tscr tbody td[data-label="Message"]{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .tscr tbody td[data-label="Message"]::before{ margin-bottom:3px; }
+  .msg-cell{ font-size:.76rem; white-space:normal; max-height:60px; overflow:hidden; }
+
+  .th2{ padding:16px 14px 10px; flex-direction:column; align-items:flex-start; gap:10px; }
+  .srch{ width:100%; }
+
+  /* ── Pills (BD filter) ── */
+  .pills{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
+  .pills::-webkit-scrollbar{ display:none; }
+
+  /* ── tfoot pagination ── */
+  .tfoot{ padding:10px 14px; flex-wrap:wrap; gap:8px; font-size:.70rem; }
+
+  /* ── Country detail page ── */
+  .ctry-header{ padding:20px 16px 16px; gap:12px; }
+  .ctry-flag-big{ font-size:1.8rem; }
+  .ctry-title{ font-size:1.2rem; }
+  .ctry-subtitle{ font-size:.72rem; }
+
+  /* On mobile: reorder ctry-body — bars FIRST, then donuts below */
+  .ctry-body{
+    display:flex !important;
+    flex-direction:column !important;
+    grid-template-columns:unset !important;
+  }
+  /* Bar chart comes first */
+  .bar-chart{ order:1; padding:16px 14px; border-right:none !important; border-top:1px solid rgba(0,0,0,.06); }
+  /* Opens donut second */
+  .mini-donut-wrap:first-of-type{ order:2; border-right:none !important; border-top:1px solid rgba(0,0,0,.06); }
+  /* Replies donut third */
+  .mini-donut-wrap:last-of-type{ order:3; border-right:none !important; border-top:1px solid rgba(0,0,0,.06); }
+
+  /* Donuts: horizontal layout on mobile */
+  .mini-donut-wrap{
+    flex-direction:row !important;
+    align-items:flex-start;
+    gap:16px;
+    padding:16px 14px;
+  }
+  .mini-donut-svg{ width:100px; height:100px; flex-shrink:0; }
+  .mini-leg-row{ padding:2px 0; }
+  .mini-leg-name{ font-size:.72rem; }
+
+  /* Bar labels: shorter */
+  .bar-label{ width:120px; font-size:.72rem; }
+  .bar-label small{ font-size:.60rem; }
+  .bar-num{ font-size:.68rem; min-width:80px !important; }
+
+  /* ── All Countries donut ── */
+  #pg-allctry .gi > div { padding:12px !important; }
+  .donut-layout{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    padding:0 !important;
+    gap:20px;
+  }
+  .donut-wrap{
+    width:min(240px, 72vw) !important;
+    height:min(240px, 72vw) !important;
+    margin:0 auto;
+    display:block;
+  }
+  .donut-svg{ width:100% !important; height:100% !important; }
+  #donut-legend{ width:100%; padding:0 4px; }
+}
 </style>
 </head>
 <body>
@@ -975,12 +1326,12 @@ function renderTbl(){
   const tb=document.getElementById('tbody');
   if(!sl.length){tb.innerHTML='<tr><td colspan="6" class="empty">No matching records</td></tr>';return;}
   tb.innerHTML=sl.map(r=>{const m=FL[r.country]||{};return`<tr>
-    <td><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
-    <td><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></td>
-    <td style="font-weight:600">${esc(r.BD||'—')}</td>
-    <td style="font-size:.78rem;color:var(--sub)">${esc(r.category_name||'—')}</td>
-    <td><span class="badge">✓ ${esc(r.mail_status||'sent')}</span></td>
-    <td style="font-size:.78rem;color:var(--sub)">${esc(r.Stage||r.lead_status||'—')}</td>
+    <td data-label="Merchant"><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
+    <td data-label="Country"><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></td>
+    <td data-label="BD" style="font-weight:600">${esc(r.BD||'—')}</td>
+    <td data-label="Category" style="font-size:.78rem;color:var(--sub)">${esc(r.category_name||'—')}</td>
+    <td data-label="Status"><span class="badge">✓ ${esc(r.mail_status||'sent')}</span></td>
+    <td data-label="Stage" style="font-size:.78rem;color:var(--sub)">${esc(r.Stage||r.lead_status||'—')}</td>
   </tr>`;}).join('');
 }
 function renderPg(){
@@ -1067,14 +1418,14 @@ function renderTblRep(){
     const replyDate = r.replied_at ? new Date(r.replied_at).toLocaleString() : "Unknown Date";
     
     return`<tr>
-    <td><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
-    <td><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></td>
-    <td style="font-weight:600">${esc(r.BD||'—')}</td>
-    <td>
+    <td data-label="Merchant"><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
+    <td data-label="Country"><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></td>
+    <td data-label="BD" style="font-weight:600">${esc(r.BD||'—')}</td>
+    <td data-label="Message">
       <div class="msg-cell" title="${replyText}">${replyText}</div>
       <div class="msg-date">${replyDate}</div>
     </td>
-    <td><span class="badge blue">💬 Replied</span></td>
+    <td data-label="Status"><span class="badge blue">💬 Replied</span></td>
   </tr>`;}).join('');
 }
 
@@ -1325,6 +1676,7 @@ function renderCountryDetail(code){
    TILT + SPECULAR + SHIMMER (ONLY ON OVERVIEW .tilt CARDS)
 ══════════════════════════════════════════════════════════ */
 function initTilt(){
+  if(window.matchMedia('(hover:none)').matches) return; // disable on touch
   document.querySelectorAll('.tilt').forEach(card=>{
     const sp=card.querySelector('.sp');
     let shimmered=false;
@@ -1335,8 +1687,8 @@ function initTilt(){
     card.addEventListener('mousemove',e=>{
       const r=card.getBoundingClientRect();
       const x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
-      card.style.transform=`perspective(900px) rotateX(${(y-.5)*-12}deg) rotateY(${(x-.5)*12}deg) scale(1.018) translateZ(6px)`;
-      card.style.boxShadow=`inset 0 1.5px 0 rgba(255,255,255,.95),inset 1.5px 0 0 rgba(255,255,255,.70),0 4px 10px rgba(255,85,55,.08),0 16px 36px rgba(255,85,55,.14),0 36px 64px rgba(255,85,55,.10),0 64px 96px rgba(255,85,55,.06)`;
+      card.style.transform=`perspective(700px) rotateX(${(y-.5)*-18}deg) rotateY(${(x-.5)*18}deg) scale(1.026) translateZ(10px)`;
+      card.style.boxShadow=`inset 0 2px 0 rgba(255,255,255,1),inset 2px 0 0 rgba(255,255,255,.85),0 8px 18px rgba(255,85,55,.14),0 22px 44px rgba(255,85,55,.22),0 44px 80px rgba(255,85,55,.16),0 80px 120px rgba(255,85,55,.08),0 0 0 1.5px rgba(255,255,255,.70)`;
       if(sp){sp.style.left=(x*100)+'%';sp.style.top=(y*100)+'%';}
     });
     card.addEventListener('mouseleave',()=>{card.style.transform='';card.style.boxShadow='';if(sp)sp.style.opacity='0';});
