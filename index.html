@@ -412,7 +412,7 @@ tbody tr:last-child td{border-bottom:none}
 </head>
 <body>
 
-<div id="loading"><div class="spin"></div><div class="ll">Loading dashboard…</div></div>
+<div id="loading" style="display:none"><div class="spin"></div><div class="ll">Loading dashboard…</div></div>
 
 <div class="scene"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
 
@@ -420,7 +420,6 @@ tbody tr:last-child td{border-bottom:none}
 
   <header>
     <div class="logo">
-      <div class="gem"><span>FN</span></div>
       <div><div class="lt">FUNNOW Group</div><div class="ls">Mail Outreach · Click Dashboard</div></div>
     </div>
     <div class="hr">
@@ -608,7 +607,7 @@ let repliedAll=[], repliedFil=[], skr='replied_at', sur=false, pgr=1;
    FETCH
 ══════════════════════════════════════════════════════════ */
 async function loadData(){
-  document.getElementById('loading').style.display='flex';
+  // document.getElementById('loading').style.display='flex'; // removed splash
   document.getElementById('app').style.display='none';
   document.getElementById('err-banner').style.display='none';
   try{
@@ -1095,7 +1094,7 @@ function goPgRep(p){const t=Math.ceil(repliedFil.length/PS);if(p<1||p>t)return;p
 /* ══════════════════════════════════════════════════════════
    SVG DONUT CHART 
 ══════════════════════════════════════════════════════════ */
-function buildDonutSVG(svgId, segs, cx, cy, R, W, showCenter){
+function buildDonutSVG(svgId, segs, cx, cy, R, W, showCenter, centerOverride){
   const svg = document.getElementById(svgId);
   if(!svg) return;
   const ns = 'http://www.w3.org/2000/svg';
@@ -1145,7 +1144,7 @@ function buildDonutSVG(svgId, segs, cx, cy, R, W, showCenter){
     t1.setAttribute('x',cx);t1.setAttribute('y',cy-10);t1.setAttribute('text-anchor','middle');
     t1.setAttribute('font-size',R>80?30:18);t1.setAttribute('font-weight','800');t1.setAttribute('fill','#0f172a');
     t1.setAttribute('font-family','Outfit');
-    t1.textContent = String(rawTotal); 
+    t1.textContent = String(centerOverride !== undefined && centerOverride !== null ? centerOverride : rawTotal);
     svg.appendChild(t1);
     
     const t2 = document.createElementNS(ns,'text');
@@ -1243,14 +1242,14 @@ function renderCountryDetail(code){
   const miniSegsOpens = countryTabs
     .map((t,i)=>({label:t.sheetName, v:sheetCnt[t.sheetName]||0, color:SHEET_PALETTE[i%SHEET_PALETTE.length]}))
     .filter(s=>s.v>0);
-  buildDonutSVG('donut-mini-opens', miniSegsOpens.length ? miniSegsOpens : [{label:'No clicks',v:1,color:'#e2e8f0'}], 90, 90, 65, 30, true);
+  buildDonutSVG('donut-mini-opens',   miniSegsOpens.length   ? miniSegsOpens   : [{label:'No clicks',  v:1,color:'#e2e8f0'}], 90, 90, 65, 30, true, miniSegsOpens.length   ? null : 0);
   setTimeout(()=>animateDonut('donut-mini-opens'), 120);
 
   /* ── 2) Replies Donut ── */
   const miniSegsReplies = countryTabs
     .map((t,i)=>({label:t.sheetName, v:sheetRepCnt[t.sheetName]||0, color:SHEET_PALETTE[i%SHEET_PALETTE.length]}))
     .filter(s=>s.v>0);
-  buildDonutSVG('donut-mini-replies', miniSegsReplies.length ? miniSegsReplies : [{label:'No replies',v:1,color:'#e2e8f0'}], 90, 90, 65, 30, true);
+  buildDonutSVG('donut-mini-replies', miniSegsReplies.length ? miniSegsReplies : [{label:'No replies',v:1,color:'#e2e8f0'}], 90, 90, 65, 30, true, miniSegsReplies.length ? null : 0);
   setTimeout(()=>animateDonut('donut-mini-replies'), 120);
 
   /* ── Legend Generator ── */
