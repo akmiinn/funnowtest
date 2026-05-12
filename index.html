@@ -159,18 +159,17 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .mc{padding:26px}
 
 /* Country / BD rows (Hover Effects ON for Overview) */
-.crow{display:flex;align-items:center;gap:12px;padding:10px 13px;border-radius:14px;
+.crow{display:flex;align-items:flex-start;gap:12px;padding:14px 13px;border-radius:14px;
   cursor:pointer;transition:background .14s,transform .14s;margin-bottom:5px}
 .crow:hover{background:rgba(255,255,255,.55);transform:translateX(4px)}
-.cflag{font-size:1.4rem;width:30px;text-align:center;flex-shrink:0}
+.cflag{font-size:1.4rem;width:30px;text-align:center;flex-shrink:0; margin-top:2px;}
 .cname{font-size:.85rem;font-weight:600}
-.ccnt{font-size:.71rem;color:var(--muted);margin-top:1px}
 .ctrack{flex:2;height:8px;background:rgba(0,0,0,.055);border-radius:99px;overflow:hidden;
   box-shadow:inset 0 2px 3px rgba(0,0,0,.09)}
 .cfill{height:100%;border-radius:99px;transition:width 1.3s cubic-bezier(.4,0,.2,1);width:0;
   position:relative;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 1px 4px rgba(0,0,0,.12)}
 .cfill::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,.35);border-radius:inherit}
-.cpct{font-size:.76rem;font-weight:700;font-family:var(--fm);width:38px;text-align:right}
+.cpct{font-size:.76rem;font-weight:700;font-family:var(--fm);width:32px;text-align:right}
 
 .brow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;
   cursor:pointer;transition:background .14s,transform .14s;margin-bottom:5px}
@@ -225,13 +224,23 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 
 /* ═══════════════════════════════════════════════ TABLE */
 .tc{overflow:hidden;padding:0}
-.th2{display:flex;align-items:center;justify-content:space-between;padding:24px 26px 16px}
+.th2{display:flex;align-items:center;justify-content:space-between;padding:24px 26px 12px}
 .srch{background:rgba(255,255,255,.70);border:1.5px solid rgba(255,255,255,.88);
   border-radius:13px;padding:9px 15px;font-family:var(--f);font-size:.78rem;color:var(--text);
   outline:none;width:240px;box-shadow:inset 0 2px 4px rgba(0,0,0,.055),inset 0 1px 0 rgba(255,255,255,.8);
   transition:all .2s}
 .srch:focus{background:rgba(255,255,255,.92);box-shadow:inset 0 2px 4px rgba(0,0,0,.055),0 0 0 3px rgba(255,85,55,.11)}
 .srch::placeholder{color:var(--muted)}
+
+/* TABLE FILTERS */
+.tbl-filters { display:flex; gap:10px; padding:0 26px 14px; flex-wrap:wrap; }
+.tbl-filters select {
+  background: rgba(255,255,255,0.7); border: 1px solid rgba(0,0,0,0.08); border-radius: 8px;
+  padding: 6px 12px; font-family: var(--f); font-size: 0.75rem; color: var(--text); outline: none; cursor: pointer;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.02); transition: all .2s;
+}
+.tbl-filters select:hover { background: rgba(255,255,255,0.9); }
+
 .tscr{overflow-x:auto}
 table{width:100%;border-collapse:collapse;min-width:680px}
 thead th{font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
@@ -342,11 +351,11 @@ tbody tr:last-child td{border-bottom:none}
 .bar-chart{padding:22px 28px 22px 20px}
 .bar-sec{font-size:.67rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:var(--muted);margin-bottom:18px}
-.bar-row-static{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.bar-row-static{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
 .bar-label{
   width:200px;flex-shrink:0;font-size:.80rem;font-weight:500;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  color:var(--text);
+  color:var(--text); margin-top:5px;
 }
 .bar-label small{display:block;font-size:.66rem;color:var(--muted);margin-top:1px;font-weight:400}
 .bar-track{
@@ -366,8 +375,7 @@ tbody tr:last-child td{border-bottom:none}
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
   animation:barShim 2.5s ease-in-out infinite;animation-delay:var(--d,0s)}
 @keyframes barShim{0%,100%{left:-60%}50%{left:110%}}
-.bar-num{font-size:.82rem;font-weight:700;font-family:var(--fm);min-width:28px;text-align:right;color:var(--text)}
-.bar-pct{font-size:.70rem;color:var(--muted);font-family:var(--fm);min-width:38px;text-align:right}
+.bar-num{font-size:.82rem;font-weight:700;font-family:var(--fm);min-width:45px;text-align:right;color:var(--text)}
 
 /* ═══════════════════════════════════════════════ ERR / LOADING */
 .err{background:rgba(225,29,72,.07);border:1px solid rgba(225,29,72,.2);
@@ -438,15 +446,16 @@ tbody tr:last-child td{border-bottom:none}
         <div class="kh">active sheets</div>
       </div></div>
       <div class="g kc tilt"><div class="sp"></div><div class="gi">
-        <div class="ki" style="background:linear-gradient(150deg,#fef3c7,#d97706)">🏆</div>
-        <div class="kl">Top BD</div>
-        <div class="kv" style="font-size:1.5rem;padding-top:4px;color:var(--amber)" id="k-bd">—</div>
-        <div class="kh" id="k-bd-sub"></div>
+        <div class="ki" style="background:linear-gradient(150deg,#fef3c7,#d97706)">💬</div>
+        <div class="kl">Total Replies</div>
+        <div class="kv" style="color:var(--amber)" id="k-rep">0</div>
+        <div class="kh" id="k-rep-sub">from merchants</div>
       </div></div>
     </div>
+    
     <div class="mg">
       <div class="g mc tilt"><div class="sp"></div><div class="gi">
-        <div class="sec">Opens by Country</div>
+        <div class="sec">Opens & Replies by Country</div>
         <div id="ov-ctry"><p class="empty">No data</p></div>
       </div></div>
       <div class="g mc tilt"><div class="sp"></div><div class="gi">
@@ -454,15 +463,23 @@ tbody tr:last-child td{border-bottom:none}
         <div id="ov-bd"><p class="empty">No data</p></div>
       </div></div>
     </div>
+    
     <div class="g campc tilt"><div class="sp"></div><div class="gi">
       <div class="sec">Campaign Breakdown</div>
       <div class="ch" id="ov-camps-hdr"><span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Opens</span><span style="text-align:center">Share</span></div>
       <div id="ov-camps"><p class="empty">No data</p></div>
     </div></div>
+    
     <div class="g tc"><div class="sp"></div><div class="gi">
       <div class="th2">
         <div class="sec" style="margin-bottom:0">Merchant Opens</div>
         <input class="srch" type="text" placeholder="🔍 Search name, email…" id="srch" oninput="doFil()"/>
+      </div>
+      <div class="tbl-filters">
+        <select id="sel-country" onchange="doFil()"><option value="">All Countries</option></select>
+        <select id="sel-bd" onchange="doFil()"><option value="">All BDs</option></select>
+        <select id="sel-mail" onchange="doFil()"><option value="">All Mail Status</option></select>
+        <select id="sel-stage" onchange="doFil()"><option value="">All Stages</option></select>
       </div>
       <div class="pills" id="pills"></div>
       <div class="tscr"><table>
@@ -488,6 +505,12 @@ tbody tr:last-child td{border-bottom:none}
       <div class="th2">
         <div class="sec" style="margin-bottom:0">Inbox: Email Replies</div>
         <input class="srch" type="text" placeholder="🔍 Search replies, names…" id="srch-rep" oninput="doFilRep()"/>
+      </div>
+      <div class="tbl-filters">
+        <select id="sel-country-rep" onchange="doFilRep()"><option value="">All Countries</option></select>
+        <select id="sel-bd-rep" onchange="doFilRep()"><option value="">All BDs</option></select>
+        <select id="sel-mail-rep" onchange="doFilRep()"><option value="">All Mail Status</option></select>
+        <select id="sel-stage-rep" onchange="doFilRep()"><option value="">All Stages</option></select>
       </div>
       <div class="tscr"><table>
         <thead><tr>
@@ -536,7 +559,7 @@ tbody tr:last-child td{border-bottom:none}
             <div id="mini-legend" style="width:100%;display:flex;flex-direction:column;gap:8px"></div>
           </div>
           <div class="bar-chart">
-            <div class="bar-sec">Campaign Opens</div>
+            <div class="bar-sec">Campaign Breakdown (Opens vs Replies)</div>
             <div id="cd-bars"></div>
           </div>
         </div>
@@ -605,7 +628,7 @@ async function loadData(){
       return r;
     });
     
-    // Dataset 1: Standard Clicks (NOW INCLUDES REPLIES)
+    // Dataset 1: Standard Clicks (INCLUDES REPLIES)
     all = d.filter(r => {
       const isClicked = Number(r.clicked) === 1;
       const isReplied = r.mail_status && r.mail_status.toLowerCase().includes('replied');
@@ -615,6 +638,7 @@ async function loadData(){
     // Dataset 2: Email Replies ONLY
     repliedAll = d.filter(r => r.mail_status && r.mail_status.toLowerCase().includes('replied'));
     
+    populateFilters();
     renderAll();
     document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString();
   }catch(e){
@@ -634,13 +658,47 @@ async function loadData(){
 function showErr(msg){ const b=document.getElementById('err-banner');document.getElementById('err-msg').textContent=msg;b.style.display='flex'; }
 
 /* ══════════════════════════════════════════════════════════
+   POPULATE DROPDOWNS
+══════════════════════════════════════════════════════════ */
+function populateFilters() {
+  const buildOpts = (arr, id) => {
+    const sel = document.getElementById(id);
+    const sel2 = document.getElementById(id+'-rep');
+    
+    const cleanArr = arr.map(x => (x === undefined || x === null || String(x).trim() === '') ? 'No Value' : String(x).trim());
+    const unique = [...new Set(cleanArr)].sort();
+    
+    const opts = unique.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+    
+    if(sel) sel.innerHTML = sel.options[0].outerHTML + opts;
+    if(sel2) sel2.innerHTML = sel2.options[0].outerHTML + opts;
+  };
+  
+  const ctryList = all.map(r=>r.country);
+  const bdList = all.map(r=>r.BD);
+  const mailList = all.map(r=>r.mail_status);
+  const stageList = all.map(r=>r.Stage || r.lead_status);
+  
+  buildOpts(ctryList, 'sel-country');
+  buildOpts(bdList, 'sel-bd');
+  buildOpts(mailList, 'sel-mail');
+  buildOpts(stageList, 'sel-stage');
+}
+
+function matchDropdown(recordVal, dropVal) {
+  if (!dropVal) return true; // not filtering
+  const rV = (recordVal === undefined || recordVal === null || String(recordVal).trim() === '') ? 'No Value' : String(recordVal).trim();
+  return rV === dropVal;
+}
+
+/* ══════════════════════════════════════════════════════════
    RENDER ALL
 ══════════════════════════════════════════════════════════ */
 function renderAll(){
   buildCountryTabs();
   renderKPIs(); renderOvCtry(); renderOvBD(); renderOvCamps(); 
   doFil(); 
-  doFilRep(); // Render Replies Table
+  doFilRep(); 
   renderDonutMain();
   goPage(curPage, curCtry, false);
 }
@@ -650,7 +708,6 @@ function renderAll(){
 ══════════════════════════════════════════════════════════ */
 function goPage(page, ctry=null, animate=true){
   curPage=page; curCtry=ctry;
-  // include new replies page in array
   ['overview','replies','allctry','country'].forEach(p=>document.getElementById('pg-'+p).style.display='none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
 
@@ -693,35 +750,59 @@ function buildCountryTabs(){
 }
 
 /* ══════════════════════════════════════════════════════════
-   OVERVIEW RENDERS (CLICKS)
+   OVERVIEW RENDERS (CLICKS & REPLIES)
 ══════════════════════════════════════════════════════════ */
 function renderKPIs(){
   const t = all.length;
   const c = window.allTabs && window.allTabs.length ? new Set(window.allTabs.map(t=>t.country)).size : new Set(all.map(r=>r.country)).size;
   const s = window.allTabs && window.allTabs.length ? window.allTabs.length : new Set(all.map(r=>r.sheetName)).size;
   
-  const bc={};all.forEach(r=>{if(r.BD)bc[r.BD]=(bc[r.BD]||0)+1;});
-  const tb=Object.entries(bc).sort((a,b)=>b[1]-a[1])[0];
   num('k-total',t);num('k-ctry',c);num('k-camp',s);
-  document.getElementById('k-bd').textContent=tb?tb[0]:'—';
-  document.getElementById('k-bd-sub').textContent=tb?`${tb[1]} opens`:'';
+  num('k-rep', repliedAll.length); 
 }
 
 function renderOvCtry(){
-  const cnt={};all.forEach(r=>{cnt[r.country]=(cnt[r.country]||0)+1;});
-  const tot=all.length||1,rows=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+  const cnt={}; const rcnt={};
+  all.forEach(r=>{cnt[r.country]=(cnt[r.country]||0)+1;});
+  repliedAll.forEach(r=>{rcnt[r.country]=(rcnt[r.country]||0)+1;});
+  
+  const tot=all.length||1;
+  const rows=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
   const el=document.getElementById('ov-ctry');
   if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
+  
+  // ✅ DOUBLE BAR CHART FOR OVERVIEW (OPENS & REPLIES)
   el.innerHTML=rows.map(([code,n])=>{
     const m=FL[code]||{e:'🌐',n:code,c:'#64748b',grad:'#64748b'};
-    return`<div class="crow" onclick="goPage('country','${code}')">
-      <div class="cflag">${m.e}</div>
-      <div style="min-width:78px"><div class="cname">${m.n}</div><div class="ccnt">${n} opens</div></div>
-      <div class="ctrack"><div class="cfill" id="cf-${code}" style="background:${m.grad}"></div></div>
-      <div class="cpct" style="color:${m.c}">${Math.round(n/tot*100)}%</div>
+    const repN = rcnt[code]||0;
+    
+    return`<div class="crow" onclick="goPage('country','${code}')" style="align-items:flex-start; padding:14px 13px;">
+      <div class="cflag" style="margin-top:2px;">${m.e}</div>
+      <div style="flex:1">
+        <div class="cname" style="margin-bottom:8px;">${m.n}</div>
+        
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="font-size:0.65rem; font-weight:700; width:45px; color:var(--muted)">OPENS</span>
+          <div class="ctrack"><div class="cfill" id="cf-o-${code}" style="background:${m.grad}"></div></div>
+          <span class="cpct" style="color:${m.c}">${n}</span>
+        </div>
+        
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:0.65rem; font-weight:700; width:45px; color:var(--muted)">REPLIES</span>
+          <div class="ctrack" style="background:rgba(0,0,0,0.03)"><div class="cfill" id="cf-r-${code}" style="background:linear-gradient(90deg,#818cf8,#4f46e5)"></div></div>
+          <span class="cpct" style="color:#4f46e5">${repN}</span>
+        </div>
+      </div>
     </div>`;
   }).join('');
-  rAF(()=>rows.forEach(([code,n])=>{const b=document.getElementById('cf-'+code);if(b)b.style.width=Math.round(n/tot*100)+'%';}));
+  
+  rAF(()=>rows.forEach(([code,n])=>{
+    const b = document.getElementById('cf-o-'+code);
+    const rB = document.getElementById('cf-r-'+code);
+    const repN = rcnt[code]||0;
+    if(b) b.style.width=Math.round(n/tot*100)+'%';
+    if(rB) rB.style.width=Math.round(repN/tot*100)+'%';
+  }));
 }
 
 function renderOvBD(){
@@ -803,32 +884,35 @@ function renderOvCamps(){
    MULTI-SELECT TABLE FILTERS
 ══════════════════════════════════════════════════════════ */
 function toggleF(k, v) {
-  if (activeFilters[k].has(v)) {
-    activeFilters[k].delete(v);
-  } else {
-    activeFilters[k].add(v);
-  }
-  pg = 1; 
-  pills(); 
-  doFil();
-  renderOvBD(); 
+  if (activeFilters[k].has(v)) activeFilters[k].delete(v);
+  else activeFilters[k].add(v);
+  pg = 1; pgr = 1; pills(); doFil(); doFilRep(); renderOvBD(); 
 }
 
 function rmF(k, v) {
   activeFilters[k].delete(v);
-  pg = 1; 
-  pills(); 
-  doFil();
-  renderOvBD();
+  pg = 1; pgr = 1; pills(); doFil(); doFilRep(); renderOvBD();
 }
 
 function doFil(){
   pg=1;
   const q=(document.getElementById('srch').value||'').toLowerCase();
   
+  const cVal = document.getElementById('sel-country').value;
+  const bVal = document.getElementById('sel-bd').value;
+  const mVal = document.getElementById('sel-mail').value;
+  const sVal = document.getElementById('sel-stage').value;
+  
   fil=all.filter(r=>{
+    // Clickable Filters
     if (activeFilters.country.size > 0 && !activeFilters.country.has(r.country)) return false;
     if (activeFilters.BD.size > 0 && !activeFilters.BD.has(r.BD)) return false;
+    
+    // Dropdown Filters
+    if (!matchDropdown(r.country, cVal)) return false;
+    if (!matchDropdown(r.BD, bVal)) return false;
+    if (!matchDropdown(r.mail_status, mVal)) return false;
+    if (!matchDropdown(r.Stage || r.lead_status, sVal)) return false;
     
     if(q&&!`${r.title} ${r.email} ${r.BD} ${r.category_name} ${r.country}`.toLowerCase().includes(q)) return false;
     return true;
@@ -845,9 +929,13 @@ function srt(k){
   if(si){si.textContent=su?'↑':'↓';si.closest('th').classList.add('ac');}
   doFil();
 }
+
 function renderTbl(){
   const s=(pg-1)*PS,sl=fil.slice(s,s+PS);
-  document.getElementById('rcount').textContent=`${fil.length} merchant${fil.length!==1?'s':''}`;
+  
+  // ✅ UPDATED COUNT WITH FILTER VS TOTAL
+  document.getElementById('rcount').innerHTML=`${fil.length} merchant${fil.length!==1?'s':''} <small style="color:var(--muted); margin-left:6px;">(${all.length} total)</small>`;
+  
   const tb=document.getElementById('tbody');
   if(!sl.length){tb.innerHTML='<tr><td colspan="6" class="empty">No matching records</td></tr>';return;}
   tb.innerHTML=sl.map(r=>{const m=FL[r.country]||{};return`<tr>
@@ -890,7 +978,22 @@ function doFilRep(){
   pgr=1;
   const q=(document.getElementById('srch-rep').value||'').toLowerCase();
   
+  const cVal = document.getElementById('sel-country-rep').value;
+  const bVal = document.getElementById('sel-bd-rep').value;
+  const mVal = document.getElementById('sel-mail-rep').value;
+  const sVal = document.getElementById('sel-stage-rep').value;
+  
   repliedFil=repliedAll.filter(r=>{
+    // Clickable Filters
+    if (activeFilters.country.size > 0 && !activeFilters.country.has(r.country)) return false;
+    if (activeFilters.BD.size > 0 && !activeFilters.BD.has(r.BD)) return false;
+
+    // Dropdown Filters
+    if (!matchDropdown(r.country, cVal)) return false;
+    if (!matchDropdown(r.BD, bVal)) return false;
+    if (!matchDropdown(r.mail_status, mVal)) return false;
+    if (!matchDropdown(r.Stage || r.lead_status, sVal)) return false;
+    
     if(q&&!`${r.title} ${r.BD} ${r.country} ${r.mail_reply}`.toLowerCase().includes(q)) return false;
     return true;
   });
@@ -915,7 +1018,10 @@ function srtRep(k){
 
 function renderTblRep(){
   const s=(pgr-1)*PS, sl=repliedFil.slice(s,s+PS);
-  document.getElementById('rcount-rep').textContent=`${repliedFil.length} repl${repliedFil.length===1?'y':'ies'}`;
+  
+  // ✅ UPDATED COUNT WITH FILTER VS TOTAL
+  document.getElementById('rcount-rep').innerHTML=`${repliedFil.length} repl${repliedFil.length===1?'y':'ies'} <small style="color:var(--muted); margin-left:6px;">(${repliedAll.length} total)</small>`;
+  
   const tb=document.getElementById('tbody-rep');
   if(!sl.length){tb.innerHTML='<tr><td colspan="5" class="empty">No replies found</td></tr>';return;}
   
@@ -1075,7 +1181,14 @@ function renderCountryDetail(code){
   document.getElementById('cd-name').textContent  = m.n;
 
   const sheetCnt = {};
-  rows.forEach(r=>{const k=r.sheetName||'Unknown';sheetCnt[k]=(sheetCnt[k]||0)+1;});
+  const sheetRepCnt = {};
+  rows.forEach(r=>{
+    const k=r.sheetName||'Unknown';
+    sheetCnt[k]=(sheetCnt[k]||0)+1;
+    if (r.mail_status && r.mail_status.toLowerCase().includes('replied')) {
+       sheetRepCnt[k] = (sheetRepCnt[k]||0)+1;
+    }
+  });
   const sheetRows = Object.entries(sheetCnt).sort((a,b)=>b[1]-a[1]);
   const campCount = sheetRows.length;
 
@@ -1099,31 +1212,49 @@ function renderCountryDetail(code){
     </div>`;
   }).join('');
 
+  // ✅ DOUBLE BAR CHART FOR COUNTRY CAMPAIGNS (OPENS & REPLIES)
   const barsEl = document.getElementById('cd-bars');
   barsEl.innerHTML = sheetRows.map(([nm,n],i)=>{
+    const repN = sheetRepCnt[nm] || 0;
     const clean = nm.replace(/^\(Final\)/,'').trim();
     const dm    = clean.match(/(\d{4}-\d{2}-\d{2})$/);
     const dt    = dm?dm[1]:'';
     const label = clean.replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
     const color = SHEET_PALETTE[i % SHEET_PALETTE.length];
-    const pct   = Math.round(n/total*100) || 0;
     const delay = (i*0.07).toFixed(2)+'s';
-    return`<div class="bar-row-static">
-      <div class="bar-label">${esc(label)}${dt?`<small>${dt}</small>`:''}</div>
-      <div class="bar-track">
-        <div class="bar-fill" id="bar-${code}-${i}"
-          style="background:${color};width:0;--d:${delay}"></div>
+    
+    return`<div class="bar-row-static" style="align-items:flex-start;">
+      <div class="bar-label" style="margin-top:5px;">${esc(label)}${dt?`<small>${dt}</small>`:''}</div>
+      <div style="flex:1;">
+        
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:6px;">
+           <div class="bar-track" style="height:22px;">
+             <div class="bar-fill" id="bar-${code}-${i}"
+               style="background:${color};width:0;--d:${delay}"></div>
+           </div>
+           <div class="bar-num" style="color:${color}; font-size:.75rem;">${n} opens</div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:14px;">
+           <div class="bar-track" style="height:14px; background:rgba(0,0,0,0.03);">
+             <div class="bar-fill" id="bar-rep-${code}-${i}"
+               style="background:linear-gradient(90deg,#818cf8,#4f46e5);width:0;--d:${delay}"></div>
+           </div>
+           <div class="bar-num" style="color:#4f46e5; font-size:.70rem;">${repN} replies</div>
+        </div>
+
       </div>
-      <div class="bar-num" style="color:${color}">${n}</div>
-      <div class="bar-pct">${pct}%</div>
     </div>`;
   }).join('');
 
   const maxN = sheetRows[0]?.[1]||1;
   setTimeout(()=>{
     sheetRows.forEach(([nm,n],i)=>{
+      const repN = sheetRepCnt[nm] || 0;
       const b=document.getElementById(`bar-${code}-${i}`);
+      const rB=document.getElementById(`bar-rep-${code}-${i}`);
       if(b) b.style.width=Math.round(n/maxN*100)+'%';
+      if(rB) rB.style.width=Math.round(repN/maxN*100)+'%'; 
     });
   }, 60);
 }
