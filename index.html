@@ -882,7 +882,6 @@ function renderOvCamps(){
           tMerch += (sheetTotals[sheet] || 0);
       });
       // Fallback: If n8n count fails, at least use the opens as minimum merchants
-      if (tMerch < ctryStats[c].opens) tMerch = ctryStats[c].opens;
       ctryStats[c].merchants = tMerch;
   });
 
@@ -891,7 +890,9 @@ function renderOvCamps(){
   
   el.innerHTML = rows.map(([ctry, stats])=>{
     const m = FL[ctry] || { n: ctry };
-    const avgRate = stats.merchants ? Math.round((stats.opens / stats.merchants) * 100) : 0;
+    const avgRate = (stats.merchants && stats.merchants >= stats.opens)
+      ? Math.round((stats.opens / stats.merchants) * 100) + '%'
+      : '—';
     
     return `<div class="cr" style="grid-template-columns:1fr 90px 90px 80px 80px;">
       <div style="display:flex;align-items:center;gap:10px;">
@@ -899,9 +900,9 @@ function renderOvCamps(){
         <span style="font-weight:600;font-size:.85rem">${m.n}</span>
       </div>
       <div style="text-align:center;font-weight:600;color:var(--text)">${stats.sheets.size}</div>
-      <div style="text-align:center;font-weight:600;color:var(--muted)">${stats.merchants}</div>
+      <div style="text-align:center;font-weight:600;color:var(--muted)">${stats.merchants || '—'}</div>
       <div style="text-align:center;font-family:var(--fm);font-weight:700;color:var(--brand)">${stats.opens}</div>
-      <div style="text-align:center;font-size:.75rem;color:var(--muted);font-family:var(--fm)">${avgRate}%</div>
+      <div style="text-align:center;font-size:.75rem;color:var(--muted);font-family:var(--fm)">${avgRate}</div>
     </div>`;
   }).join('');
 }
@@ -1264,7 +1265,7 @@ function renderCountryDetail(code){
     const repN = sheetRepCnt[nm] || 0;
     
     const tabObj = window.allTabs.find(t => t.sheetName === nm);
-    const totalLeads = tabObj ? tabObj.totalRows : n; 
+    const totalLeads = (tabObj && tabObj.totalRows) ? tabObj.totalRows : null;
     
     const openPct = totalLeads ? Math.round((n/totalLeads)*100) : 0;
     const repPct = totalLeads ? Math.round((repN/totalLeads)*100) : 0;
@@ -1278,7 +1279,7 @@ function renderCountryDetail(code){
     
     return`<div class="bar-row-static" style="align-items:flex-start;">
       <div class="bar-label" style="margin-top:5px;">${esc(label)}${dt?`<small>${dt}</small>`:''}
-        <div style="font-size:0.68rem; font-weight:600; color:var(--text); margin-top:5px;">👥 ${totalLeads} Total Merchants</div>
+        <div style="font-size:0.68rem; font-weight:600; color:var(--text); margin-top:5px;">👥 ${totalLeads ?? '—'} Total Merchants</div>
       </div>
       <div style="flex:1;">
         
