@@ -1056,7 +1056,7 @@ async function loadData(){
     
     populateFilters();
     renderAll();
-    document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString();
+    const tsEl = document.getElementById('ts'); if(tsEl) tsEl.textContent='Updated '+new Date().toLocaleTimeString();
   }catch(e){
     showErr(`${e.message}. Enable CORS in n8n webhook settings (Access-Control-Allow-Origin: *).`);
     all=[]; repliedAll=[]; renderAll();
