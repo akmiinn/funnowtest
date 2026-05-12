@@ -875,6 +875,35 @@ tbody tr:last-child td{border-bottom:none}
   .sent-sheet-row{grid-template-columns:1fr 55px 60px 60px;gap:8px;padding:12px}
   .sent-sheet-hdr{grid-template-columns:1fr 55px 60px 60px;gap:8px;padding:0 12px 8px}
 }
+
+/* ═══════════════════════════════════════════════ EMAIL TEMPLATE */
+.email-card{background:rgba(255,255,255,.72);border:1.5px solid rgba(255,255,255,.90);
+  border-radius:16px;overflow:hidden;margin-bottom:14px;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 4px 16px rgba(0,0,0,.06)}
+.email-header{padding:14px 20px;border-bottom:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.40)}
+.email-header-row{display:flex;align-items:flex-start;gap:10px;font-size:.78rem;
+  padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04)}
+.email-header-row:last-child{border-bottom:none}
+.email-hdr-lbl{color:var(--muted);font-weight:600;font-size:.68rem;letter-spacing:.06em;
+  text-transform:uppercase;min-width:58px;padding-top:1px}
+.email-hdr-val{color:var(--text);flex:1;word-break:break-word}
+.email-subject{font-weight:700;font-size:.88rem;color:var(--text)}
+.email-body{padding:18px 20px;font-size:.82rem;color:var(--sub);line-height:1.7;
+  white-space:pre-wrap;word-break:break-word;max-height:340px;overflow-y:auto}
+.reply-card{background:rgba(79,70,229,.04);border:1.5px solid rgba(79,70,229,.15);
+  border-radius:16px;overflow:hidden;margin-bottom:14px;
+  box-shadow:0 4px 16px rgba(79,70,229,.06)}
+.reply-header{padding:12px 20px;border-bottom:1px solid rgba(79,70,229,.10);
+  background:rgba(79,70,229,.06);display:flex;align-items:center;justify-content:space-between}
+.reply-body{padding:16px 20px;font-size:.82rem;color:var(--sub);line-height:1.7;
+  white-space:pre-wrap;word-break:break-word}
+.merch-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:10px;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.06)}
+.merch-info-item{display:flex;flex-direction:column;gap:3px}
+.merch-info-lbl{font-size:.60rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted)}
+.merch-info-val{font-size:.82rem;font-weight:600;color:var(--text)}
 </style>
 </head>
 <body>
@@ -970,6 +999,7 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-replies" style="display:none">
+    <div id="reply-view-list">
     <div class="g tc"><div class="gi">
       <div class="th2">
         <div class="sec" style="margin-bottom:0">Inbox: Email Replies</div>
@@ -990,12 +1020,15 @@ tbody tr:last-child td{border-bottom:none}
         <div class="pr" id="pg-rep"></div>
       </div>
     </div></div>
+    </div>
+    <div id="reply-view-merchant" style="display:none"></div>
   </div>
 
   <div id="pg-sent" style="display:none">
     <div id="sent-view-overview"></div>
-    <div id="sent-view-country" style="display:none"></div>
-    <div id="sent-view-sheet"   style="display:none"></div>
+    <div id="sent-view-country"  style="display:none"></div>
+    <div id="sent-view-sheet"    style="display:none"></div>
+    <div id="sent-view-merchant" style="display:none"></div>
   </div>
 
   <div id="pg-allctry" style="display:none">
@@ -1518,9 +1551,10 @@ let sentLevel='overview', sentCtry=null, sentSheet=null, sentPg=1;
 
 function goSent(level, ctry, sheet){
   sentLevel=level; sentCtry=ctry||null; sentSheet=sheet||null; sentPg=1;
-  document.getElementById('sent-view-overview').style.display = level==='overview'?'block':'none';
-  document.getElementById('sent-view-country').style.display  = level==='country' ?'block':'none';
-  document.getElementById('sent-view-sheet').style.display    = level==='sheet'   ?'block':'none';
+  document.getElementById('sent-view-overview').style.display = level==='overview' ?'block':'none';
+  document.getElementById('sent-view-country').style.display  = level==='country'  ?'block':'none';
+  document.getElementById('sent-view-sheet').style.display    = level==='sheet'    ?'block':'none';
+  document.getElementById('sent-view-merchant').style.display = level==='merchant' ?'block':'none';
   if(level==='overview') renderSentOverview();
   if(level==='country')  renderSentCountry(ctry);
   if(level==='sheet')    renderSentSheet(sheet);
@@ -1668,8 +1702,10 @@ function renderSentSheet(sheetName){
     pgHtml+=`<button class="pb" onclick="sentSheetPg(${sentPg+1})" ${sentPg===tot?'disabled':''}>›</button>`;
   }
 
-  const merchantRows = sl.map(r=>`
-    <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,.05)">
+  const merchantRows = sl.map((r,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,.05);cursor:pointer;border-radius:10px;transition:background .12s"
+         onclick="openSentMerchant(${s+i},'${(sheetName||'').replace(/'/g,"\\'")}')"
+         onmouseenter="this.style.background='rgba(255,255,255,.6)'" onmouseleave="this.style.background=''">
       <div style="flex:1;min-width:0">
         <div class="mn" style="white-space:normal;overflow:visible">${esc(r.title||'—')}</div>
         <div class="me">${esc(r.email||'')}</div>
@@ -1678,6 +1714,7 @@ function renderSentSheet(sheetName){
         <span style="font-size:.78rem;font-weight:600;color:var(--sub)">${esc(r.BD||'—')}</span>
         <span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span>
         ${r.Stage||r.lead_status?`<span style="font-size:.72rem;color:var(--muted)">${esc(r.Stage||r.lead_status)}</span>`:''}
+        <span style="font-size:.70rem;color:var(--muted);opacity:.6">›</span>
       </div>
     </div>`).join('');
 
@@ -1724,6 +1761,85 @@ function sentSheetPg(p){
   if(p<1||p>tot)return;
   sentPg=p;
   renderSentSheet(sentSheet);
+}
+
+function openSentMerchant(globalIdx, sheetName){
+  const rows=sentAll.filter(r=>r.sheetName===sheetName);
+  const s=(sentPg-1)*PS;
+  const r=rows[globalIdx-s];
+  if(!r) return;
+  const m=FL[r.country]||{e:'',n:r.country};
+  const clean=(sheetName||'').replace(/^\(Final\)/,'').replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
+  const el=document.getElementById('sent-view-merchant');
+  el.innerHTML=`
+    <div class="sent-back" onclick="goSent('sheet',null,'${(sheetName||'').replace(/'/g,"\\'")}')">← ${esc(clean)}</div>
+    ${renderMerchantInfoCard(r)}
+    ${renderEmailTemplate(r)}`;
+  goSent('merchant', r.country, sheetName);
+}
+
+function renderMerchantInfoCard(r){
+  const m=FL[r.country]||{e:'',n:r.country};
+  return`<div class="g" style="margin-bottom:14px;overflow:hidden"><div class="gi">
+    <div style="padding:16px 20px 6px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:1rem;font-weight:800">${esc(r.title||'—')}</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:2px;font-family:var(--fm)">${esc(r.email||'')}</div>
+      </div>
+      <span class="tag tag-${r.country}">${m.e} ${r.country}</span>
+    </div>
+    <div class="merch-info-grid">
+      <div class="merch-info-item"><div class="merch-info-lbl">BD</div><div class="merch-info-val">${esc(r.BD||'—')}</div></div>
+      <div class="merch-info-item"><div class="merch-info-lbl">Category</div><div class="merch-info-val">${esc(r.category_name||'—')}</div></div>
+      <div class="merch-info-item"><div class="merch-info-lbl">Stage</div><div class="merch-info-val">${esc(r.Stage||r.lead_status||'—')}</div></div>
+      <div class="merch-info-item"><div class="merch-info-lbl">Status</div><div class="merch-info-val">${esc(r.mail_status||'—')}</div></div>
+    </div>
+  </div></div>`;
+}
+
+function renderEmailTemplate(r){
+  const subject = r.mail_subject || r.subject || '(No subject)';
+  const body    = r.mail_message || r.message || r.mail_body || '(No message content)';
+  return`<div class="email-card">
+    <div class="email-header">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">✉ Email Sent</div>
+      <div class="email-header-row"><span class="email-hdr-lbl">To</span><span class="email-hdr-val">${esc(r.email||'—')}</span></div>
+      <div class="email-header-row"><span class="email-hdr-lbl">Subject</span><span class="email-hdr-val email-subject">${esc(subject)}</span></div>
+      <div class="email-header-row"><span class="email-hdr-lbl">Status</span><span class="email-hdr-val"><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'sent')}</span></span></div>
+    </div>
+    <div class="email-body">${esc(body)}</div>
+  </div>`;
+}
+
+function renderReplyTemplate(r){
+  const replyMsg  = r.mail_reply || '(No reply content)';
+  const replyDate = r.replied_at ? new Date(r.replied_at).toLocaleString() : '—';
+  return`<div class="reply-card">
+    <div class="reply-header">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:#4f46e5">💬 Merchant Reply</div>
+      <div style="font-size:.70rem;color:#6366f1">${replyDate}</div>
+    </div>
+    <div class="reply-body">${esc(replyMsg)}</div>
+  </div>`;
+}
+
+/* ── Reply merchant detail ── */
+function openReplyMerchant(idx){
+  const r=repliedFil[idx];
+  if(!r) return;
+  const clean=(r.sheetName||'').replace(/^\(Final\)/,'').replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
+  document.getElementById('reply-view-list').style.display='none';
+  const el=document.getElementById('reply-view-merchant');
+  el.style.display='block';
+  el.innerHTML=`
+    <div class="sent-back" onclick="closeReplyMerchant()">← Inbox</div>
+    ${renderMerchantInfoCard(r)}
+    ${renderEmailTemplate(r)}
+    ${renderReplyTemplate(r)}`;
+}
+function closeReplyMerchant(){
+  document.getElementById('reply-view-merchant').style.display='none';
+  document.getElementById('reply-view-list').style.display='block';
 }
 
 function doFilSent(){ goSent('overview'); }
@@ -1787,31 +1903,33 @@ function renderTblRep(){
   const tb=document.getElementById('tbody-rep');
   if(!sl.length){tb.innerHTML='<tr><td colspan="5" class="empty">No replies found</td></tr>';return;}
   if(isMob()){
-    tb.innerHTML=sl.map(r=>{
+    tb.innerHTML=sl.map((r,i)=>{
       const m=FL[r.country]||{};
       const replyText=esc(r.mail_reply||'No message content');
       const replyDate=r.replied_at?new Date(r.replied_at).toLocaleString():'Unknown Date';
       return`<tr><td colspan="5" style="padding:0;border:none;background:none">
-        <div class="mob-card">
+        <div class="mob-card" style="cursor:pointer" onclick="openReplyMerchant(${s+i})">
           <div class="mc-name">${esc(r.title||'—')}</div>
           <div class="mc-email">${esc(r.email||'')}</div>
           <div class="mc-row"><span class="mc-lbl">Country</span><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></div>
           <div class="mc-row"><span class="mc-lbl">BD</span><span>${esc(r.BD||'—')}</span></div>
           <div class="mc-msg"><span class="mc-lbl">Message</span><div class="mc-msgbody">${replyText}<div class="msg-date">${replyDate}</div></div></div>
-          <div class="mc-row"><span class="mc-lbl">Status</span><span class="badge blue">💬 Replied</span></div>
+          <div class="mc-row"><span class="mc-lbl">Status</span><span class="badge blue">💬 Replied ›</span></div>
         </div>
       </td></tr>`;}).join('');
   } else {
-    tb.innerHTML=sl.map(r=>{
+    tb.innerHTML=sl.map((r,i)=>{
       const m=FL[r.country]||{};
       const replyText=esc(r.mail_reply||'No message content');
       const replyDate=r.replied_at?new Date(r.replied_at).toLocaleString():'Unknown Date';
-      return`<tr>
+      return`<tr style="cursor:pointer" onclick="openReplyMerchant(${s+i})"
+              onmouseenter="this.querySelectorAll('td').forEach(t=>t.style.background='rgba(255,255,255,.55)')"
+              onmouseleave="this.querySelectorAll('td').forEach(t=>t.style.background='')">
         <td data-label="Merchant"><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
         <td data-label="Country"><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></td>
         <td data-label="BD" style="font-weight:600">${esc(r.BD||'—')}</td>
         <td data-label="Message"><div class="msg-cell" title="${replyText}">${replyText}</div><div class="msg-date">${replyDate}</div></td>
-        <td data-label="Status"><span class="badge blue">💬 Replied</span></td>
+        <td data-label="Status"><span class="badge blue">💬 Replied ›</span></td>
       </tr>`;}).join('');
   }
 }
