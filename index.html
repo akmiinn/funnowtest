@@ -729,18 +729,38 @@ tbody tr:last-child td{border-bottom:none}
   .ctry-title{ font-size:1.2rem; }
   .ctry-subtitle{ font-size:.72rem; }
 
-  /* On mobile: reorder ctry-body — bars FIRST, then donuts below */
+  /* ctry-body: donuts side by side, bars full-width below */
   .ctry-body{
     display:flex !important;
-    flex-direction:column !important;
-    grid-template-columns:unset !important;
+    flex-direction:row !important;
+    flex-wrap:wrap !important;
   }
-  /* Bar chart comes first */
-  .bar-chart{ order:1; padding:16px 14px; border-right:none !important; border-top:1px solid rgba(0,0,0,.06); }
-  /* Opens donut second */
-  .mini-donut-wrap:first-of-type{ order:2; border-right:none !important; border-top:1px solid rgba(0,0,0,.06); }
-  /* Replies donut third */
-  .mini-donut-wrap:last-of-type{ order:3; border-right:none !important; border-top:1px solid rgba(0,0,0,.06); }
+  .mini-donut-wrap{
+    flex:1 1 45% !important;
+    min-width:0 !important;
+    order:1 !important;
+    border-right:none !important;
+    border-bottom:1px solid rgba(0,0,0,.06) !important;
+    padding:14px 10px !important;
+    gap:10px !important;
+    flex-direction:column !important;
+    align-items:center !important;
+  }
+  .mini-donut-wrap:first-of-type{
+    border-right:1px solid rgba(0,0,0,.06) !important;
+    border-top:none !important;
+  }
+  .mini-donut-wrap:last-of-type{
+    border-top:none !important;
+  }
+  .mini-donut-svg{ width:110px !important; height:110px !important; }
+  .bar-chart{
+    order:2 !important;
+    flex:0 0 100% !important;
+    width:100% !important;
+    border-right:none !important;
+    border-top:1px solid rgba(0,0,0,.06) !important;
+  }
 
   /* Donuts: vertical — pie centered alone, legend below */
   .mini-donut-wrap{
