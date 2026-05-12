@@ -833,6 +833,48 @@ tbody tr:last-child td{border-bottom:none}
   .donut-svg{ width:100% !important; height:100% !important; }
   #donut-legend{ width:100%; padding:0 4px; }
 }
+
+/* ═══════════════════════════════════════════════ SENT DRILL-DOWN */
+.sent-back{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;
+  background:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.88);
+  font-size:.78rem;font-weight:600;cursor:pointer;margin-bottom:18px;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 2px 8px rgba(255,85,55,.06);
+  transition:all .15s}
+.sent-back:hover{transform:translateX(-3px);background:rgba(255,255,255,.88)}
+.sent-ctry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:20px}
+.sent-ctry-card{background:rgba(255,255,255,.55);border:1.5px solid rgba(255,255,255,.88);
+  border-radius:18px;padding:20px;cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 4px 14px rgba(255,85,55,.06);
+  transition:transform .15s,box-shadow .15s}
+.sent-ctry-card::before{content:'';position:absolute;top:0;left:0;right:0;height:55%;
+  background:linear-gradient(180deg,rgba(255,255,255,.75),transparent);pointer-events:none}
+.sent-ctry-card:hover{transform:translateY(-3px);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 10px 28px rgba(255,85,55,.14)}
+.sent-ctry-flag{font-size:2rem;margin-bottom:8px}
+.sent-ctry-name{font-size:1rem;font-weight:700;margin-bottom:4px}
+.sent-ctry-meta{font-size:.72rem;color:var(--muted)}
+.sent-ctry-num{font-size:1.8rem;font-weight:800;font-family:var(--fm);margin-top:10px;color:var(--brand)}
+.sent-ctry-num span{font-size:.75rem;font-weight:400;color:var(--muted);font-family:var(--f)}
+.sent-sheet-list{display:flex;flex-direction:column;gap:8px}
+.sent-sheet-row{background:rgba(255,255,255,.55);border:1.5px solid rgba(255,255,255,.88);
+  border-radius:14px;padding:14px 18px;cursor:pointer;display:grid;
+  grid-template-columns:1fr 70px 80px 80px;align-items:center;gap:12px;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 2px 8px rgba(255,85,55,.05);
+  transition:transform .12s,background .12s}
+.sent-sheet-row:hover{transform:translateX(4px);background:rgba(255,255,255,.78)}
+.sent-sheet-name{font-size:.85rem;font-weight:600}
+.sent-sheet-date{font-size:.68rem;color:var(--muted);margin-top:2px}
+.sent-stat{text-align:center}
+.sent-stat-val{font-size:.92rem;font-weight:700;font-family:var(--fm)}
+.sent-stat-lbl{font-size:.60rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
+.sent-sheet-hdr{display:grid;grid-template-columns:1fr 70px 80px 80px;gap:12px;
+  padding:0 18px 8px;font-size:.62rem;font-weight:700;letter-spacing:.10em;
+  text-transform:uppercase;color:var(--muted);border-bottom:1px solid rgba(0,0,0,.06);margin-bottom:8px}
+@media(max-width:520px){
+  .sent-ctry-grid{grid-template-columns:1fr 1fr}
+  .sent-sheet-row{grid-template-columns:1fr 55px 60px 60px;gap:8px;padding:12px}
+  .sent-sheet-hdr{grid-template-columns:1fr 55px 60px 60px;gap:8px;padding:0 12px 8px}
+}
 </style>
 </head>
 <body>
@@ -951,26 +993,9 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-sent" style="display:none">
-    <div class="g tc"><div class="gi">
-      <div class="th2">
-        <div class="sec" style="margin-bottom:0">📤 Sent Merchants</div>
-        <input class="srch" type="text" placeholder="🔍 Search name, email…" id="srch-sent" oninput="doFilSent()"/>
-      </div>
-      <div class="tscr"><table>
-        <thead><tr>
-          <th onclick="srtSent('title')">Merchant <span id="sis-title">↕</span></th>
-          <th><select id="sel-country-sent" onchange="doFilSent()"><option value="">COUNTRY ▾</option></select></th>
-          <th><select id="sel-bd-sent" onchange="doFilSent()"><option value="">BD ▾</option></select></th>
-          <th><select id="sel-mail-sent" onchange="doFilSent()"><option value="">STATUS ▾</option></select></th>
-          <th><select id="sel-stage-sent" onchange="doFilSent()"><option value="">STAGE ▾</option></select></th>
-        </tr></thead>
-        <tbody id="tbody-sent"><tr><td colspan="5" class="empty">No sent records</td></tr></tbody>
-      </table></div>
-      <div class="tfoot">
-        <span id="rcount-sent">0 sent</span>
-        <div class="pr" id="pg-sent-pg"></div>
-      </div>
-    </div></div>
+    <div id="sent-view-overview"></div>
+    <div id="sent-view-country" style="display:none"></div>
+    <div id="sent-view-sheet"   style="display:none"></div>
   </div>
 
   <div id="pg-allctry" style="display:none">
@@ -1176,7 +1201,6 @@ function renderAll(){
   buildCountryTabs();
   renderKPIs(); renderOvCtry(); renderOvBD(); renderOvCamps(); 
   doFil(); 
-  doFilSent();
   doFilRep(); 
   renderDonutMain();
   goPage(curPage, curCtry, false);
@@ -1203,6 +1227,7 @@ function goPage(page, ctry=null, animate=true){
   } else if(page==='sent'){
     document.getElementById('tab-sent').classList.add('on');
     show('sent');
+    goSent('overview');
   } else if(page==='replies'){
     document.getElementById('tab-replies').classList.add('on');
     show('replies');
@@ -1487,82 +1512,206 @@ function pills(){
 
 /* ══════════════════════════════════════════════════════════
 /* ══════════════════════════════════════════════════════════
-   SENT TABLE LOGIC
+   SENT DRILL-DOWN LOGIC
 ══════════════════════════════════════════════════════════ */
-function doFilSent(){
-  pgs=1;
-  const q=(document.getElementById('srch-sent')?.value||'').toLowerCase();
-  const cVal=document.getElementById('sel-country-sent')?.value||'';
-  const bVal=document.getElementById('sel-bd-sent')?.value||'';
-  const mVal=document.getElementById('sel-mail-sent')?.value||'';
-  const sVal=document.getElementById('sel-stage-sent')?.value||'';
+let sentLevel='overview', sentCtry=null, sentSheet=null, sentPg=1;
 
-  sentFil=sentAll.filter(r=>{
-    if(!matchDropdown(r.country,cVal))return false;
-    if(!matchDropdown(r.BD,bVal))return false;
-    if(!matchDropdown(r.mail_status,mVal))return false;
-    if(!matchDropdown(r.Stage||r.lead_status,sVal))return false;
-    if(q&&!`${r.title} ${r.email} ${r.BD} ${r.country}`.toLowerCase().includes(q))return false;
-    return true;
-  });
-
-  sentFil.sort((a,b)=>{
-    const av=(a[sks]||'').toString().toLowerCase();
-    const bv=(b[sks]||'').toString().toLowerCase();
-    return sus?av.localeCompare(bv):bv.localeCompare(av);
-  });
-
-  renderTblSent(); renderPgSent();
+function goSent(level, ctry, sheet){
+  sentLevel=level; sentCtry=ctry||null; sentSheet=sheet||null; sentPg=1;
+  document.getElementById('sent-view-overview').style.display = level==='overview'?'block':'none';
+  document.getElementById('sent-view-country').style.display  = level==='country' ?'block':'none';
+  document.getElementById('sent-view-sheet').style.display    = level==='sheet'   ?'block':'none';
+  if(level==='overview') renderSentOverview();
+  if(level==='country')  renderSentCountry(ctry);
+  if(level==='sheet')    renderSentSheet(sheet);
 }
 
-function srtSent(k){
-  document.querySelectorAll('#pg-sent thead th').forEach(t=>t.classList.remove('ac'));
-  document.querySelectorAll('[id^=sis-]').forEach(s=>s.textContent='↕');
-  if(sks===k)sus=!sus;else{sks=k;sus=true;}
-  const si=document.getElementById('sis-'+k);
-  if(si){si.textContent=sus?'↑':'↓';si.closest('th').classList.add('ac');}
-  doFilSent();
+function renderSentOverview(){
+  const el=document.getElementById('sent-view-overview');
+  // Group by country
+  const byCtry={};
+  sentAll.forEach(r=>{
+    const c=r.country||'Unknown';
+    if(!byCtry[c]) byCtry[c]={sent:0,sheets:new Set()};
+    byCtry[c].sent++;
+    byCtry[c].sheets.add(r.sheetName);
+  });
+  // Also include countries with tabs but 0 sent
+  (window.allTabs||[]).forEach(t=>{
+    const c=t.country||'Unknown';
+    if(!byCtry[c]) byCtry[c]={sent:0,sheets:new Set()};
+  });
+
+  const rows=Object.entries(byCtry).filter(([c])=>c!=='Unknown').sort((a,b)=>b[1].sent-a[1].sent);
+  const total=sentAll.length;
+
+  el.innerHTML=`
+    <div class="sec">Sent Overview</div>
+    <div class="sent-ctry-grid">
+      ${rows.map(([code,s])=>{
+        const m=FL[code]||{e:'🌐',n:code};
+        return`<div class="sent-ctry-card" onclick="goSent('country','${code}')">
+          <div class="sent-ctry-flag">${m.e}</div>
+          <div class="sent-ctry-name">${m.n}</div>
+          <div class="sent-ctry-meta">${s.sheets.size} sheet${s.sheets.size!==1?'s':''}</div>
+          <div class="sent-ctry-num">${s.sent} <span>sent</span></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="font-size:.72rem;color:var(--muted);text-align:right">${total} total sent across all countries</div>`;
 }
 
-function renderTblSent(){
-  const s=(pgs-1)*PS, sl=sentFil.slice(s,s+PS);
-  document.getElementById('rcount-sent').innerHTML=`${sentFil.length} sent <small style="color:var(--muted);margin-left:6px;">(${sentAll.length} total)</small>`;
-  const tb=document.getElementById('tbody-sent');
-  if(!sl.length){tb.innerHTML='<tr><td colspan="5" class="empty">No sent records found</td></tr>';return;}
-  if(isMob()){
-    tb.innerHTML=sl.map(r=>{const m=FL[r.country]||{};return`<tr><td colspan="5" style="padding:0;border:none;background:none">
-      <div class="mob-card">
-        <div class="mc-name">${esc(r.title||'—')}</div>
-        <div class="mc-email">${esc(r.email||'')}</div>
-        <div class="mc-row"><span class="mc-lbl">Country</span><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></div>
-        <div class="mc-row"><span class="mc-lbl">BD</span><span>${esc(r.BD||'—')}</span></div>
-        <div class="mc-row"><span class="mc-lbl">Status</span><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span></div>
-        <div class="mc-row"><span class="mc-lbl">Stage</span><span>${esc(r.Stage||r.lead_status||'—')}</span></div>
+function renderSentCountry(code){
+  const el=document.getElementById('sent-view-country');
+  const m=FL[code]||{e:'🌐',n:code};
+  // Get sheets for this country from allTabs
+  const tabs=(window.allTabs||[]).filter(t=>t.country===code);
+  // Count sent/clicked/replied per sheet
+  const sheetSent={}, sheetClicked={}, sheetReplied={};
+  sentAll.filter(r=>r.country===code).forEach(r=>{
+    sheetSent[r.sheetName]=(sheetSent[r.sheetName]||0)+1;
+  });
+  all.filter(r=>r.country===code).forEach(r=>{
+    sheetClicked[r.sheetName]=(sheetClicked[r.sheetName]||0)+1;
+  });
+  repliedAll.filter(r=>r.country===code).forEach(r=>{
+    sheetReplied[r.sheetName]=(sheetReplied[r.sheetName]||0)+1;
+  });
+  // Add sheets that have sent but aren't in allTabs
+  const knownSheets=new Set(tabs.map(t=>t.sheetName));
+  Object.keys(sheetSent).forEach(sn=>{ if(!knownSheets.has(sn)) tabs.push({sheetName:sn,country:code,sentCount:0,totalRows:0}); });
+  tabs.sort((a,b)=>(sheetSent[b.sheetName]||0)-(sheetSent[a.sheetName]||0));
+
+  const totalSent=Object.values(sheetSent).reduce((a,b)=>a+b,0);
+
+  el.innerHTML=`
+    <div class="sent-back" onclick="goSent('overview')">← All Countries</div>
+    <div class="g" style="padding:0;margin-bottom:16px;overflow:hidden">
+      <div class="gi">
+        <div style="padding:20px 24px 16px;border-bottom:1px solid rgba(0,0,0,.06)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:2rem">${m.e}</span>
+            <div>
+              <div style="font-size:1.2rem;font-weight:800">${m.n}</div>
+              <div style="font-size:.75rem;color:var(--muted)">${tabs.length} sheets · ${totalSent} sent</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:14px 18px">
+          <div class="sent-sheet-hdr">
+            <span>Sheet</span><span style="text-align:center">Sent</span><span style="text-align:center">Clicked</span><span style="text-align:center">Replied</span>
+          </div>
+          <div class="sent-sheet-list">
+            ${tabs.map(t=>{
+              const sn=t.sheetName;
+              const sent=sheetSent[sn]||0;
+              const clicked=sheetClicked[sn]||0;
+              const replied=sheetReplied[sn]||0;
+              const cPct=sent?((clicked/sent)*100).toFixed(1):'—';
+              const rPct=sent?((replied/sent)*100).toFixed(1):'—';
+              const clean=sn.replace(/^\(Final\)/,'').trim();
+              const dmatch=clean.match(/(\d{4}-\d{2}-\d{2})$/);
+              const dt=dmatch?dmatch[1]:'';
+              const label=clean.replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
+              return`<div class="sent-sheet-row" onclick="goSent('sheet',null,'${sn.replace(/'/g,"\\'")}')">
+                <div>
+                  <div class="sent-sheet-name">${esc(label)}</div>
+                  ${dt?`<div class="sent-sheet-date">${dt}</div>`:''}
+                </div>
+                <div class="sent-stat">
+                  <div class="sent-stat-val" style="color:var(--brand)">${sent}</div>
+                  <div class="sent-stat-lbl">sent</div>
+                </div>
+                <div class="sent-stat">
+                  <div class="sent-stat-val" style="color:var(--sky,#0284c7)">${clicked}<small style="font-size:.65rem;opacity:.6"> (${cPct}%)</small></div>
+                  <div class="sent-stat-lbl">clicked</div>
+                </div>
+                <div class="sent-stat">
+                  <div class="sent-stat-val" style="color:#4f46e5">${replied}<small style="font-size:.65rem;opacity:.6"> (${rPct}%)</small></div>
+                  <div class="sent-stat-lbl">replied</div>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
       </div>
-    </td></tr>`;}).join('');
-  } else {
-    tb.innerHTML=sl.map(r=>{const m=FL[r.country]||{};return`<tr>
-      <td><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
-      <td><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></td>
-      <td style="font-weight:600">${esc(r.BD||'—')}</td>
-      <td><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span></td>
-      <td style="font-size:.78rem;color:var(--sub)">${esc(r.Stage||r.lead_status||'—')}</td>
-    </tr>`;}).join('');
-  }
+    </div>`;
 }
 
-function renderPgSent(){
-  const tot=Math.ceil(sentFil.length/PS),el=document.getElementById('pg-sent-pg');
-  if(tot<=1){el.innerHTML='';return;}
-  let h=`<button class="pb" onclick="goPgSent(${pgs-1})" ${pgs===1?'disabled':''}>‹</button>`;
-  for(let i=1;i<=tot;i++){
-    if(tot>7&&Math.abs(i-pgs)>2&&i!==1&&i!==tot){if(i===2||i===tot-1)h+=`<button class="pb" disabled>…</button>`;continue;}
-    h+=`<button class="pb ${i===pgs?'on':''}" onclick="goPgSent(${i})">${i}</button>`;
+function renderSentSheet(sheetName){
+  const el=document.getElementById('sent-view-sheet');
+  const rows=sentAll.filter(r=>r.sheetName===sheetName);
+  const ctry=rows[0]?.country||'';
+  const m=FL[ctry]||{e:'',n:ctry};
+  const clean=sheetName.replace(/^\(Final\)/,'').replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
+
+  const s=(sentPg-1)*PS, sl=rows.slice(s,s+PS);
+
+  const tableRows = isMob()
+    ? sl.map(r=>{const mc=FL[r.country]||{};return`<tr><td colspan="5" style="padding:0;border:none;background:none">
+        <div class="mob-card">
+          <div class="mc-name">${esc(r.title||'—')}</div>
+          <div class="mc-email">${esc(r.email||'')}</div>
+          <div class="mc-row"><span class="mc-lbl">BD</span><span>${esc(r.BD||'—')}</span></div>
+          <div class="mc-row"><span class="mc-lbl">Status</span><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span></div>
+          <div class="mc-row"><span class="mc-lbl">Stage</span><span>${esc(r.Stage||r.lead_status||'—')}</span></div>
+        </div></td></tr>`;}).join('')
+    : sl.map(r=>`<tr>
+        <td><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
+        <td style="font-weight:600">${esc(r.BD||'—')}</td>
+        <td><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span></td>
+        <td style="font-size:.78rem;color:var(--sub)">${esc(r.Stage||r.lead_status||'—')}</td>
+      </tr>`).join('');
+
+  // Pagination
+  const tot=Math.ceil(rows.length/PS);
+  let pgHtml='';
+  if(tot>1){
+    pgHtml+=`<button class="pb" onclick="sentSheetPg(${sentPg-1})" ${sentPg===1?'disabled':''}>‹</button>`;
+    for(let i=1;i<=tot;i++){
+      if(tot>7&&Math.abs(i-sentPg)>2&&i!==1&&i!==tot){if(i===2||i===tot-1)pgHtml+=`<button class="pb" disabled>…</button>`;continue;}
+      pgHtml+=`<button class="pb ${i===sentPg?'on':''}" onclick="sentSheetPg(${i})">${i}</button>`;
+    }
+    pgHtml+=`<button class="pb" onclick="sentSheetPg(${sentPg+1})" ${sentPg===tot?'disabled':''}>›</button>`;
   }
-  h+=`<button class="pb" onclick="goPgSent(${pgs+1})" ${pgs===tot?'disabled':''}>›</button>`;
-  el.innerHTML=h;
+
+  el.innerHTML=`
+    <div class="sent-back" onclick="goSent('country','${ctry}')">← ${m.e} ${m.n||ctry}</div>
+    <div class="g tc" style="overflow:hidden"><div class="gi">
+      <div class="sent-merchant-hdr">
+        <div>
+          <div style="font-size:.88rem;font-weight:700">${esc(clean)}</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${rows.length} sent merchants</div>
+        </div>
+        <span class="tag tag-${ctry}">${m.e} ${ctry}</span>
+      </div>
+      <div class="tscr"><table>
+        <thead><tr>
+          <th>Merchant</th><th>BD</th><th>Status</th><th>Stage</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table></div>
+      <div class="tfoot">
+        <span>${rows.length} merchants</span>
+        <div class="pr">${pgHtml}</div>
+      </div>
+    </div></div>`;
 }
-function goPgSent(p){const t=Math.ceil(sentFil.length/PS);if(p<1||p>t)return;pgs=p;renderTblSent();renderPgSent();}
+
+function sentSheetPg(p){
+  const rows=sentAll.filter(r=>r.sheetName===sentSheet);
+  const tot=Math.ceil(rows.length/PS);
+  if(p<1||p>tot)return;
+  sentPg=p;
+  renderSentSheet(sentSheet);
+}
+
+function doFilSent(){ goSent('overview'); }
+function srtSent(){}
+function renderTblSent(){}
+function renderPgSent(){}
+function goPgSent(){}
+
 
 /* ══════════════════════════════════════════════════════════
    REPLIES TABLE LOGIC
