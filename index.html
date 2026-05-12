@@ -1645,8 +1645,9 @@ function renderSentCountry(code){
 
   const totalSent=Object.values(sheetSent).reduce((a,b)=>a+b,0);
 
+  _sentCtryTabsCache[code]={tabs,sheetSent,sheetClicked,sheetReplied};
+
   el.innerHTML=`
-    <div class="sent-back" onclick="goSent('overview')">← All Countries</div>
     <div class="g" style="padding:0;margin-bottom:16px;overflow:hidden">
       <div class="gi">
         <div style="padding:20px 24px 16px;border-bottom:1px solid rgba(0,0,0,.06)">
@@ -1657,46 +1658,64 @@ function renderSentCountry(code){
               <div style="font-size:.75rem;color:var(--muted)">${tabs.length} sheets · ${totalSent} sent</div>
             </div>
           </div>
+          <input id="sent-ctry-srch" type="text" class="srch" style="margin-top:14px;width:100%"
+            placeholder="🔍 Search sheets…" oninput="filterSentSheets('${code}')"/>
         </div>
         <div style="padding:14px 18px">
           <div class="sent-sheet-hdr">
             <span>Sheet</span><span style="text-align:center">Sent</span><span style="text-align:center">Clicked</span><span style="text-align:center">Replied</span>
           </div>
-          <div class="sent-sheet-list">
-            ${tabs.map(t=>{
-              const sn=t.sheetName;
-              const sent=sheetSent[sn]||0;
-              const clicked=sheetClicked[sn]||0;
-              const replied=sheetReplied[sn]||0;
-              const cPct=sent?((clicked/sent)*100).toFixed(1):'—';
-              const rPct=sent?((replied/sent)*100).toFixed(1):'—';
-              const clean=sn.replace(/^\(Final\)/,'').trim();
-              const dmatch=clean.match(/(\d{4}-\d{2}-\d{2})$/);
-              const dt=dmatch?dmatch[1]:'';
-              const label=clean.replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
-              return`<div class="sent-sheet-row" onclick="goSent('sheet',null,'${sn.replace(/'/g,"\\'")}')">
-                <div>
-                  <div class="sent-sheet-name">${esc(label)}</div>
-                  ${dt?`<div class="sent-sheet-date">${dt}</div>`:''}
-                </div>
-                <div class="sent-stat">
-                  <div class="sent-stat-val" style="color:var(--brand)">${sent}</div>
-                  <div class="sent-stat-lbl">sent</div>
-                </div>
-                <div class="sent-stat">
-                  <div class="sent-stat-val" style="color:var(--sky,#0284c7)">${clicked}<small style="font-size:.65rem;opacity:.6"> (${cPct}%)</small></div>
-                  <div class="sent-stat-lbl">clicked</div>
-                </div>
-                <div class="sent-stat">
-                  <div class="sent-stat-val" style="color:#4f46e5">${replied}<small style="font-size:.65rem;opacity:.6"> (${rPct}%)</small></div>
-                  <div class="sent-stat-lbl">replied</div>
-                </div>
-              </div>`;
-            }).join('')}
+          <div class="sent-sheet-list" id="sent-sheet-list-body">
+            ${renderSentSheetRows(tabs, sheetSent, sheetClicked, sheetReplied)}
           </div>
         </div>
       </div>
     </div>`;
+}
+
+function renderSentSheetRows(tabs, sheetSent, sheetClicked, sheetReplied){
+  if(!tabs.length) return '<p class="empty">No sheets</p>';
+  return tabs.map(t=>{
+    const sn=t.sheetName;
+    const sent=sheetSent[sn]||0;
+    const clicked=sheetClicked[sn]||0;
+    const replied=sheetReplied[sn]||0;
+    const cPct=sent?((clicked/sent)*100).toFixed(1):'—';
+    const rPct=sent?((replied/sent)*100).toFixed(1):'—';
+    const clean=sn.replace(/^\(Final\)/,'').trim();
+    const dmatch=clean.match(/(\d{4}-\d{2}-\d{2})$/);
+    const dt=dmatch?dmatch[1]:'';
+    const label=clean.replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
+    return`<div class="sent-sheet-row" onclick="goSent('sheet',null,'${sn.replace(/'/g,"\\'")}')">
+      <div>
+        <div class="sent-sheet-name">${esc(label)}</div>
+        ${dt?`<div class="sent-sheet-date">${dt}</div>`:''}
+      </div>
+      <div class="sent-stat">
+        <div class="sent-stat-val" style="color:var(--brand)">${sent}</div>
+        <div class="sent-stat-lbl">sent</div>
+      </div>
+      <div class="sent-stat">
+        <div class="sent-stat-val" style="color:#0284c7">${clicked}<small style="font-size:.65rem;opacity:.6"> (${cPct}%)</small></div>
+        <div class="sent-stat-lbl">clicked</div>
+      </div>
+      <div class="sent-stat">
+        <div class="sent-stat-val" style="color:#4f46e5">${replied}<small style="font-size:.65rem;opacity:.6"> (${rPct}%)</small></div>
+        <div class="sent-stat-lbl">replied</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let _sentCtryTabsCache={};
+function filterSentSheets(code){
+  const q=(document.getElementById('sent-ctry-srch')?.value||'').toLowerCase();
+  const cache=_sentCtryTabsCache[code];
+  if(!cache) return;
+  const {tabs,sheetSent,sheetClicked,sheetReplied}=cache;
+  const filtered=q ? tabs.filter(t=>t.sheetName.toLowerCase().includes(q)) : tabs;
+  const el=document.getElementById('sent-sheet-list-body');
+  if(el) el.innerHTML=renderSentSheetRows(filtered,sheetSent,sheetClicked,sheetReplied);
 }
 
 function renderSentSheet(sheetName){
