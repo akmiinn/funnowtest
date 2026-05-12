@@ -1168,13 +1168,25 @@ async function loadData(){
       const s = (r.mail_status||'').toLowerCase().trim();
       return SENT_STATUSES.some(v => s === v);
     });
+
+    // Dataset 4: All valid outreach (sent + replied) — used for sheet merchant list
+    const VALID_STATUSES = [
+      'email - sent','email - replied',
+      'email - 2nd outreach sent','email - 2nd outreach replied',
+      'email - 3rd outreach sent','email - 3rd outreach replied',
+      'email - 4th outreach sent','email - 4th outreach replied'
+    ];
+    window.allOutreach = d.filter(r => {
+      const s = (r.mail_status||'').toLowerCase().trim();
+      return VALID_STATUSES.some(v => s === v);
+    });
     
     populateFilters();
     renderAll();
     const tsEl = document.getElementById('ts'); if(tsEl) tsEl.textContent='Updated '+new Date().toLocaleTimeString();
   }catch(e){
     showErr(`${e.message}. Enable CORS in n8n webhook settings (Access-Control-Allow-Origin: *).`);
-    all=[]; repliedAll=[]; sentAll=[]; renderAll();
+    all=[]; repliedAll=[]; sentAll=[]; window.allOutreach=[]; renderAll();
   } finally{
     document.getElementById('loading').style.display='none';
     const app=document.getElementById('app');
@@ -1560,6 +1572,21 @@ function goSent(level, ctry, sheet){
   if(level==='sheet')    renderSentSheet(sheet);
 }
 
+function statusBadge(status){
+  const s=(status||'').toLowerCase();
+  const isReplied=s.includes('replied');
+  const is2nd=s.includes('2nd');
+  const is3rd=s.includes('3rd');
+  const is4th=s.includes('4th');
+  let bg,color,border,icon;
+  if(isReplied){      bg='rgba(79,70,229,.09)'; color='#4338ca'; border='rgba(79,70,229,.22)'; icon='💬';}
+  else if(is4th){     bg='rgba(220,38,38,.08)'; color='#b91c1c'; border='rgba(220,38,38,.20)'; icon='📤';}
+  else if(is3rd){     bg='rgba(217,119,6,.09)'; color='#92400e'; border='rgba(217,119,6,.22)'; icon='📤';}
+  else if(is2nd){     bg='rgba(5,150,105,.09)'; color='#065f46'; border='rgba(5,150,105,.22)'; icon='📤';}
+  else{               bg='rgba(14,165,233,.09)';color='#0369a1'; border='rgba(14,165,233,.2)'; icon='📤';}
+  return `<span class="badge" style="background:${bg};color:${color};border-color:${border}">${icon} ${esc(status||'—')}</span>`;
+}
+
 function renderSentOverview(){
   const el=document.getElementById('sent-view-overview');
   // Group by country
@@ -1674,19 +1701,21 @@ function renderSentCountry(code){
 
 function renderSentSheet(sheetName){
   const el=document.getElementById('sent-view-sheet');
-  const rows=sentAll.filter(r=>r.sheetName===sheetName);
+  // Use allOutreach (all valid statuses) not just sentAll
+  const rows=(window.allOutreach||[]).filter(r=>r.sheetName===sheetName);
   const ctry=rows[0]?.country||sentCtry||'';
   const m=FL[ctry]||{e:'',n:ctry};
   const clean=sheetName.replace(/^\(Final\)/,'').replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
   const dmatch=sheetName.match(/(\d{4}-\d{2}-\d{2})$/);
   const dt=dmatch?dmatch[1]:'';
 
-  // Stats
+  // Stats from respective datasets
+  const sent=sentAll.filter(r=>r.sheetName===sheetName).length;
   const clicked=all.filter(r=>r.sheetName===sheetName).length;
   const replied=repliedAll.filter(r=>r.sheetName===sheetName).length;
-  const total=rows.length;
-  const cPct=total?((clicked/total)*100).toFixed(1):'—';
-  const rPct=total?((replied/total)*100).toFixed(1):'—';
+  const total=sent||rows.length||1;
+  const cPct=((clicked/total)*100).toFixed(1);
+  const rPct=((replied/total)*100).toFixed(1);
 
   const s=(sentPg-1)*PS, sl=rows.slice(s,s+PS);
 
@@ -1712,7 +1741,7 @@ function renderSentSheet(sheetName){
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;flex-shrink:0">
         <span style="font-size:.78rem;font-weight:600;color:var(--sub)">${esc(r.BD||'—')}</span>
-        <span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'—')}</span>
+        ${statusBadge(r.mail_status)}
         ${r.Stage||r.lead_status?`<span style="font-size:.72rem;color:var(--muted)">${esc(r.Stage||r.lead_status)}</span>`:''}
         <span style="font-size:.70rem;color:var(--muted);opacity:.6">›</span>
       </div>
@@ -1764,7 +1793,7 @@ function sentSheetPg(p){
 }
 
 function openSentMerchant(globalIdx, sheetName){
-  const rows=sentAll.filter(r=>r.sheetName===sheetName);
+  const rows=(window.allOutreach||[]).filter(r=>r.sheetName===sheetName);
   const s=(sentPg-1)*PS;
   const r=rows[globalIdx-s];
   if(!r) return;
@@ -1805,7 +1834,7 @@ function renderEmailTemplate(r){
       <div style="font-size:.68rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">✉ Email Sent</div>
       <div class="email-header-row"><span class="email-hdr-lbl">To</span><span class="email-hdr-val">${esc(r.email||'—')}</span></div>
       <div class="email-header-row"><span class="email-hdr-lbl">Subject</span><span class="email-hdr-val email-subject">${esc(subject)}</span></div>
-      <div class="email-header-row"><span class="email-hdr-lbl">Status</span><span class="email-hdr-val"><span class="badge" style="background:rgba(14,165,233,.09);color:#0369a1;border-color:rgba(14,165,233,.2)">📤 ${esc(r.mail_status||'sent')}</span></span></div>
+      <div class="email-header-row"><span class="email-hdr-lbl">Status</span><span class="email-hdr-val">${statusBadge(r.mail_status)}</span></div>
     </div>
     <div class="email-body">${esc(body)}</div>
   </div>`;
