@@ -158,7 +158,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 @media(max-width:800px){.mg{grid-template-columns:1fr}}
 .mc{padding:26px}
 
-/* Country / BD rows */
+/* Country / BD rows (Hover Effects ON for Overview) */
 .crow{display:flex;align-items:flex-start;gap:12px;padding:14px 13px;border-radius:14px;
   cursor:pointer;transition:background .14s,transform .14s;margin-bottom:5px}
 .crow:hover{background:rgba(255,255,255,.55);transform:translateX(4px)}
@@ -175,6 +175,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .brow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;
   cursor:pointer;transition:background .14s,transform .14s;margin-bottom:5px}
 .brow:hover{background:rgba(255,255,255,.55);transform:translateX(4px)}
+
+/* MULTI-SELECT ACTIVE BD STATE */
 .brow.active-bd {
   background: rgba(255, 85, 55, 0.12);
   transform: translateX(4px);
@@ -200,11 +202,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 
 /* ═══════════════════════════════════════════════ CAMPAIGN */
 .campc{padding:26px;margin-bottom:26px}
-/* ✅ UPDATED COLUMN WIDTHS FOR CAMPAIGN BREAKDOWN */
-.campc .ch, .campc .cr {
-  grid-template-columns: 1fr 90px 90px 80px 80px;
-}
-.ch{font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+.ch{display:grid;grid-template-columns:1fr 90px 90px 80px 80px;
+  font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
   color:var(--muted);padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,.07);margin-bottom:4px}
 .cr{padding:10px 6px;border-bottom:1px solid rgba(0,0,0,.04);
   border-radius:12px;align-items:center;font-size:.82rem;transition:background .12s}
@@ -490,11 +489,11 @@ tbody tr:last-child td{border-bottom:none}
       <div class="tscr"><table>
         <thead><tr>
           <th onclick="srt('title')" style="width:26%">Merchant <span id="si-title">↕</span></th>
-          <th style="width:12%"><select id="sel-country" onchange="doFil()"><option value="">COUNTRY</option></select></th>
-          <th style="width:16%"><select id="sel-bd" onchange="doFil()"><option value="">BD</option></select></th>
-          <th style="width:18%"><select id="sel-cat" onchange="doFil()"><option value="">CATEGORY</option></select></th>
-          <th style="width:16%"><select id="sel-mail" onchange="doFil()"><option value="">MAIL</option></select></th>
-          <th style="width:12%"><select id="sel-stage" onchange="doFil()"><option value="">STAGE</option></select></th>
+          <th style="width:12%"><select id="sel-country" onchange="doFil()"><option value="">COUNTRY ▾</option></select></th>
+          <th style="width:16%"><select id="sel-bd" onchange="doFil()"><option value="">BD ▾</option></select></th>
+          <th style="width:18%"><select id="sel-cat" onchange="doFil()"><option value="">CATEGORY ▾</option></select></th>
+          <th style="width:16%"><select id="sel-mail" onchange="doFil()"><option value="">MAIL ▾</option></select></th>
+          <th style="width:12%"><select id="sel-stage" onchange="doFil()"><option value="">STAGE ▾</option></select></th>
         </tr></thead>
         <tbody id="tbody"><tr><td colspan="6" class="empty">No data</td></tr></tbody>
       </table></div>
@@ -514,10 +513,10 @@ tbody tr:last-child td{border-bottom:none}
       <div class="tscr"><table>
         <thead><tr>
           <th onclick="srtRep('title')" style="width:26%">Merchant <span id="sir-title">↕</span></th>
-          <th style="width:12%"><select id="sel-country-rep" onchange="doFilRep()"><option value="">COUNTRY</option></select></th>
-          <th style="width:16%"><select id="sel-bd-rep" onchange="doFilRep()"><option value="">BD</option></select></th>
+          <th style="width:12%"><select id="sel-country-rep" onchange="doFilRep()"><option value="">COUNTRY ▾</option></select></th>
+          <th style="width:16%"><select id="sel-bd-rep" onchange="doFilRep()"><option value="">BD ▾</option></select></th>
           <th onclick="srtRep('replied_at')" style="width:34%">Message <span id="sir-replied_at">↕</span></th>
-          <th style="width:12%"><select id="sel-stage-rep" onchange="doFilRep()"><option value="">STAGE</option></select></th>
+          <th style="width:12%"><select id="sel-stage-rep" onchange="doFilRep()"><option value="">STAGE ▾</option></select></th>
         </tr></thead>
         <tbody id="tbody-rep"><tr><td colspan="5" class="empty">No replies found</td></tr></tbody>
       </table></div>
@@ -1245,7 +1244,7 @@ function renderCountryDetail(code){
   barsEl.innerHTML = sheetRows.map(([nm,n],i)=>{
     const repN = sheetRepCnt[nm] || 0;
     
-    // ✅ PULLS TOTAL LEADS FROM N8N ARRAY TO CALCULATE REAL CONVERSION
+    // PULLS TOTAL LEADS FROM N8N ARRAY TO CALCULATE REAL CONVERSION
     const tabObj = window.allTabs.find(t => t.sheetName === nm);
     const totalLeads = tabObj ? tabObj.totalRows : n; 
     
@@ -1287,9 +1286,9 @@ function renderCountryDetail(code){
 
   setTimeout(()=>{
     sheetRows.forEach(([nm,n],i)=>{
+      const repN = sheetRepCnt[nm] || 0;
       const b=document.getElementById(`bar-${code}-${i}`);
       const rB=document.getElementById(`bar-rep-${code}-${i}`);
-      // ✅ BARS NOW FILL UP BASED ON THE % INSTEAD OF THE MAX CAMPAIGN
       if(b) b.style.width=b.dataset.w + '%';
       if(rB) rB.style.width=rB.dataset.w + '%'; 
     });
