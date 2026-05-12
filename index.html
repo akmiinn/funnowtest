@@ -164,6 +164,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .crow:hover{background:rgba(255,255,255,.55);transform:translateX(4px)}
 .cflag{font-size:1.4rem;width:30px;text-align:center;flex-shrink:0; margin-top:2px;}
 .cname{font-size:.85rem;font-weight:600}
+.ccnt{font-size:.71rem;color:var(--muted);margin-top:1px}
 .ctrack{flex:2;height:8px;background:rgba(0,0,0,.055);border-radius:99px;overflow:hidden;
   box-shadow:inset 0 2px 3px rgba(0,0,0,.09)}
 .cfill{height:100%;border-radius:99px;transition:width 1.3s cubic-bezier(.4,0,.2,1);width:0;
@@ -224,23 +225,13 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 
 /* ═══════════════════════════════════════════════ TABLE */
 .tc{overflow:hidden;padding:0}
-.th2{display:flex;align-items:center;justify-content:space-between;padding:24px 26px 12px}
+.th2{display:flex;align-items:center;justify-content:space-between;padding:24px 26px 16px}
 .srch{background:rgba(255,255,255,.70);border:1.5px solid rgba(255,255,255,.88);
   border-radius:13px;padding:9px 15px;font-family:var(--f);font-size:.78rem;color:var(--text);
   outline:none;width:240px;box-shadow:inset 0 2px 4px rgba(0,0,0,.055),inset 0 1px 0 rgba(255,255,255,.8);
   transition:all .2s}
 .srch:focus{background:rgba(255,255,255,.92);box-shadow:inset 0 2px 4px rgba(0,0,0,.055),0 0 0 3px rgba(255,85,55,.11)}
 .srch::placeholder{color:var(--muted)}
-
-/* TABLE FILTERS */
-.tbl-filters { display:flex; gap:10px; padding:0 26px 14px; flex-wrap:wrap; }
-.tbl-filters select {
-  background: rgba(255,255,255,0.7); border: 1px solid rgba(0,0,0,0.08); border-radius: 8px;
-  padding: 6px 12px; font-family: var(--f); font-size: 0.75rem; color: var(--text); outline: none; cursor: pointer;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,.02); transition: all .2s;
-}
-.tbl-filters select:hover { background: rgba(255,255,255,0.9); }
-
 .tscr{overflow-x:auto}
 table{width:100%;border-collapse:collapse;min-width:680px}
 thead th{font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
@@ -249,6 +240,16 @@ thead th{font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:up
   background:rgba(255,255,255,.28);transition:color .14s}
 thead th:hover{color:var(--text)}
 thead th.ac{color:var(--brand)}
+
+/* ✅ SEAMLESS HEADER DROPDOWNS */
+thead th select {
+  background: transparent; border: none; font-family: var(--f); font-size: inherit; font-weight: inherit;
+  letter-spacing: inherit; text-transform: inherit; color: inherit; cursor: pointer; outline: none;
+  -webkit-appearance: none; appearance: none; padding: 0;
+}
+thead th select:hover { color: var(--text); }
+thead th select option { color: var(--text); font-weight: 500; text-transform: none; letter-spacing: normal; }
+
 tbody tr{transition:background .12s}
 tbody tr:hover td{background:rgba(255,255,255,.48)}
 tbody td{padding:12px 16px;font-size:.82rem;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:middle}
@@ -340,8 +341,9 @@ tbody tr:last-child td{border-bottom:none}
 .ctry-title{font-size:1.5rem;font-weight:800;letter-spacing:-.03em}
 .ctry-subtitle{font-size:.8rem;color:var(--muted);margin-top:3px;font-weight:500}
 
-.ctry-body{display:grid;grid-template-columns:220px 1fr;gap:0;align-items:start}
-@media(max-width:680px){.ctry-body{grid-template-columns:1fr}}
+/* ✅ UPDATED FOR TWO PIE CHARTS */
+.ctry-body{display:grid;grid-template-columns:220px 220px 1fr;gap:0;align-items:start}
+@media(max-width:900px){.ctry-body{grid-template-columns:1fr}}
 .mini-donut-wrap{
   padding:24px 20px;border-right:1px solid rgba(0,0,0,.06);
   display:flex;flex-direction:column;align-items:center;gap:16px;
@@ -434,6 +436,12 @@ tbody tr:last-child td{border-bottom:none}
         <div class="kh">unique merchants</div>
       </div></div>
       <div class="g kc tilt"><div class="sp"></div><div class="gi">
+        <div class="ki" style="background:linear-gradient(150deg,#fef3c7,#d97706)">💬</div>
+        <div class="kl">Total Replies</div>
+        <div class="kv" style="color:var(--amber)" id="k-rep">0</div>
+        <div class="kh" id="k-rep-sub">from merchants</div>
+      </div></div>
+      <div class="g kc tilt"><div class="sp"></div><div class="gi">
         <div class="ki" style="background:linear-gradient(150deg,#ede9fe,#7c3aed)">🌏</div>
         <div class="kl">Countries</div>
         <div class="kv" style="color:var(--violet)" id="k-ctry">0</div>
@@ -444,12 +452,6 @@ tbody tr:last-child td{border-bottom:none}
         <div class="kl">Campaigns</div>
         <div class="kv" style="color:var(--green)" id="k-camp">0</div>
         <div class="kh">active sheets</div>
-      </div></div>
-      <div class="g kc tilt"><div class="sp"></div><div class="gi">
-        <div class="ki" style="background:linear-gradient(150deg,#fef3c7,#d97706)">💬</div>
-        <div class="kl">Total Replies</div>
-        <div class="kv" style="color:var(--amber)" id="k-rep">0</div>
-        <div class="kh" id="k-rep-sub">from merchants</div>
       </div></div>
     </div>
     
@@ -475,21 +477,15 @@ tbody tr:last-child td{border-bottom:none}
         <div class="sec" style="margin-bottom:0">Merchant Opens</div>
         <input class="srch" type="text" placeholder="🔍 Search name, email…" id="srch" oninput="doFil()"/>
       </div>
-      <div class="tbl-filters">
-        <select id="sel-country" onchange="doFil()"><option value="">All Countries</option></select>
-        <select id="sel-bd" onchange="doFil()"><option value="">All BDs</option></select>
-        <select id="sel-mail" onchange="doFil()"><option value="">All Mail Status</option></select>
-        <select id="sel-stage" onchange="doFil()"><option value="">All Stages</option></select>
-      </div>
       <div class="pills" id="pills"></div>
       <div class="tscr"><table>
         <thead><tr>
           <th onclick="srt('title')">Merchant <span id="si-title">↕</span></th>
-          <th onclick="srt('country')">Country <span id="si-country">↕</span></th>
-          <th onclick="srt('BD')">BD <span id="si-BD">↕</span></th>
-          <th onclick="srt('category_name')">Category <span id="si-category_name">↕</span></th>
-          <th onclick="srt('mail_status')">Mail <span id="si-mail_status">↕</span></th>
-          <th onclick="srt('Stage')">Stage <span id="si-Stage">↕</span></th>
+          <th><select id="sel-country" onchange="doFil()"><option value="">COUNTRY ▾</option></select></th>
+          <th><select id="sel-bd" onchange="doFil()"><option value="">BD ▾</option></select></th>
+          <th><select id="sel-cat" onchange="doFil()"><option value="">CATEGORY ▾</option></select></th>
+          <th><select id="sel-mail" onchange="doFil()"><option value="">MAIL ▾</option></select></th>
+          <th><select id="sel-stage" onchange="doFil()"><option value="">STAGE ▾</option></select></th>
         </tr></thead>
         <tbody id="tbody"><tr><td colspan="6" class="empty">No data</td></tr></tbody>
       </table></div>
@@ -506,19 +502,13 @@ tbody tr:last-child td{border-bottom:none}
         <div class="sec" style="margin-bottom:0">Inbox: Email Replies</div>
         <input class="srch" type="text" placeholder="🔍 Search replies, names…" id="srch-rep" oninput="doFilRep()"/>
       </div>
-      <div class="tbl-filters">
-        <select id="sel-country-rep" onchange="doFilRep()"><option value="">All Countries</option></select>
-        <select id="sel-bd-rep" onchange="doFilRep()"><option value="">All BDs</option></select>
-        <select id="sel-mail-rep" onchange="doFilRep()"><option value="">All Mail Status</option></select>
-        <select id="sel-stage-rep" onchange="doFilRep()"><option value="">All Stages</option></select>
-      </div>
       <div class="tscr"><table>
         <thead><tr>
           <th onclick="srtRep('title')">Merchant <span id="sir-title">↕</span></th>
-          <th onclick="srtRep('country')">Country <span id="sir-country">↕</span></th>
-          <th onclick="srtRep('BD')">BD <span id="sir-BD">↕</span></th>
+          <th><select id="sel-country-rep" onchange="doFilRep()"><option value="">COUNTRY ▾</option></select></th>
+          <th><select id="sel-bd-rep" onchange="doFilRep()"><option value="">BD ▾</option></select></th>
           <th onclick="srtRep('replied_at')">Message <span id="sir-replied_at">↕</span></th>
-          <th onclick="srtRep('Stage')">Stage <span id="sir-Stage">↕</span></th>
+          <th><select id="sel-stage-rep" onchange="doFilRep()"><option value="">STAGE ▾</option></select></th>
         </tr></thead>
         <tbody id="tbody-rep"><tr><td colspan="5" class="empty">No replies found</td></tr></tbody>
       </table></div>
@@ -555,9 +545,16 @@ tbody tr:last-child td{border-bottom:none}
         </div>
         <div class="ctry-body">
           <div class="mini-donut-wrap">
-            <svg class="mini-donut-svg" id="donut-mini" viewBox="0 0 160 160"></svg>
-            <div id="mini-legend" style="width:100%;display:flex;flex-direction:column;gap:8px"></div>
+            <div style="font-size:.66rem;font-weight:700;color:var(--muted);letter-spacing:.1em">OPENS</div>
+            <svg class="mini-donut-svg" id="donut-mini-opens" viewBox="0 0 160 160"></svg>
+            <div id="mini-legend-opens" style="width:100%;display:flex;flex-direction:column;gap:8px"></div>
           </div>
+          <div class="mini-donut-wrap">
+            <div style="font-size:.66rem;font-weight:700;color:var(--muted);letter-spacing:.1em">REPLIES</div>
+            <svg class="mini-donut-svg" id="donut-mini-replies" viewBox="0 0 160 160"></svg>
+            <div id="mini-legend-replies" style="width:100%;display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+          
           <div class="bar-chart">
             <div class="bar-sec">Campaign Breakdown (Opens vs Replies)</div>
             <div id="cd-bars"></div>
@@ -628,14 +625,12 @@ async function loadData(){
       return r;
     });
     
-    // Dataset 1: Standard Clicks (INCLUDES REPLIES)
     all = d.filter(r => {
       const isClicked = Number(r.clicked) === 1;
       const isReplied = r.mail_status && r.mail_status.toLowerCase().includes('replied');
       return isClicked || isReplied;
     });
     
-    // Dataset 2: Email Replies ONLY
     repliedAll = d.filter(r => r.mail_status && r.mail_status.toLowerCase().includes('replied'));
     
     populateFilters();
@@ -658,31 +653,32 @@ async function loadData(){
 function showErr(msg){ const b=document.getElementById('err-banner');document.getElementById('err-msg').textContent=msg;b.style.display='flex'; }
 
 /* ══════════════════════════════════════════════════════════
-   POPULATE DROPDOWNS
+   POPULATE DROPDOWNS IN TABLE HEADERS
 ══════════════════════════════════════════════════════════ */
 function populateFilters() {
-  const buildOpts = (arr, id) => {
+  const buildOpts = (arr, id, defaultLabel) => {
     const sel = document.getElementById(id);
-    const sel2 = document.getElementById(id+'-rep');
-    
+    if(!sel) return;
     const cleanArr = arr.map(x => (x === undefined || x === null || String(x).trim() === '') ? 'No Value' : String(x).trim());
     const unique = [...new Set(cleanArr)].sort();
-    
     const opts = unique.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
-    
-    if(sel) sel.innerHTML = sel.options[0].outerHTML + opts;
-    if(sel2) sel2.innerHTML = sel2.options[0].outerHTML + opts;
+    sel.innerHTML = `<option value="">${defaultLabel} ▾</option>` + opts;
   };
   
   const ctryList = all.map(r=>r.country);
   const bdList = all.map(r=>r.BD);
+  const catList = all.map(r=>r.category_name);
   const mailList = all.map(r=>r.mail_status);
   const stageList = all.map(r=>r.Stage || r.lead_status);
   
-  buildOpts(ctryList, 'sel-country');
-  buildOpts(bdList, 'sel-bd');
-  buildOpts(mailList, 'sel-mail');
-  buildOpts(stageList, 'sel-stage');
+  buildOpts(ctryList, 'sel-country', 'COUNTRY');
+  buildOpts(ctryList, 'sel-country-rep', 'COUNTRY');
+  buildOpts(bdList, 'sel-bd', 'BD');
+  buildOpts(bdList, 'sel-bd-rep', 'BD');
+  buildOpts(catList, 'sel-cat', 'CATEGORY');
+  buildOpts(mailList, 'sel-mail', 'MAIL');
+  buildOpts(stageList, 'sel-stage', 'STAGE');
+  buildOpts(stageList, 'sel-stage-rep', 'STAGE');
 }
 
 function matchDropdown(recordVal, dropVal) {
@@ -771,7 +767,6 @@ function renderOvCtry(){
   const el=document.getElementById('ov-ctry');
   if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
   
-  // ✅ DOUBLE BAR CHART FOR OVERVIEW (OPENS & REPLIES)
   el.innerHTML=rows.map(([code,n])=>{
     const m=FL[code]||{e:'🌐',n:code,c:'#64748b',grad:'#64748b'};
     const repN = rcnt[code]||0;
@@ -900,6 +895,7 @@ function doFil(){
   
   const cVal = document.getElementById('sel-country').value;
   const bVal = document.getElementById('sel-bd').value;
+  const catVal = document.getElementById('sel-cat').value;
   const mVal = document.getElementById('sel-mail').value;
   const sVal = document.getElementById('sel-stage').value;
   
@@ -911,6 +907,7 @@ function doFil(){
     // Dropdown Filters
     if (!matchDropdown(r.country, cVal)) return false;
     if (!matchDropdown(r.BD, bVal)) return false;
+    if (!matchDropdown(r.category_name, catVal)) return false;
     if (!matchDropdown(r.mail_status, mVal)) return false;
     if (!matchDropdown(r.Stage || r.lead_status, sVal)) return false;
     
@@ -922,7 +919,7 @@ function doFil(){
 }
 
 function srt(k){
-  document.querySelectorAll('thead th').forEach(t=>t.classList.remove('ac'));
+  document.querySelectorAll('#pg-overview thead th').forEach(t=>t.classList.remove('ac'));
   document.querySelectorAll('[id^=si-]').forEach(s=>s.textContent='↕');
   if(sk===k)su=!su;else{sk=k;su=true;}
   const si=document.getElementById('si-'+k);
@@ -932,8 +929,6 @@ function srt(k){
 
 function renderTbl(){
   const s=(pg-1)*PS,sl=fil.slice(s,s+PS);
-  
-  // ✅ UPDATED COUNT WITH FILTER VS TOTAL
   document.getElementById('rcount').innerHTML=`${fil.length} merchant${fil.length!==1?'s':''} <small style="color:var(--muted); margin-left:6px;">(${all.length} total)</small>`;
   
   const tb=document.getElementById('tbody');
@@ -980,18 +975,14 @@ function doFilRep(){
   
   const cVal = document.getElementById('sel-country-rep').value;
   const bVal = document.getElementById('sel-bd-rep').value;
-  const mVal = document.getElementById('sel-mail-rep').value;
   const sVal = document.getElementById('sel-stage-rep').value;
   
   repliedFil=repliedAll.filter(r=>{
-    // Clickable Filters
     if (activeFilters.country.size > 0 && !activeFilters.country.has(r.country)) return false;
     if (activeFilters.BD.size > 0 && !activeFilters.BD.has(r.BD)) return false;
 
-    // Dropdown Filters
     if (!matchDropdown(r.country, cVal)) return false;
     if (!matchDropdown(r.BD, bVal)) return false;
-    if (!matchDropdown(r.mail_status, mVal)) return false;
     if (!matchDropdown(r.Stage || r.lead_status, sVal)) return false;
     
     if(q&&!`${r.title} ${r.BD} ${r.country} ${r.mail_reply}`.toLowerCase().includes(q)) return false;
@@ -1018,8 +1009,6 @@ function srtRep(k){
 
 function renderTblRep(){
   const s=(pgr-1)*PS, sl=repliedFil.slice(s,s+PS);
-  
-  // ✅ UPDATED COUNT WITH FILTER VS TOTAL
   document.getElementById('rcount-rep').innerHTML=`${repliedFil.length} repl${repliedFil.length===1?'y':'ies'} <small style="color:var(--muted); margin-left:6px;">(${repliedAll.length} total)</small>`;
   
   const tb=document.getElementById('tbody-rep');
@@ -1170,7 +1159,7 @@ function renderDonutMain(){
 }
 
 /* ══════════════════════════════════════════════════════════
-   COUNTRY DETAIL
+   COUNTRY DETAIL (DOUBLE PIE CHARTS)
 ══════════════════════════════════════════════════════════ */
 function renderCountryDetail(code){
   const m = FL[code]||{e:'🌐',n:code,c:'#64748b',grad:'#64748b'};
@@ -1182,11 +1171,14 @@ function renderCountryDetail(code){
 
   const sheetCnt = {};
   const sheetRepCnt = {};
+  let totalRep = 0;
+  
   rows.forEach(r=>{
     const k=r.sheetName||'Unknown';
     sheetCnt[k]=(sheetCnt[k]||0)+1;
     if (r.mail_status && r.mail_status.toLowerCase().includes('replied')) {
        sheetRepCnt[k] = (sheetRepCnt[k]||0)+1;
+       totalRep++;
     }
   });
   const sheetRows = Object.entries(sheetCnt).sort((a,b)=>b[1]-a[1]);
@@ -1194,25 +1186,36 @@ function renderCountryDetail(code){
 
   document.getElementById('cd-sub').textContent = `${total} opens across ${campCount} campaign${campCount!==1?'s':''}`;
 
-  const miniSegs = sheetRows.map(([nm,v],i)=>({
-    label: nm,
-    v,
-    color: SHEET_PALETTE[i % SHEET_PALETTE.length]
+  /* ── 1) Opens Donut ── */
+  const miniSegsOpens = sheetRows.map(([nm,v],i)=>({
+    label: nm, v: v, color: SHEET_PALETTE[i % SHEET_PALETTE.length]
   }));
-  buildDonutSVG('donut-mini', miniSegs, 80, 80, 55, 26, true);
-  setTimeout(()=>animateDonut('donut-mini'), 120);
+  buildDonutSVG('donut-mini-opens', miniSegsOpens, 80, 80, 55, 26, true);
+  setTimeout(()=>animateDonut('donut-mini-opens'), 120);
 
-  const ml = document.getElementById('mini-legend');
-  ml.innerHTML = miniSegs.map(seg=>{
+  /* ── 2) Replies Donut ── */
+  const miniSegsReplies = sheetRows.map(([nm,v],i)=>({
+    label: nm, v: sheetRepCnt[nm]||0, color: SHEET_PALETTE[i % SHEET_PALETTE.length]
+  }));
+  buildDonutSVG('donut-mini-replies', miniSegsReplies, 80, 80, 55, 26, true);
+  setTimeout(()=>animateDonut('donut-mini-replies'), 120);
+
+  /* ── Legend Generator (with percentages) ── */
+  const buildLegend = (segs, totCount) => segs.map(seg=>{
+    const pct = totCount ? Math.round((seg.v/totCount)*100) : 0;
     const label = seg.label.replace(/^\(Final\)/,'').replace(/\s*\d{4}-\d{2}-\d{2}$/,'').trim();
     return`<div style="display:flex;align-items:center;gap:8px;font-size:.72rem">
       <div style="width:10px;height:10px;border-radius:50%;background:${seg.color};flex-shrink:0"></div>
-      <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px;font-weight:500">${esc(label)}</div>
+      <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;font-weight:500">${esc(label)}</div>
       <div style="font-family:var(--fm);font-weight:700;color:${seg.color};margin-left:auto">${seg.v}</div>
+      <div style="font-family:var(--fm);color:var(--muted);width:32px;text-align:right">${pct}%</div>
     </div>`;
   }).join('');
 
-  // ✅ DOUBLE BAR CHART FOR COUNTRY CAMPAIGNS (OPENS & REPLIES)
+  document.getElementById('mini-legend-opens').innerHTML = buildLegend(miniSegsOpens, total);
+  document.getElementById('mini-legend-replies').innerHTML = buildLegend(miniSegsReplies, totalRep);
+
+  /* ── Bar chart (Comparison) ── */
   const barsEl = document.getElementById('cd-bars');
   barsEl.innerHTML = sheetRows.map(([nm,n],i)=>{
     const repN = sheetRepCnt[nm] || 0;
