@@ -1277,8 +1277,8 @@ function renderCountryDetail(code){
     const n          = sheetCnt[nm]  || 0;
     const repN       = sheetRepCnt[nm] || 0;
     const totalLeads = (t.totalRows && t.totalRows > 0) ? t.totalRows : null;
-    const openPct    = (totalLeads && totalLeads >= n)    ? Math.round((n/totalLeads)*100)    : 0;
-    const repPct     = (totalLeads && totalLeads >= repN) ? Math.round((repN/totalLeads)*100) : 0;
+    const openPct    = (totalLeads && totalLeads >= n)    ? (n/totalLeads*100).toFixed(2)    : 0;
+    const repPct     = (totalLeads && totalLeads >= repN) ? (repN/totalLeads*100).toFixed(2) : 0;
 
     const clean  = nm.replace(/^\(Final\)/,'').trim();
     const dmatch = clean.match(/(\d{4}-\d{2}-\d{2})$/);
