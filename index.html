@@ -605,21 +605,38 @@ tbody tr:last-child td{border-bottom:none}
   .ls{ display:none; }
   #ts{ display:none; }
 
-  /* ── Nav: horizontal scroll pill bar ── */
+  /* ── Nav: 2 rows ── */
   .nav{
-    padding:5px;
-    gap:4px;
-    overflow-x:auto;
-    flex-wrap:nowrap;
-    scrollbar-width:none;
-    -webkit-overflow-scrolling:touch;
-    border-radius:14px;
-    margin-bottom:16px;
+    flex-wrap:wrap !important;
+    padding:6px !important;
+    gap:5px !important;
   }
-  .nav::-webkit-scrollbar{ display:none; }
-  .tab{ padding:7px 12px; font-size:.72rem; white-space:nowrap; border-radius:10px; }
-  .nav-sep{ display:none; }
-  .ctabs{ flex-wrap:nowrap; }
+  /* First 3 main tabs fill row 1 evenly */
+  #tab-overview, #tab-replies, #tab-allctry{
+    flex:1;
+    justify-content:center;
+    text-align:center;
+  }
+  /* Separator becomes full-width row break */
+  .nav-sep{
+    display:block !important;
+    width:100% !important;
+    height:1px !important;
+    background:rgba(0,0,0,.07) !important;
+    margin:2px 0 !important;
+  }
+  /* Country tabs: row 2, scrollable */
+  .ctabs{
+    width:100%;
+    overflow-x:auto;
+    scrollbar-width:none;
+    flex-wrap:nowrap !important;
+    display:flex;
+    gap:4px;
+    padding-bottom:2px;
+  }
+  .ctabs::-webkit-scrollbar{ display:none; }
+  .ctabs .tab{ white-space:nowrap; flex:unset; }
 
   /* ── KPI grid: 2×2 ── */
   .kg{ grid-template-columns:1fr 1fr !important; gap:10px; margin-bottom:16px; }
@@ -725,21 +742,36 @@ tbody tr:last-child td{border-bottom:none}
   /* Replies donut third */
   .mini-donut-wrap:last-of-type{ order:3; border-right:none !important; border-top:1px solid rgba(0,0,0,.06); }
 
-  /* Donuts: horizontal layout on mobile */
+  /* Donuts: vertical — pie centered alone, legend below */
   .mini-donut-wrap{
-    flex-direction:row !important;
-    align-items:flex-start;
-    gap:16px;
-    padding:16px 14px;
+    flex-direction:column !important;
+    align-items:center !important;
+    padding:16px 14px !important;
+    gap:16px !important;
   }
-  .mini-donut-svg{ width:100px; height:100px; flex-shrink:0; }
-  .mini-leg-row{ padding:2px 0; }
-  .mini-leg-name{ font-size:.72rem; }
+  .mini-donut-svg{ width:140px !important; height:140px !important; flex-shrink:0; }
+  #mini-legend-opens, #mini-legend-replies{ width:100%; }
 
-  /* Bar labels: shorter */
-  .bar-label{ width:120px; font-size:.72rem; }
-  .bar-label small{ font-size:.60rem; }
-  .bar-num{ font-size:.68rem; min-width:80px !important; }
+  /* Bar rows: stack label above bar */
+  .bar-row-static{
+    flex-direction:column !important;
+    gap:6px !important;
+    margin-bottom:18px !important;
+  }
+  .bar-label{
+    width:100% !important;
+    white-space:normal !important;
+    font-size:.78rem !important;
+  }
+  .bar-label small{ font-size:.66rem !important; }
+  .bar-track{ height:18px !important; }
+  .bar-num{
+    font-size:.70rem !important;
+    min-width:unset !important;
+    white-space:nowrap;
+  }
+  /* Inline bar+num row */
+  .bar-row-static > div:last-child{ width:100%; }
 
   /* ── All Countries donut ── */
   #pg-allctry .gi > div { padding:12px !important; }
