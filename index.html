@@ -200,11 +200,13 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 
 /* ═══════════════════════════════════════════════ CAMPAIGN */
 .campc{padding:26px;margin-bottom:26px}
-.ch{display:grid;grid-template-columns:1fr 100px 80px 80px;
-  font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+/* ✅ UPDATED COLUMN WIDTHS FOR CAMPAIGN BREAKDOWN */
+.campc .ch, .campc .cr {
+  grid-template-columns: 1fr 90px 90px 80px 80px;
+}
+.ch{font-size:.66rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
   color:var(--muted);padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,.07);margin-bottom:4px}
-.cr{display:grid;grid-template-columns:1fr 100px 80px 80px;
-  padding:10px 6px;border-bottom:1px solid rgba(0,0,0,.04);
+.cr{padding:10px 6px;border-bottom:1px solid rgba(0,0,0,.04);
   border-radius:12px;align-items:center;font-size:.82rem;transition:background .12s}
 .cr:hover{background:rgba(255,255,255,.58)}
 .cr:last-child{border-bottom:none}
@@ -221,7 +223,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .tag-TW{background:rgba(124,58,237,.10);color:#4c1d95;border:1px solid rgba(124,58,237,.20)}
 .tag-PH{background:rgba(234,88,12,.10);color:#7c2d12;border:1px solid rgba(234,88,12,.20)}
 
-/* ═══════════════════════════════════════════════ TABLE (FIXED LAYOUT) */
+/* ═══════════════════════════════════════════════ TABLE */
 .tc{overflow:hidden;padding:0}
 .th2{display:flex;align-items:center;justify-content:space-between;padding:24px 26px 12px}
 .srch{background:rgba(255,255,255,.70);border:1.5px solid rgba(255,255,255,.88);
@@ -232,7 +234,6 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .srch::placeholder{color:var(--muted)}
 .tscr{overflow-x:auto}
 
-/* ✅ ENFORCES FIXED WIDTH COLUMNS SO DROPDOWNS DON'T JUMP */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -248,7 +249,7 @@ thead th{
 thead th:hover{color:var(--text)}
 thead th.ac{color:var(--brand)}
 
-/* ✅ FULL-WIDTH HEADER DROPDOWNS */
+/* FULL-WIDTH HEADER DROPDOWNS */
 thead th select {
   background: transparent; border: none; font-family: var(--f); font-size: inherit; font-weight: inherit;
   letter-spacing: inherit; text-transform: inherit; color: inherit; cursor: pointer; outline: none;
@@ -489,11 +490,11 @@ tbody tr:last-child td{border-bottom:none}
       <div class="tscr"><table>
         <thead><tr>
           <th onclick="srt('title')" style="width:26%">Merchant <span id="si-title">↕</span></th>
-          <th style="width:12%"><select id="sel-country" onchange="doFil()"><option value="">COUNTRY ▾</option></select></th>
-          <th style="width:16%"><select id="sel-bd" onchange="doFil()"><option value="">BD ▾</option></select></th>
-          <th style="width:18%"><select id="sel-cat" onchange="doFil()"><option value="">CATEGORY ▾</option></select></th>
-          <th style="width:16%"><select id="sel-mail" onchange="doFil()"><option value="">MAIL ▾</option></select></th>
-          <th style="width:12%"><select id="sel-stage" onchange="doFil()"><option value="">STAGE ▾</option></select></th>
+          <th style="width:12%"><select id="sel-country" onchange="doFil()"><option value="">COUNTRY</option></select></th>
+          <th style="width:16%"><select id="sel-bd" onchange="doFil()"><option value="">BD</option></select></th>
+          <th style="width:18%"><select id="sel-cat" onchange="doFil()"><option value="">CATEGORY</option></select></th>
+          <th style="width:16%"><select id="sel-mail" onchange="doFil()"><option value="">MAIL</option></select></th>
+          <th style="width:12%"><select id="sel-stage" onchange="doFil()"><option value="">STAGE</option></select></th>
         </tr></thead>
         <tbody id="tbody"><tr><td colspan="6" class="empty">No data</td></tr></tbody>
       </table></div>
@@ -513,10 +514,10 @@ tbody tr:last-child td{border-bottom:none}
       <div class="tscr"><table>
         <thead><tr>
           <th onclick="srtRep('title')" style="width:26%">Merchant <span id="sir-title">↕</span></th>
-          <th style="width:12%"><select id="sel-country-rep" onchange="doFilRep()"><option value="">COUNTRY ▾</option></select></th>
-          <th style="width:16%"><select id="sel-bd-rep" onchange="doFilRep()"><option value="">BD ▾</option></select></th>
+          <th style="width:12%"><select id="sel-country-rep" onchange="doFilRep()"><option value="">COUNTRY</option></select></th>
+          <th style="width:16%"><select id="sel-bd-rep" onchange="doFilRep()"><option value="">BD</option></select></th>
           <th onclick="srtRep('replied_at')" style="width:34%">Message <span id="sir-replied_at">↕</span></th>
-          <th style="width:12%"><select id="sel-stage-rep" onchange="doFilRep()"><option value="">STAGE ▾</option></select></th>
+          <th style="width:12%"><select id="sel-stage-rep" onchange="doFilRep()"><option value="">STAGE</option></select></th>
         </tr></thead>
         <tbody id="tbody-rep"><tr><td colspan="5" class="empty">No replies found</td></tr></tbody>
       </table></div>
@@ -835,29 +836,36 @@ function renderOvCamps(){
   const hdr = document.getElementById('ov-camps-hdr');
   
   if(window.allTabs && window.allTabs.length) {
-    hdr.innerHTML = `<span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Opens</span><span style="text-align:center">Share</span>`;
+    hdr.innerHTML = `<span>Country</span><span style="text-align:center">Active Sheets</span><span style="text-align:center">Merchants</span><span style="text-align:center">Opens</span><span style="text-align:center">Avg Rate</span>`;
     
     const ctrySheets = {};
-    window.allTabs.forEach(t => { ctrySheets[t.country] = (ctrySheets[t.country]||0) + 1; });
+    const ctryMerchants = {};
+    window.allTabs.forEach(t => { 
+      ctrySheets[t.country] = (ctrySheets[t.country]||0) + 1; 
+      ctryMerchants[t.country] = (ctryMerchants[t.country]||0) + t.totalRows;
+    });
     const ctryOpens = {};
     all.forEach(r => { ctryOpens[r.country] = (ctryOpens[r.country]||0) + 1; });
     
     const rows = Object.entries(ctrySheets).sort((a,b)=>b[1]-a[1]);
-    const totOpens = all.length || 1;
     
     if(!rows.length){el.innerHTML='<p class="empty">No data</p>';return;}
     
     el.innerHTML = rows.map(([ctry, sCount])=>{
       const m = FL[ctry] || { n: ctry };
       const oCount = ctryOpens[ctry] || 0;
-      return `<div class="cr">
+      const tMerch = ctryMerchants[ctry] || 0;
+      const avgRate = tMerch ? Math.round((oCount/tMerch)*100) : 0;
+      
+      return `<div class="cr" style="grid-template-columns:1fr 90px 90px 80px 80px;">
         <div style="display:flex;align-items:center;gap:10px;">
           <span class="tag tag-${ctry}">${ctry}</span>
           <span style="font-weight:600;font-size:.85rem">${m.n}</span>
         </div>
         <div style="text-align:center;font-weight:600;color:var(--text)">${sCount}</div>
+        <div style="text-align:center;font-weight:600;color:var(--muted)">${tMerch}</div>
         <div style="text-align:center;font-family:var(--fm);font-weight:700;color:var(--brand)">${oCount}</div>
-        <div style="text-align:center;font-size:.75rem;color:var(--muted)">${(oCount/totOpens*100).toFixed(1)}%</div>
+        <div style="text-align:center;font-size:.75rem;color:var(--muted);font-family:var(--fm)">${avgRate}%</div>
       </div>`;
     }).join('');
   } 
@@ -907,7 +915,6 @@ function doFil(){
   const mVal = document.getElementById('sel-mail').value;
   const sVal = document.getElementById('sel-stage').value;
   
-  // Highlight active dropdowns
   ['sel-country', 'sel-bd', 'sel-cat', 'sel-mail', 'sel-stage'].forEach(id => {
      const el = document.getElementById(id);
      if(el) el.style.color = el.value ? 'var(--brand)' : 'inherit';
@@ -1237,6 +1244,14 @@ function renderCountryDetail(code){
   const barsEl = document.getElementById('cd-bars');
   barsEl.innerHTML = sheetRows.map(([nm,n],i)=>{
     const repN = sheetRepCnt[nm] || 0;
+    
+    // ✅ PULLS TOTAL LEADS FROM N8N ARRAY TO CALCULATE REAL CONVERSION
+    const tabObj = window.allTabs.find(t => t.sheetName === nm);
+    const totalLeads = tabObj ? tabObj.totalRows : n; 
+    
+    const openPct = totalLeads ? Math.round((n/totalLeads)*100) : 0;
+    const repPct = totalLeads ? Math.round((repN/totalLeads)*100) : 0;
+    
     const clean = nm.replace(/^\(Final\)/,'').trim();
     const dm    = clean.match(/(\d{4}-\d{2}-\d{2})$/);
     const dt    = dm?dm[1]:'';
@@ -1245,37 +1260,38 @@ function renderCountryDetail(code){
     const delay = (i*0.07).toFixed(2)+'s';
     
     return`<div class="bar-row-static" style="align-items:flex-start;">
-      <div class="bar-label" style="margin-top:5px;">${esc(label)}${dt?`<small>${dt}</small>`:''}</div>
+      <div class="bar-label" style="margin-top:5px;">${esc(label)}${dt?`<small>${dt}</small>`:''}
+        <div style="font-size:0.68rem; font-weight:600; color:var(--text); margin-top:5px;">👥 ${totalLeads} Total Merchants</div>
+      </div>
       <div style="flex:1;">
         
         <div style="display:flex; align-items:center; gap:14px; margin-bottom:6px;">
            <div class="bar-track" style="height:22px;">
              <div class="bar-fill" id="bar-${code}-${i}"
-               style="background:${color};width:0;--d:${delay}"></div>
+               style="background:${color};width:0;--d:${delay}" data-w="${openPct}"></div>
            </div>
-           <div class="bar-num" style="color:${color}; font-size:.75rem;">${n} opens</div>
+           <div class="bar-num" style="color:${color}; font-size:.75rem; min-width:100px;">${n} opens <span style="opacity:0.5">(${openPct}%)</span></div>
         </div>
 
         <div style="display:flex; align-items:center; gap:14px;">
            <div class="bar-track" style="height:14px; background:rgba(0,0,0,0.03);">
              <div class="bar-fill" id="bar-rep-${code}-${i}"
-               style="background:linear-gradient(90deg,#818cf8,#4f46e5);width:0;--d:${delay}"></div>
+               style="background:linear-gradient(90deg,#818cf8,#4f46e5);width:0;--d:${delay}" data-w="${repPct}"></div>
            </div>
-           <div class="bar-num" style="color:#4f46e5; font-size:.70rem;">${repN} replies</div>
+           <div class="bar-num" style="color:#4f46e5; font-size:.70rem; min-width:100px;">${repN} replies <span style="opacity:0.5">(${repPct}%)</span></div>
         </div>
 
       </div>
     </div>`;
   }).join('');
 
-  const maxN = sheetRows[0]?.[1]||1;
   setTimeout(()=>{
     sheetRows.forEach(([nm,n],i)=>{
-      const repN = sheetRepCnt[nm] || 0;
       const b=document.getElementById(`bar-${code}-${i}`);
       const rB=document.getElementById(`bar-rep-${code}-${i}`);
-      if(b) b.style.width=Math.round(n/maxN*100)+'%';
-      if(rB) rB.style.width=Math.round(repN/maxN*100)+'%'; 
+      // ✅ BARS NOW FILL UP BASED ON THE % INSTEAD OF THE MAX CAMPAIGN
+      if(b) b.style.width=b.dataset.w + '%';
+      if(rB) rB.style.width=rB.dataset.w + '%'; 
     });
   }, 60);
 }
