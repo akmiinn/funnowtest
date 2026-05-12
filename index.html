@@ -26,7 +26,7 @@
     0 16px 36px rgba(255,85,55,.14),
     0 36px 64px rgba(255,85,55,.10),
     0 64px 96px rgba(255,85,55,.06);
-  --brand:#ff5537; /* ✅ NEW THEME COLOR */
+  --brand:#ff5537; 
   --violet:#7c3aed;--green:#059669;
   --amber:#d97706;--rose:#e11d48;--sky:#0284c7;
   --text:#0f172a;--sub:#475569;--muted:#94a3b8;
@@ -34,7 +34,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:15px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--f);color:var(--text);min-height:100vh;overflow-x:hidden;
-  /* ✅ WARMED UP THE BACKGROUND TO MATCH THE THEME */
   background:linear-gradient(145deg,#faece9 0%,#fdf5f3 35%,#ffffff 65%,#fae3dd 100%)}
 
 /* ═══════════════════════════════════════════════ BACKGROUND */
@@ -82,7 +81,6 @@ body{font-family:var(--f);color:var(--text);min-height:100vh;overflow-x:hidden;
 header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
 .logo{display:flex;align-items:center;gap:15px}
 .gem{width:48px;height:48px;border-radius:15px;position:relative;overflow:hidden;flex-shrink:0;
-  /* ✅ UPDATED LOGO GRADIENT AND SHADOWS */
   background:linear-gradient(148deg,#fff 0%,#ffccc2 38%,#ff8970 72%,#ff5537 100%);
   box-shadow:inset 0 2px 0 rgba(255,255,255,.95),inset 2px 0 0 rgba(255,255,255,.70),
     inset 0 -2px 0 rgba(255,85,55,.22),0 4px 16px rgba(255,85,55,.32),0 12px 28px rgba(255,85,55,.16);
@@ -127,7 +125,6 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
   background:rgba(255,255,255,0);border-radius:inherit;pointer-events:none;transition:background .18s}
 .tab:hover{color:var(--text);background:rgba(255,255,255,.45)}
 .tab.on{
-  /* ✅ UPDATED TO CORAL THEME GRADIENT */
   background:linear-gradient(155deg,#ff8970,#ff5537);
   color:#fff;
   box-shadow:inset 0 1.5px 0 rgba(255,255,255,.28),0 4px 14px rgba(255,85,55,.32);
@@ -161,7 +158,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 @media(max-width:800px){.mg{grid-template-columns:1fr}}
 .mc{padding:26px}
 
-/* Country / BD rows */
+/* Country / BD rows (Hover Effects ON for Overview) */
 .crow{display:flex;align-items:center;gap:12px;padding:10px 13px;border-radius:14px;
   cursor:pointer;transition:background .14s,transform .14s;margin-bottom:5px}
 .crow:hover{background:rgba(255,255,255,.55);transform:translateX(4px)}
@@ -179,7 +176,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
   cursor:pointer;transition:background .14s,transform .14s;margin-bottom:5px}
 .brow:hover{background:rgba(255,255,255,.55);transform:translateX(4px)}
 
-/* MULTI-SELECT ACTIVE BD STATE (UPDATED COLOR) */
+/* MULTI-SELECT ACTIVE BD STATE */
 .brow.active-bd {
   background: rgba(255, 85, 55, 0.12);
   transform: translateX(4px);
@@ -218,7 +215,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 
 /* Tags */
 .tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;
-  font-size:.67rem;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}
+  font-size:.67rem;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.55); white-space:nowrap;}
 .tag-SG{background:rgba(2,132,199,.10);color:#075985;border:1px solid rgba(2,132,199,.20)}
 .tag-TH{background:rgba(217,119,6,.10);color:#92400e;border:1px solid rgba(217,119,6,.20)}
 .tag-HK{background:rgba(225,29,72,.10);color:#9f1239;border:1px solid rgba(225,29,72,.20)}
@@ -247,10 +244,28 @@ tbody tr{transition:background .12s}
 tbody tr:hover td{background:rgba(255,255,255,.48)}
 tbody td{padding:12px 16px;font-size:.82rem;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:middle}
 tbody tr:last-child td{border-bottom:none}
+
+/* REPLIES TABLE SPECIFIC */
+.msg-cell {
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+  font-size: .80rem;
+}
+.msg-date {
+  font-size: .68rem;
+  color: var(--muted);
+  font-family: var(--fm);
+  margin-top: 3px;
+}
+
 .mn{font-weight:600}.me{font-size:.71rem;color:var(--muted);margin-top:2px;font-family:var(--fm)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;
   font-size:.67rem;font-weight:700;background:rgba(5,150,105,.09);color:#065f46;
-  border:1px solid rgba(5,150,105,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+  border:1px solid rgba(5,150,105,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.5); white-space:nowrap;}
+.badge.blue {background:rgba(29,107,229,.09);color:#1d6be5;border:1px solid rgba(29,107,229,.18);}
 .tfoot{display:flex;align-items:center;justify-content:space-between;
   padding:14px 26px;border-top:1px solid rgba(0,0,0,.07);font-size:.74rem;color:var(--muted)}
 .pr{display:flex;gap:5px}
@@ -316,7 +331,6 @@ tbody tr:last-child td{border-bottom:none}
 .ctry-title{font-size:1.5rem;font-weight:800;letter-spacing:-.03em}
 .ctry-subtitle{font-size:.8rem;color:var(--muted);margin-top:3px;font-weight:500}
 
-/* Mini donut for country page */
 .ctry-body{display:grid;grid-template-columns:220px 1fr;gap:0;align-items:start}
 @media(max-width:680px){.ctry-body{grid-template-columns:1fr}}
 .mini-donut-wrap{
@@ -325,7 +339,6 @@ tbody tr:last-child td{border-bottom:none}
 }
 .mini-donut-svg{width:160px;height:160px}
 
-/* Horizontal bar chart */
 .bar-chart{padding:22px 28px 22px 20px}
 .bar-sec{font-size:.67rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:var(--muted);margin-bottom:18px}
@@ -394,7 +407,8 @@ tbody tr:last-child td{border-bottom:none}
   </header>
 
   <div class="nav g">
-    <button class="tab on" id="tab-overview" onclick="goPage('overview')">📊&nbsp;Overview</button>
+    <button class="tab on" id="tab-overview" onclick="goPage('overview')">📊&nbsp;Click Rate</button>
+    <button class="tab" id="tab-replies" onclick="goPage('replies')">💬&nbsp;Replies</button>
     <button class="tab" id="tab-allctry" onclick="goPage('allctry')">🌍&nbsp;All Countries</button>
     <div class="nav-sep"></div>
     <div class="ctabs" id="ctabs"></div>
@@ -469,6 +483,29 @@ tbody tr:last-child td{border-bottom:none}
     </div></div>
   </div>
 
+  <div id="pg-replies" style="display:none">
+    <div class="g tc"><div class="gi">
+      <div class="th2">
+        <div class="sec" style="margin-bottom:0">Inbox: Email Replies</div>
+        <input class="srch" type="text" placeholder="🔍 Search replies, names…" id="srch-rep" oninput="doFilRep()"/>
+      </div>
+      <div class="tscr"><table>
+        <thead><tr>
+          <th onclick="srtRep('title')">Merchant <span id="sir-title">↕</span></th>
+          <th onclick="srtRep('country')">Country <span id="sir-country">↕</span></th>
+          <th onclick="srtRep('BD')">BD <span id="sir-BD">↕</span></th>
+          <th onclick="srtRep('replied_at')">Message <span id="sir-replied_at">↕</span></th>
+          <th onclick="srtRep('Stage')">Stage <span id="sir-Stage">↕</span></th>
+        </tr></thead>
+        <tbody id="tbody-rep"><tr><td colspan="5" class="empty">No replies found</td></tr></tbody>
+      </table></div>
+      <div class="tfoot">
+        <span id="rcount-rep">0 replies</span>
+        <div class="pr" id="pg-rep"></div>
+      </div>
+    </div></div>
+  </div>
+
   <div id="pg-allctry" style="display:none">
     <div class="g" style="margin-bottom:26px"><div class="gi">
       <div style="padding:28px 36px">
@@ -512,7 +549,7 @@ tbody tr:last-child td{border-bottom:none}
    CONFIG
 ══════════════════════════════════════════════════════════ */
 const WEBHOOK = 'https://funnow.app.n8n.cloud/webhook/Dashboard_clicked';
-const MOCK    = false; // Ensure this is false for real data
+const MOCK    = false; 
 
 const FL = {
   SG:{e:'🇸🇬',n:'Singapore',  c:'#ff5537', grad:'linear-gradient(90deg,#ff977a,#ff5537)'},
@@ -528,11 +565,14 @@ const SHEET_PALETTE = [
   '#ef4444','#ec4899','#84cc16','#f97316','#6366f1',
 ];
 
-/* ── STATE ── */
+/* ── STATE (CLICKS) ── */
 let all=[],fil=[],sk='title',su=true,pg=1,curPage='overview',curCtry=null;
 let activeFilters = { BD: new Set(), country: new Set() };
 const PS=10;
 window.allTabs = [];
+
+/* ── STATE (REPLIES) ── */
+let repliedAll=[], repliedFil=[], skr='replied_at', sur=false, pgr=1;
 
 /* ══════════════════════════════════════════════════════════
    FETCH
@@ -557,7 +597,6 @@ async function loadData(){
     
     d = d.map(r => {
       r.country = r.country_code || r.country || "Unknown";
-      
       if (!r.BD && r.account_owner) {
         let name = r.account_owner.split('@')[0];
         name = name.charAt(0).toUpperCase() + name.slice(1).replace(/\./g, ' ');
@@ -566,12 +605,17 @@ async function loadData(){
       return r;
     });
     
-    all=d.filter(r=>Number(r.clicked)===1);
+    // Dataset 1: Standard Clicks
+    all = d.filter(r=>Number(r.clicked)===1);
+    
+    // Dataset 2: Email Replies ONLY
+    repliedAll = d.filter(r => r.mail_status && r.mail_status.toLowerCase().includes('replied'));
+    
     renderAll();
     document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString();
   }catch(e){
     showErr(`${e.message}. Enable CORS in n8n webhook settings (Access-Control-Allow-Origin: *).`);
-    all=[];renderAll();
+    all=[]; repliedAll=[]; renderAll();
   } finally{
     document.getElementById('loading').style.display='none';
     const app=document.getElementById('app');
@@ -590,7 +634,9 @@ function showErr(msg){ const b=document.getElementById('err-banner');document.ge
 ══════════════════════════════════════════════════════════ */
 function renderAll(){
   buildCountryTabs();
-  renderKPIs(); renderOvCtry(); renderOvBD(); renderOvCamps(); doFil();
+  renderKPIs(); renderOvCtry(); renderOvBD(); renderOvCamps(); 
+  doFil(); 
+  doFilRep(); // Render Replies Table
   renderDonutMain();
   goPage(curPage, curCtry, false);
 }
@@ -600,7 +646,8 @@ function renderAll(){
 ══════════════════════════════════════════════════════════ */
 function goPage(page, ctry=null, animate=true){
   curPage=page; curCtry=ctry;
-  ['overview','allctry','country'].forEach(p=>document.getElementById('pg-'+p).style.display='none');
+  // include new replies page in array
+  ['overview','replies','allctry','country'].forEach(p=>document.getElementById('pg-'+p).style.display='none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
 
   const show = id => {
@@ -613,6 +660,9 @@ function goPage(page, ctry=null, animate=true){
   if(page==='overview'){
     document.getElementById('tab-overview').classList.add('on');
     show('overview');
+  } else if(page==='replies'){
+    document.getElementById('tab-replies').classList.add('on');
+    show('replies');
   } else if(page==='allctry'){
     document.getElementById('tab-allctry').classList.add('on');
     show('allctry');
@@ -639,7 +689,7 @@ function buildCountryTabs(){
 }
 
 /* ══════════════════════════════════════════════════════════
-   OVERVIEW RENDERS
+   OVERVIEW RENDERS (CLICKS)
 ══════════════════════════════════════════════════════════ */
 function renderKPIs(){
   const t = all.length;
@@ -749,23 +799,14 @@ function renderOvCamps(){
    MULTI-SELECT TABLE FILTERS
 ══════════════════════════════════════════════════════════ */
 function toggleF(k, v) {
-  if (activeFilters[k].has(v)) {
-    activeFilters[k].delete(v);
-  } else {
-    activeFilters[k].add(v);
-  }
-  pg = 1; 
-  pills(); 
-  doFil();
-  renderOvBD(); 
+  if (activeFilters[k].has(v)) activeFilters[k].delete(v);
+  else activeFilters[k].add(v);
+  pg = 1; pills(); doFil(); renderOvBD(); 
 }
 
 function rmF(k, v) {
   activeFilters[k].delete(v);
-  pg = 1; 
-  pills(); 
-  doFil();
-  renderOvBD();
+  pg = 1; pills(); doFil(); renderOvBD();
 }
 
 function doFil(){
@@ -828,6 +869,72 @@ function pills(){
   });
   el.innerHTML=h;
 }
+
+/* ══════════════════════════════════════════════════════════
+   REPLIES TABLE LOGIC
+══════════════════════════════════════════════════════════ */
+function doFilRep(){
+  pgr=1;
+  const q=(document.getElementById('srch-rep').value||'').toLowerCase();
+  
+  repliedFil=repliedAll.filter(r=>{
+    if(q&&!`${r.title} ${r.BD} ${r.country} ${r.mail_reply}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  
+  repliedFil.sort((a,b)=>{
+    const av=(a[skr]||'').toString().toLowerCase();
+    const bv=(b[skr]||'').toString().toLowerCase();
+    return sur?av.localeCompare(bv):bv.localeCompare(av);
+  });
+  
+  renderTblRep(); renderPgRep();
+}
+
+function srtRep(k){
+  document.querySelectorAll('#pg-replies thead th').forEach(t=>t.classList.remove('ac'));
+  document.querySelectorAll('[id^=sir-]').forEach(s=>s.textContent='↕');
+  if(skr===k)sur=!sur;else{skr=k;sur=true;}
+  const si=document.getElementById('sir-'+k);
+  if(si){si.textContent=sur?'↑':'↓';si.closest('th').classList.add('ac');}
+  doFilRep();
+}
+
+function renderTblRep(){
+  const s=(pgr-1)*PS, sl=repliedFil.slice(s,s+PS);
+  document.getElementById('rcount-rep').textContent=`${repliedFil.length} repl${repliedFil.length===1?'y':'ies'}`;
+  const tb=document.getElementById('tbody-rep');
+  if(!sl.length){tb.innerHTML='<tr><td colspan="5" class="empty">No replies found</td></tr>';return;}
+  
+  tb.innerHTML=sl.map(r=>{
+    const m=FL[r.country]||{};
+    const replyText = esc(r.mail_reply || "No message content");
+    const replyDate = r.replied_at ? new Date(r.replied_at).toLocaleString() : "Unknown Date";
+    
+    return`<tr>
+    <td><div class="mn">${esc(r.title||'—')}</div><div class="me">${esc(r.email||'')}</div></td>
+    <td><span class="tag tag-${r.country}">${m.e||''} ${r.country}</span></td>
+    <td style="font-weight:600">${esc(r.BD||'—')}</td>
+    <td>
+      <div class="msg-cell" title="${replyText}">${replyText}</div>
+      <div class="msg-date">${replyDate}</div>
+    </td>
+    <td><span class="badge blue">💬 Replied</span></td>
+  </tr>`;}).join('');
+}
+
+function renderPgRep(){
+  const tot=Math.ceil(repliedFil.length/PS),el=document.getElementById('pg-rep');
+  if(tot<=1){el.innerHTML='';return;}
+  let h=`<button class="pb" onclick="goPgRep(${pgr-1})" ${pgr===1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=tot;i++){
+    if(tot>7&&Math.abs(i-pgr)>2&&i!==1&&i!==tot){if(i===2||i===tot-1)h+=`<button class="pb" disabled>…</button>`;continue;}
+    h+=`<button class="pb ${i===pgr?'on':''}" onclick="goPgRep(${i})">${i}</button>`;
+  }
+  h+=`<button class="pb" onclick="goPgRep(${pgr+1})" ${pgr===tot?'disabled':''}>›</button>`;
+  el.innerHTML=h;
+}
+function goPgRep(p){const t=Math.ceil(repliedFil.length/PS);if(p<1||p>t)return;pgr=p;renderTblRep();renderPgRep();}
 
 /* ══════════════════════════════════════════════════════════
    SVG DONUT CHART 
